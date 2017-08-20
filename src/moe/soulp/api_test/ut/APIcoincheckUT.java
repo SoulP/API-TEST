@@ -26,6 +26,12 @@ import moe.soulp.api_test.api.Pair;
 import moe.soulp.api_test.coincheck.CoincheckRate;
 import moe.soulp.api_test.coincheck.dto.OrderDTO;
 
+/**
+ * <b>UTテストケース</b><br>
+ * date: 2017/08/03 last_date: 2017/08/20
+ * 
+ * @author ソウルP
+ */
 public class APIcoincheckUT extends APIkey{
     final static APIcoincheck                    coincheck  = new APIcoincheck();
 
