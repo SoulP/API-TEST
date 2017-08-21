@@ -9,7 +9,7 @@ import java.util.function.Function;
  * date: 2017/08/03 last_date: 2017/08/21
  * 
  * @author ソウルP
- * @version 1.0
+ * @version 1.0 2017/08/03 APIcoincheck作成
  * @see API 汎用API接続
  * @see Coincheckable coincheck
  */
@@ -19,6 +19,7 @@ public class APIcoincheck extends API implements Coincheckable {
     static URL orderBooksURL;
     static URL ordersURL;
     static URL ordersOpensURL;
+    static URL ordersTransactions;
 
     static URL accountsURL;
 
@@ -29,6 +30,7 @@ public class APIcoincheck extends API implements Coincheckable {
             orderBooksURL = new URL(API + ORDER_BOOKS);
             ordersURL = new URL(API + ORDERS);
             ordersOpensURL = new URL(API + ORDERS_OPENS);
+            ordersTransactions = new URL(API + ORDERS_TRANSACTIONS);
 
             accountsURL = new URL(API + ACCOUNTS);
         } catch (MalformedURLException e) {
@@ -36,36 +38,47 @@ public class APIcoincheck extends API implements Coincheckable {
         }
     }
 
-    Function<String, String> getPubAPI   = (url) -> {
-                                             try {
-                                                 return getPublicAPI(new URL(url));
-                                             } catch (MalformedURLException e) {
-                                                 e.printStackTrace();
-                                             }
-                                             return null;
-                                         };
+    Function<String, String> getPubAPI     = (url) -> {
+                                               try {
+                                                   return getPublicAPI(new URL(url));
+                                               } catch (MalformedURLException e) {
+                                                   e.printStackTrace();
+                                               }
+                                               return null;
+                                           };
 
-    Function<URL, String>    getPrivAPI  = (url) -> {
-                                             try {
-                                                 if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
-                                                 if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
-                                                 return getPrivateAPI(url);
-                                             } catch (Exception e) {
-                                                 e.printStackTrace();
-                                             }
-                                             return null;
-                                         };
+    Function<URL, String>    getPrivAPI    = (url) -> {
+                                               try {
+                                                   if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
+                                                   if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
+                                                   return getPrivateAPI(url);
+                                               } catch (Exception e) {
+                                                   e.printStackTrace();
+                                               }
+                                               return null;
+                                           };
 
-    Function<URL, String>    postPrivAPI = (url) -> {
-                                             try {
-                                                 if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
-                                                 if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
-                                                 return postPrivateAPI(url);
-                                             } catch (Exception e) {
-                                                 e.printStackTrace();
-                                             }
-                                             return null;
-                                         };
+    Function<URL, String>    postPrivAPI   = (url) -> {
+                                               try {
+                                                   if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
+                                                   if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
+                                                   return postPrivateAPI(url);
+                                               } catch (Exception e) {
+                                                   e.printStackTrace();
+                                               }
+                                               return null;
+                                           };
+
+    Function<String, String> deletePrivAPI = (url) -> {
+                                               try {
+                                                   if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
+                                                   if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
+                                                   return deletePrivateAPI(new URL(url));
+                                               } catch (Exception e) {
+                                                   e.printStackTrace();
+                                               }
+                                               return null;
+                                           };
 
     /**
      * <b>ティッカー</b><br>
@@ -610,12 +623,31 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String deleteOrdersId(long id) {
-        try {
-            return deletePrivateAPI(new URL(API + ORDERS_ID + id));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return deletePrivAPI.apply(API + ORDERS_ID + id);
+    }
+
+    /**
+     * <b>取引履歴</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @return 【JSON(JSON, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <hr>
+     *         transactionsの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactions() {
+        return getPrivAPI.apply(ordersTransactions);
     }
 
     /**

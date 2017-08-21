@@ -9,11 +9,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,10 +20,12 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 import moe.soulp.api_test.api.APIcoincheck;
+import moe.soulp.api_test.api.Coincheckable;
 import moe.soulp.api_test.api.OrderType;
 import moe.soulp.api_test.api.Pair;
 import moe.soulp.api_test.coincheck.CoincheckRate;
 import moe.soulp.api_test.coincheck.dto.OrderDTO;
+import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
 
 /**
  * <b>UTテストケース</b><br>
@@ -33,14 +34,7 @@ import moe.soulp.api_test.coincheck.dto.OrderDTO;
  * @author ソウルP
  */
 public class APIcoincheckUT extends APIkey {
-    final static APIcoincheck                    coincheck = new APIcoincheck();
-
-    final static Function<String, LocalDateTime> dateTime  = (dt) -> {
-                                                               return LocalDateTime
-                                                                       .parse(dt.substring(0, 19),
-                                                                               DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                                                                       .plusHours(9l);
-                                                           };
+    final static APIcoincheck coincheck = new APIcoincheck();
 
     /**
      * <b>ティッカー</b><br>
@@ -96,7 +90,7 @@ public class APIcoincheckUT extends APIkey {
         String amount = null;
         int rate = -1;
         String order_type = null;
-        LocalDateTime created_at = null;
+        ZonedDateTime created_at = null;
         try {
             trades = new JSONArray(coincheck.getTrades());
             temp = trades.getJSONObject(0);
@@ -104,7 +98,8 @@ public class APIcoincheckUT extends APIkey {
             amount = temp.getString("amount");
             rate = temp.getInt("rate");
             order_type = temp.getString("order_type");
-            created_at = dateTime.apply(temp.getString("created_at"));
+            created_at = ZonedDateTime.parse(temp.getString("created_at"), Coincheckable.FORMAT)
+                    .withZoneSameInstant(ZoneId.systemDefault());
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -137,7 +132,7 @@ public class APIcoincheckUT extends APIkey {
         String amount = null;
         int rate = -1;
         String order_type = null;
-        LocalDateTime created_at = null;
+        ZonedDateTime created_at = null;
         try {
             trades = new JSONArray(coincheck.getTrades(99));
             temp = trades.getJSONObject(0);
@@ -145,7 +140,8 @@ public class APIcoincheckUT extends APIkey {
             amount = temp.getString("amount");
             rate = temp.getInt("rate");
             order_type = temp.getString("order_type");
-            created_at = dateTime.apply(temp.getString("created_at"));
+            created_at = ZonedDateTime.parse(temp.getString("created_at"), Coincheckable.FORMAT)
+                    .withZoneSameInstant(ZoneId.systemDefault());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -352,7 +348,8 @@ public class APIcoincheckUT extends APIkey {
             double stop = (temp.isNull("stop_loss_rate")) ? -1.0d : temp.getDouble("stop_loss_rate");
             System.out.println("stop_loss_rate: " + stop);
             System.out.println("pair: " + temp.getString("pair"));
-            System.out.println("created_at: " + dateTime.apply(temp.getString("created_at")));
+            System.out.println("created_at: " + ZonedDateTime.parse(temp.getString("created_at"), Coincheckable.FORMAT)
+                    .withZoneSameInstant(ZoneId.systemDefault()));
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -381,7 +378,8 @@ public class APIcoincheckUT extends APIkey {
             double stop = (temp.isNull("stop_loss_rate")) ? -1.0d : temp.getDouble("stop_loss_rate");
             System.out.println("stop_loss_rate: " + stop);
             System.out.println("pair: " + temp.getString("pair"));
-            System.out.println("created_at: " + dateTime.apply(temp.getString("created_at")));
+            System.out.println("created_at: " + ZonedDateTime.parse(temp.getString("created_at"), Coincheckable.FORMAT)
+                    .withZoneSameInstant(ZoneId.systemDefault()));
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -411,7 +409,8 @@ public class APIcoincheckUT extends APIkey {
             double stop = (temp.isNull("stop_loss_rate")) ? -1.0d : temp.getDouble("stop_loss_rate");
             System.out.println("stop_loss_rate: " + stop);
             System.out.println("pair: " + temp.getString("pair"));
-            System.out.println("created_at: " + dateTime.apply(temp.getString("created_at")));
+            System.out.println("created_at: " + ZonedDateTime.parse(temp.getString("created_at"), Coincheckable.FORMAT)
+                    .withZoneSameInstant(ZoneId.systemDefault()));
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -440,7 +439,8 @@ public class APIcoincheckUT extends APIkey {
             double stop = (temp.isNull("stop_loss_rate")) ? -1.0d : temp.getDouble("stop_loss_rate");
             System.out.println("stop_loss_rate: " + stop);
             System.out.println("pair: " + temp.getString("pair"));
-            System.out.println("created_at: " + dateTime.apply(temp.getString("created_at")));
+            System.out.println("created_at: " + ZonedDateTime.parse(temp.getString("created_at"), Coincheckable.FORMAT)
+                    .withZoneSameInstant(ZoneId.systemDefault()));
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -476,7 +476,7 @@ public class APIcoincheckUT extends APIkey {
                 tempOrder.setPendingMarketBuyAmount(obj.isNull("pending_market_buy_amount") ? -1.0d
                         : Double.parseDouble(obj.getString("pending_market_buy_amount")));
                 tempOrder.setStopLessRate(obj.isNull("stop_less_rate") ? -1.0d : obj.getDouble("stop_less_rate"));
-                tempOrder.setCreatedAt(dateTime.apply(obj.getString("created_at")));
+                tempOrder.setCreatedAt(obj.getString("created_at"));
                 list.add(tempOrder);
             }
             System.out.println("未決済の注文一覧");
@@ -508,16 +508,75 @@ public class APIcoincheckUT extends APIkey {
         coincheck.setAPIkey(API_KEY);
         coincheck.setAPIsecret(API_SECRET);
         long id = 210480568l;
+        boolean success = false;
         try {
             temp = new JSONObject(coincheck.deleteOrdersId(id));
             System.out.println("注文のキャンセル");
-            System.out.println("success: " + temp.getBoolean("success"));
+            System.out.println("success: " + (success = temp.getBoolean("success")));
             System.out.println("id: " + temp.getLong("id"));
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
         assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>取引履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getOrdersTransactions() {
+        JSONObject temp = null;
+        JSONArray tempArray = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        List<OrderTransactionDTO> list = new ArrayList<>();
+        try {
+            temp = new JSONObject(coincheck.getOrdersTransactions());
+            System.out.println("取引履歴");
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            tempArray = temp.getJSONArray("transactions");
+            for (int i = 0; i < tempArray.length(); i++) {
+                JSONObject jObj = tempArray.getJSONObject(i);
+                OrderTransactionDTO dto = new OrderTransactionDTO();
+                dto.setId(jObj.getLong("id"));
+                dto.setOrderId(jObj.getLong("order_id"));
+                dto.setCreatedAt(jObj.getString("created_at"));
+                dto.setFundsBtc(Double.parseDouble(jObj.getJSONObject("funds").getString("btc")));
+                dto.setFundsJpy(Double.parseDouble(jObj.getJSONObject("funds").getString("jpy")));
+                dto.setPair(jObj.getString("pair"));
+                dto.setRate(Double.parseDouble(jObj.getString("rate")));
+                dto.setFeeCurrency(jObj.isNull("fee_currency") ? null : jObj.getString("fee_currency"));
+                dto.setFee(Double.parseDouble(jObj.getString("fee")));
+                dto.setLiquidity(jObj.getString("liquidity"));
+                dto.setSide(jObj.getString("side"));
+                list.add(dto);
+            }
+
+            for (OrderTransactionDTO transaction : list) {
+                System.out.println("id: " + transaction.getId());
+                System.out.println("order_id: " + transaction.getOrderId());
+                System.out.println("created_at: " + transaction.getCreatedAt());
+                System.out.println("funds_btc: " + transaction.getFundsBtc());
+                System.out.println("funds_jpy: " + transaction.getFundsJpy());
+                System.out.println("pair: " + transaction.getPair());
+                System.out.println("rate: " + transaction.getRate());
+                System.out.println("fee_currency: " + transaction.getFeeCurrency());
+                System.out.println("fee: " + transaction.getFee());
+                System.out.println("liquidity: " + transaction.getLiquidity());
+                System.out.println("side: " + transaction.getSide());
+                System.out.println();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertNotNull(tempArray);
+        assertTrue(success);
     }
 
     /**

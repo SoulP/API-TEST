@@ -19,7 +19,8 @@ import javax.xml.bind.DatatypeConverter;
  * date: 2017/08/03 last_date: 2017/08/21
  * 
  * @author ソウルP
- * @version 1.0
+ * @version 1.0 2017/08/03 API作成
+ * @version 1.1 2017/08/21 Private API用のdelete操作追加
  */
 public abstract class API {
     final static String GET        = "GET";

@@ -1,15 +1,19 @@
 package moe.soulp.api_test.api;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * <b>インターフェース coincheck</b><br>
  * date: 2017/08/03 last_date: 2017/08/21
  * 
  * @author ソウルP
- * @version 1.0
+ * @version 1.0 2017/08/03 Coincheckable作成
  * @see Pair 取引ペア
  * @see OrderType 注文方法
  */
 public interface Coincheckable {
+    DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+    
     // Public API
     String API                              = "https://coincheck.com";                        // API接続先
     String TICKER                           = "/api/ticker";                                  // ティッカー
@@ -90,6 +94,8 @@ public interface Coincheckable {
     public String getOrdersOpens(); // 未決済の注文一覧
 
     public String deleteOrdersId(long id); // 注文のキャンセル
+
+    public String getOrdersTransactions(); // 取引履歴
 
     // アカウント
     public String getAccounts(); // アカウント情報取得

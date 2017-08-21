@@ -1,7 +1,9 @@
 package moe.soulp.api_test.coincheck.dto;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
+import moe.soulp.api_test.api.Coincheckable;
 import moe.soulp.api_test.api.OrderType;
 import moe.soulp.api_test.api.Pair;
 
@@ -10,7 +12,9 @@ import moe.soulp.api_test.api.Pair;
  * date: 2017/08/06 last_date: 2017/08/21
  * 
  * @author ソウルP
- * @version 1.0
+ * @version 1.0 2017/08/06 未決済の注文DTO作成
+ * @version 1.1 2017/08/21 setCreatedAt(String)追加
+ * @version 1.2 2017/08/21 created_atのLocalDateTime型をZonedDateTimeに変更
  */
 public class OrderDTO {
     private long          id;                        // 注文のID
@@ -20,7 +24,7 @@ public class OrderDTO {
     private double        pending_amount;            // 注文の未決済の量
     private double        pending_market_buy_amount; // 注文の未決済の量（現物成行買いの場合のみ）
     private double        stop_less_rate;            // 逆指値レート
-    private LocalDateTime created_at;                // 注文の作成日時
+    private ZonedDateTime created_at;                // 注文の作成日時
 
     /**
      * <b>注文のID 出力</b>
@@ -110,7 +114,7 @@ public class OrderDTO {
      * @see Pair 取引ペア
      */
     public void setPair(String pair) {
-        setPair(Pair.valueOf(pair));
+        if (!(pair == null || pair.isEmpty())) setPair(Pair.valueOf(pair));
     }
 
     /**
@@ -186,7 +190,7 @@ public class OrderDTO {
      * 
      * @return 注文の作成日時
      */
-    public LocalDateTime getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return created_at;
     }
 
@@ -196,7 +200,18 @@ public class OrderDTO {
      * @param created_at
      *            注文の作成日時
      */
-    public void setCreatedAt(LocalDateTime created_at) {
+    public void setCreatedAt(ZonedDateTime created_at) {
         this.created_at = created_at;
+    }
+
+    /**
+     * <b>注文の作成日時 入力</b>
+     * 
+     * @param created_at
+     *            注文の作成日時
+     */
+    public void setCreatedAt(String created_at) {
+        this.created_at = ZonedDateTime.parse(created_at, Coincheckable.FORMAT)
+                .withZoneSameInstant(ZoneId.systemDefault());
     }
 }
