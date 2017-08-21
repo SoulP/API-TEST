@@ -28,19 +28,19 @@ import moe.soulp.api_test.coincheck.dto.OrderDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/08/20
+ * date: 2017/08/03 last_date: 2017/08/21
  * 
  * @author ソウルP
  */
-public class APIcoincheckUT extends APIkey{
-    final static APIcoincheck                    coincheck  = new APIcoincheck();
+public class APIcoincheckUT extends APIkey {
+    final static APIcoincheck                    coincheck = new APIcoincheck();
 
-    final static Function<String, LocalDateTime> dateTime   = (dt) -> {
-                                                                return LocalDateTime
-                                                                        .parse(dt.substring(0, 19),
-                                                                                DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                                                                        .plusHours(9l);
-                                                            };
+    final static Function<String, LocalDateTime> dateTime  = (dt) -> {
+                                                               return LocalDateTime
+                                                                       .parse(dt.substring(0, 19),
+                                                                               DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                                                       .plusHours(9l);
+                                                           };
 
     /**
      * <b>ティッカー</b><br>
@@ -366,16 +366,72 @@ public class APIcoincheckUT extends APIkey{
      */
     @Test
     public void postOrderLeverageSell() {
-
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        double amount = 0.005d;
+        double rate = 460000d;
+        assertTrue(amount >= 0.005d);
+        try {
+            temp = new JSONObject(coincheck.postOrderLeverageSell(Pair.btc_jpy, amount, rate));
+            System.out.println("id: " + temp.getInt("id"));
+            System.out.println("rate: " + temp.getDouble("rate"));
+            System.out.println("amount: " + temp.getDouble("amount"));
+            System.out.println("order_type: " + temp.getString("order_type"));
+            double stop = (temp.isNull("stop_loss_rate")) ? -1.0d : temp.getDouble("stop_loss_rate");
+            System.out.println("stop_loss_rate: " + stop);
+            System.out.println("pair: " + temp.getString("pair"));
+            System.out.println("created_at: " + dateTime.apply(temp.getString("created_at")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
     }
 
+    /**
+     * <b>指値注文 レバレッジ取引決済 売り</b><br>
+     * 成功テスト
+     */
     @Test
     public void postOrderCloseLong() {
         JSONObject temp = null;
         coincheck.setAPIkey(API_KEY);
         coincheck.setAPIsecret(API_SECRET);
+        double amount = 0.05d;
+        long position_id = 193728148l;
+        double rate = 460000d;
         try {
-            temp = new JSONObject(coincheck.postOrderCloseLong(Pair.btc_jpy, 0.01d, 193728148));
+            temp = new JSONObject(coincheck.postOrderCloseLong(Pair.btc_jpy, amount, position_id, rate));
+            System.out.println(temp);
+            System.out.println("id: " + temp.getInt("id"));
+            System.out.println("rate: " + temp.getDouble("rate"));
+            System.out.println("amount: " + temp.getDouble("amount"));
+            System.out.println("order_type: " + temp.getString("order_type"));
+            double stop = (temp.isNull("stop_loss_rate")) ? -1.0d : temp.getDouble("stop_loss_rate");
+            System.out.println("stop_loss_rate: " + stop);
+            System.out.println("pair: " + temp.getString("pair"));
+            System.out.println("created_at: " + dateTime.apply(temp.getString("created_at")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>成行注文 レバレッジ取引決済 買い</b><br>
+     * 成功テスト
+     */
+    public void postOrderCloseShort() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        double amount = 0.05d;
+        long position_id = 193728148l;
+        double rate = 460000d;
+        try {
+            temp = new JSONObject(coincheck.postOrderCloseShort(Pair.btc_jpy, amount, position_id, rate));
             System.out.println(temp);
             System.out.println("id: " + temp.getInt("id"));
             System.out.println("rate: " + temp.getDouble("rate"));
