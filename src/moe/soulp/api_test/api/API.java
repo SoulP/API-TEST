@@ -16,7 +16,7 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * <b>汎用API接続</b><br>
- * date: 2017/08/03 last_date: 2017/08/06
+ * date: 2017/08/03 last_date: 2017/08/21
  * 
  * @author ソウルP
  * @version 1.0
@@ -128,6 +128,38 @@ public abstract class API {
         } finally {
             if (connection != null) connection.disconnect();
             clearParameters();
+        }
+        return result;
+    }
+
+    protected String deletePrivateAPI(URL url) {
+        clearParameters();
+        HttpURLConnection connection = null;
+        String result = null;
+        String nonce = createNonce();
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(DELETE);
+            connection.setRequestProperty("ACCESS-KEY", apiKey);
+            connection.setRequestProperty("ACCESS-NONCE", nonce);
+            connection.setRequestProperty("ACCESS-SIGNATURE", createSignature(apiSecret, url.toString(), nonce));
+            int code = connection.getResponseCode();
+            if (code == HttpURLConnection.HTTP_OK) {
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
+                BufferedReader reader = new BufferedReader(isr);
+                String line;
+                StringBuilder temp = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    temp.append(line);
+                }
+                result = temp.toString();
+            } else {
+                throw new IOException("HTTP CODE: " + code);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) connection.disconnect();
         }
         return result;
     }

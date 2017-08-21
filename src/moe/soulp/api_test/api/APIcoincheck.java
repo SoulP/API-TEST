@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/08/04
+ * date: 2017/08/03 last_date: 2017/08/21
  * 
  * @author ソウルP
  * @version 1.0
@@ -596,6 +596,26 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String getOrdersOpens() {
         return getPrivAPI.apply(ordersOpensURL);
+    }
+
+    /**
+     * <b>注文のキャンセル</b><br>
+     * 新規注文または未決済の注文一覧のIDを指定してキャンセルすることができます。
+     * 
+     * @param id
+     *            新規注文または未決済の注文一覧のID
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>id</b> キャンセルした注文のID
+     */
+    @Override
+    public String deleteOrdersId(long id) {
+        try {
+            return deletePrivateAPI(new URL(API + ORDERS_ID + id));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

@@ -7,13 +7,13 @@ import moe.soulp.api_test.api.Pair;
 
 /**
  * <b>未決済の注文</b><br>
- * date: 2017/08/06 last_date: 2017/08/06
+ * date: 2017/08/06 last_date: 2017/08/21
  * 
  * @author ソウルP
  * @version 1.0
  */
 public class OrderDTO {
-    private int           id;                        // 注文のID
+    private long          id;                        // 注文のID
     private OrderType     order_type;                // 注文方法
     private double        rate;                      // 注文のレート
     private Pair          pair;                      // 取引ペア
@@ -27,7 +27,7 @@ public class OrderDTO {
      * 
      * @return 注文のID
      */
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -37,7 +37,7 @@ public class OrderDTO {
      * @param id
      *            注文のID
      */
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

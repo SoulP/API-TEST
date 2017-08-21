@@ -2,7 +2,7 @@ package moe.soulp.api_test.api;
 
 /**
  * <b>インターフェース coincheck</b><br>
- * date: 2017/08/03 last_date: 2017/08/04
+ * date: 2017/08/03 last_date: 2017/08/21
  * 
  * @author ソウルP
  * @version 1.0
@@ -88,6 +88,8 @@ public interface Coincheckable {
     public String postOrderCloseShort(Pair pair, double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 買い
 
     public String getOrdersOpens(); // 未決済の注文一覧
+
+    public String deleteOrdersId(long id); // 注文のキャンセル
 
     // アカウント
     public String getAccounts(); // アカウント情報取得

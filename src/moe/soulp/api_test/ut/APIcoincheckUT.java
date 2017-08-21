@@ -467,7 +467,7 @@ public class APIcoincheckUT extends APIkey {
             for (int i = 0; i < orders.length(); i++) {
                 JSONObject obj = orders.getJSONObject(i);
                 OrderDTO tempOrder = new OrderDTO();
-                tempOrder.setId(obj.getInt("id"));
+                tempOrder.setId(obj.getLong("id"));
                 tempOrder.setOrderType(obj.getString("order_type"));
                 tempOrder.setRate(obj.getDouble("rate"));
                 tempOrder.setPair(obj.getString("pair"));
@@ -496,6 +496,28 @@ public class APIcoincheckUT extends APIkey {
             fail(e.getMessage());
         }
         assertTrue(success);
+    }
+
+    /**
+     * <b>注文のキャンセル</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void deleteOrdersId() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        long id = 210480568l;
+        try {
+            temp = new JSONObject(coincheck.deleteOrdersId(id));
+            System.out.println("注文のキャンセル");
+            System.out.println("success: " + temp.getBoolean("success"));
+            System.out.println("id: " + temp.getLong("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
     }
 
     /**
