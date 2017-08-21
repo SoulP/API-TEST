@@ -471,9 +471,11 @@ public class APIcoincheckUT extends APIkey {
                 tempOrder.setOrderType(obj.getString("order_type"));
                 tempOrder.setRate(obj.getDouble("rate"));
                 tempOrder.setPair(obj.getString("pair"));
-                tempOrder.setPendingAmount(obj.getDouble("pending_amount"));
-                tempOrder.setPendingMarketBuyAmount(obj.getDouble("pending_market_buy_amount"));
-                tempOrder.setStopLessRate(obj.getDouble("stop_less_rate"));
+                tempOrder.setPendingAmount(
+                        obj.isNull("pending_amount") ? -1.0d : Double.parseDouble(obj.getString("pending_amount")));
+                tempOrder.setPendingMarketBuyAmount(obj.isNull("pending_market_buy_amount") ? -1.0d
+                        : Double.parseDouble(obj.getString("pending_market_buy_amount")));
+                tempOrder.setStopLessRate(obj.isNull("stop_less_rate") ? -1.0d : obj.getDouble("stop_less_rate"));
                 tempOrder.setCreatedAt(dateTime.apply(obj.getString("created_at")));
                 list.add(tempOrder);
             }
