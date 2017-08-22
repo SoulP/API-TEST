@@ -7,6 +7,6 @@ package moe.soulp.api_test.api;
  * @author ソウルP
  * @version 1.0
  */
-public enum OrderType {
+public enum Type {
     buy, sell, market_buy, market_sell, leverage_buy, leverage_sell, close_long, close_short
 }

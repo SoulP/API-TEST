@@ -4,21 +4,23 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import moe.soulp.api_test.api.Coincheckable;
-import moe.soulp.api_test.api.OrderType;
 import moe.soulp.api_test.api.Pair;
+import moe.soulp.api_test.api.Type;
 
 /**
  * <b>未決済の注文</b><br>
- * date: 2017/08/06 last_date: 2017/08/21
+ * date: 2017/08/06 last_date: 2017/08/22
  * 
  * @author ソウルP
  * @version 1.0 2017/08/06 未決済の注文DTO作成
  * @version 1.1 2017/08/21 setCreatedAt(String)追加
  * @version 1.2 2017/08/21 created_atのLocalDateTime型をZonedDateTimeに変更
+ * @see Pair 取引ペア
+ * @see Type 種類
  */
 public class OrderDTO {
     private long          id;                        // 注文のID
-    private OrderType     order_type;                // 注文方法
+    private Type          order_type;                // 注文の種類
     private double        rate;                      // 注文のレート
     private Pair          pair;                      // 取引ペア
     private double        pending_amount;            // 注文の未決済の量
@@ -46,34 +48,34 @@ public class OrderDTO {
     }
 
     /**
-     * <b>注文方法 出力</b>
+     * <b>注文の種類 出力</b>
      * 
-     * @return 注文方法
-     * @see OrderType 注文方法
+     * @return 注文の種類
+     * @see Type 種類
      */
-    public OrderType getOrderType() {
+    public Type getOrderType() {
         return order_type;
     }
 
     /**
-     * <b>注文方法 入力</b>
+     * <b>注文の種類 入力</b>
      * 
      * @param order_type
-     *            注文方法
-     * @see OrderType 注文方法
+     *            注文の種類
+     * @see Type 種類
      */
     public void setOrderType(String order_type) {
-        setOrderType(OrderType.valueOf(order_type));
+        setOrderType(Type.valueOf(order_type));
     }
 
     /**
-     * <b>注文方法 入力</b>
+     * <b>注文の種類 入力</b>
      * 
      * @param order_type
-     *            注文方法
-     * @see OrderType 注文方法
+     *            注文の種類
+     * @see Type 種類
      */
-    public void setOrderType(OrderType order_type) {
+    public void setOrderType(Type order_type) {
         this.order_type = order_type;
     }
 

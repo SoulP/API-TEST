@@ -21,8 +21,8 @@ import org.junit.Test;
 
 import moe.soulp.api_test.api.APIcoincheck;
 import moe.soulp.api_test.api.Coincheckable;
-import moe.soulp.api_test.api.OrderType;
 import moe.soulp.api_test.api.Pair;
+import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.coincheck.CoincheckRate;
 import moe.soulp.api_test.coincheck.dto.OrderDTO;
 import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
@@ -239,7 +239,7 @@ public class APIcoincheckUT extends APIkey {
         double rate, amount, price;
         rate = amount = price = -1.0d;
         try {
-            temp = new JSONObject(coincheck.getOrdersRate_amount(OrderType.buy, Pair.btc_jpy, 0.1d));
+            temp = new JSONObject(coincheck.getOrdersRate_amount(Type.buy, Pair.btc_jpy, 0.1d));
             success = temp.getBoolean("success");
             rate = temp.getDouble("rate");
             amount = temp.getDouble("amount");
@@ -272,7 +272,7 @@ public class APIcoincheckUT extends APIkey {
         double rate, amount, price;
         rate = amount = price = -1.0d;
         try {
-            temp = new JSONObject(coincheck.getOrdersRate_price(OrderType.buy, Pair.btc_jpy, 30971));
+            temp = new JSONObject(coincheck.getOrdersRate_price(Type.buy, Pair.btc_jpy, 30971));
             success = temp.getBoolean("success");
             rate = temp.getDouble("rate");
             amount = temp.getDouble("amount");
@@ -570,6 +570,8 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("side: " + transaction.getSide());
                 System.out.println();
             }
+            System.out.println("件数: " + list.size());
+            System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -641,6 +643,9 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("side: " + transaction.getSide());
                 System.out.println();
             }
+            
+            System.out.println("件数: " + list.size());
+            System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -648,6 +653,15 @@ public class APIcoincheckUT extends APIkey {
         assertNotNull(temp);
         assertNotNull(tempArray);
         assertTrue(success);
+    }
+    
+    /**
+     * <b>ポジション一覧</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getPositions(){
+        
     }
 
     /**

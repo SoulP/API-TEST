@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
  * @see Pair 取引ペア
- * @see OrderType 注文方法
+ * @see Type 種類
  */
 public interface Coincheckable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
@@ -59,9 +59,9 @@ public interface Coincheckable {
 
     public String getOrderBooks(); // 板情報
 
-    public String getOrdersRate_amount(OrderType order_type, Pair pair, double amount); // レート取得
+    public String getOrdersRate_amount(Type order_type, Pair pair, double amount); // レート取得
 
-    public String getOrdersRate_price(OrderType order_type, Pair pair, double price); // レート取得
+    public String getOrdersRate_price(Type order_type, Pair pair, double price); // レート取得
 
     public String getRate(Pair pair); // 販売レート取得
 
@@ -112,6 +112,10 @@ public interface Coincheckable {
     public String getOrdersTransactionsPagination(boolean order, long starting_after); // 取引履歴（ページネーション）
 
     public String getOrdersTransactionsPagination(int limit, boolean order, long starting_after); // 取引履歴（ページネーション）
+
+    public String getPositions(); // ポジション一覧
+
+    public String getPositions(boolean status); // ポジション一覧
 
     // アカウント
     public String getAccounts(); // アカウント情報取得

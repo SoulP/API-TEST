@@ -6,13 +6,16 @@ import java.time.ZonedDateTime;
 import moe.soulp.api_test.api.Coincheckable;
 import moe.soulp.api_test.api.Currency;
 import moe.soulp.api_test.api.Pair;
+import moe.soulp.api_test.api.Type;
 
 /**
  * <b>取引履歴</b><br>
- * date: 2017/08/21 last_date: 2017/08/21
+ * date: 2017/08/21 last_date: 2017/08/22
  * 
  * @author ソウルP
  * @version 1.0 OrderTransactionDTO作成
+ * @see Pair 取引ペア
+ * @see Type 種類
  */
 public class OrderTransactionDTO {
     private long          id;           // ID
@@ -25,7 +28,7 @@ public class OrderTransactionDTO {
     private Currency      fee_currency; // 手数料の通貨
     private double        fee;          // 発生した手数料
     private String        liquidity;    // 流動性 "T" ( Taker ) or "M" ( Maker )
-    private String        side;         // 売買 "sell" or "buy"
+    private Type          side;         // 取引の種類 "sell" or "buy"
 
     /**
      * <b>ID 出力</b>
@@ -258,23 +261,37 @@ public class OrderTransactionDTO {
     }
 
     /**
-     * <b>売買 出力</b><br>
+     * <b>取引の種類 出力</b><br>
      * "sell" or "buy"
      * 
      * @return side
+     * @see Type 種類
      */
-    public String getSide() {
+    public Type getSide() {
         return side;
     }
 
     /**
-     * <b>売買 入力</b><br>
+     * <b>取引の種類 入力</b><br>
      * "sell" or "buy"
      * 
      * @param side
-     *            売買
+     *            取引の種類
+     * @see Type 種類
+     */
+    public void setSide(Type side) {
+        this.side = side;
+    }
+
+    /**
+     * <b>取引の種類 入力</b><br>
+     * "sell" or "buy"
+     * 
+     * @param side
+     *            取引の種類
+     * @see Type 種類
      */
     public void setSide(String side) {
-        this.side = side;
+        this.side = Type.valueOf(side);
     }
 }

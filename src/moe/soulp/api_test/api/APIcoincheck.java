@@ -19,8 +19,9 @@ public class APIcoincheck extends API implements Coincheckable {
     static URL orderBooksURL;
     static URL ordersURL;
     static URL ordersOpensURL;
-    static URL ordersTransactions;
-    static URL ordersTransactionsPagination;
+    static URL ordersTransactionsURL;
+    static URL ordersTransactionsPaginationURL;
+    static URL positionsURL;
 
     static URL accountsURL;
 
@@ -31,8 +32,9 @@ public class APIcoincheck extends API implements Coincheckable {
             orderBooksURL = new URL(API + ORDER_BOOKS);
             ordersURL = new URL(API + ORDERS);
             ordersOpensURL = new URL(API + ORDERS_OPENS);
-            ordersTransactions = new URL(API + ORDERS_TRANSACTIONS);
-            ordersTransactionsPagination = new URL(API + ORDERS_TRANSACTIONS_PAGINATION);
+            ordersTransactionsURL = new URL(API + ORDERS_TRANSACTIONS);
+            ordersTransactionsPaginationURL = new URL(API + ORDERS_TRANSACTIONS_PAGINATION);
+            positionsURL = new URL(API + POSITIONS);
 
             accountsURL = new URL(API + ACCOUNTS);
         } catch (MalformedURLException e) {
@@ -77,7 +79,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 注文のID<br>
      *         <b>amount</b> 注文の量<br>
      *         <b>rate</b> 注文のレート<br>
-     *         <b>order_type</b> 注文のタイプ<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>created_at</b> 注文の作成日時
      */
     @Override
@@ -96,7 +98,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 注文のID<br>
      *         <b>amount</b> 注文の量<br>
      *         <b>rate</b> 注文のレート<br>
-     *         <b>order_type</b> 注文のタイプ<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>created_at</b> 注文の作成日時
      */
     @Override
@@ -108,7 +110,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>板情報</b><br>
      * 板情報を取得できます。
      * 
-     * @return 【JSON{JSONArray}】<br>
+     * @return 【JSON】<br>
      *         <b>asks</b> 売り注文の情報<br>
      *         <b>bids</b> 買い注文の情報
      */
@@ -122,7 +124,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * 取引所の注文を元にレートを算出します。
      * 
      * @param order_type
-     *            注文のタイプ<br>
+     *            注文の種類<br>
      *            "sell" もしくは "buy"
      * @param pair
      *            取引ペア<br>
@@ -135,10 +137,10 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>amount</b> 注文の量<br>
      *         <b>price</b> 注文の金額
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
-    public String getOrdersRate_amount(OrderType order_type, Pair pair, double amount) {
+    public String getOrdersRate_amount(Type order_type, Pair pair, double amount) {
         return getPublicAPI(API + ORDERS_RATE + "?order_type=" + order_type + "&pair=" + pair + "&amount=" + amount);
     }
 
@@ -147,7 +149,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * 取引所の注文を元にレートを算出します。
      * 
      * @param order_type
-     *            注文のタイプ<br>
+     *            注文の種類<br>
      *            "sell" もしくは "buy"
      * @param pair
      *            取引ペア<br>
@@ -160,10 +162,10 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>amount</b> 注文の量<br>
      *         <b>price</b> 注文の金額
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
-    public String getOrdersRate_price(OrderType order_type, Pair pair, double price) {
+    public String getOrdersRate_price(Type order_type, Pair pair, double price) {
         return getPublicAPI(API + ORDERS_RATE + "?order_type=" + order_type + "&pair=" + pair + "&price=" + price);
     }
 
@@ -197,18 +199,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderBuy(Pair pair, double rate, double amount) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.buy.toString());
+        addParameter("order_type", Type.buy.toString());
         addParameter("rate", String.valueOf(rate));
         addParameter("amount", String.valueOf(amount));
         return postPrivateAPI(ordersURL);
@@ -229,18 +231,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderSell(Pair pair, double rate, double amount) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.sell.toString());
+        addParameter("order_type", Type.sell.toString());
         addParameter("rate", String.valueOf(rate));
         addParameter("amount", String.valueOf(amount));
         return postPrivateAPI(ordersURL);
@@ -259,18 +261,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 注文の種類
      */
     @Override
     public String postOrderMarketBuy(Pair pair, double market_buy_amount) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.market_buy.toString());
+        addParameter("order_type", Type.market_buy.toString());
         addParameter("market_buy_amount", String.valueOf(market_buy_amount));
         return postPrivateAPI(ordersURL);
     }
@@ -288,18 +290,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderMarketSell(Pair pair, double amount) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.market_sell.toString());
+        addParameter("order_type", Type.market_sell.toString());
         addParameter("amount", String.valueOf(amount));
         return postPrivateAPI(ordersURL);
     }
@@ -317,18 +319,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderLeverageBuy(Pair pair, double amount) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.leverage_buy.toString());
+        addParameter("order_type", Type.leverage_buy.toString());
         addParameter("amount", String.valueOf(amount));
         return postPrivateAPI(ordersURL);
     }
@@ -348,18 +350,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderLeverageBuy(Pair pair, double amount, double rate) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.leverage_buy.toString());
+        addParameter("order_type", Type.leverage_buy.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("rate", String.valueOf(rate));
         return postPrivateAPI(ordersURL);
@@ -378,18 +380,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderLeverageSell(Pair pair, double amount) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.leverage_sell.toString());
+        addParameter("order_type", Type.leverage_sell.toString());
         addParameter("amount", String.valueOf(amount));
         return postPrivateAPI(ordersURL);
     }
@@ -409,18 +411,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderLeverageSell(Pair pair, double amount, double rate) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.leverage_sell.toString());
+        addParameter("order_type", Type.leverage_sell.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("rate", String.valueOf(rate));
         return postPrivateAPI(ordersURL);
@@ -441,18 +443,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderCloseLong(Pair pair, double amount, long position_id) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.close_long.toString());
+        addParameter("order_type", Type.close_long.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
         return postPrivateAPI(ordersURL);
@@ -475,18 +477,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderCloseLong(Pair pair, double amount, long position_id, double rate) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.close_long.toString());
+        addParameter("order_type", Type.close_long.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
         addParameter("rate", String.valueOf(rate));
@@ -508,18 +510,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderCloseShort(Pair pair, double amount, long position_id) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.close_short.toString());
+        addParameter("order_type", Type.close_short.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
         return postPrivateAPI(ordersURL);
@@ -542,18 +544,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>id</b> 新規注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>amount</b> 注文の量<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
      * @see Pair 取引ペア
-     * @see OrderType 注文方法
+     * @see Type 種類
      */
     @Override
     public String postOrderCloseShort(Pair pair, double amount, long position_id, double rate) {
         clearParameters();
         addParameter("pair", pair.toString());
-        addParameter("order_type", OrderType.close_short.toString());
+        addParameter("order_type", Type.close_short.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
         addParameter("rate", String.valueOf(rate));
@@ -564,7 +566,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>未決済の注文一覧</b><br>
      * アカウントの未決済の注文を一覧で表示します。
      * 
-     * @return 【JSON(JSON, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>success</b> 情報取得結果<br>
      *         <hr>
      *         ordersの配列<br>
@@ -572,7 +574,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>rate</b> 注文のレート<br>
      *         <b>pending_amount</b> 注文の未決済の量<br>
      *         <b>pending_market_buy_amount</b> 注文の未決済の量（現物成行買いの場合のみ）<br>
-     *         <b>order_type</b> 注文方法<br>
+     *         <b>order_type</b> 注文の種類<br>
      *         <b>stop_loss_rate</b> 逆指値レート<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>created_at</b> 注文の作成日時
@@ -601,7 +603,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>取引履歴</b><br>
      * 自分の最近の取引履歴を参照できます。
      * 
-     * @return 【JSON(JSON, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <hr>
      *         transactionsの配列<br>
@@ -614,18 +616,18 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactions() {
-        return getPrivateAPI(ordersTransactions);
+        return getPrivateAPI(ordersTransactionsURL);
     }
 
     /**
      * <b>取引履歴（ページネーション）</b><br>
      * 自分の最近の取引履歴を参照できます。
      * 
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -640,11 +642,11 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination() {
-        return getPrivateAPI(ordersTransactionsPagination);
+        return getPrivateAPI(ordersTransactionsPaginationURL);
     }
 
     /**
@@ -653,7 +655,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * 
      * @param limit
      *            最大表示件数
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -668,7 +670,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination(int limit) {
@@ -683,7 +685,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *            <br>
      *            true "desc" 降順 (デフォルト)<br>
      *            false "asc" 昇順
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -698,7 +700,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination(boolean order) {
@@ -711,7 +713,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * 
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -726,7 +728,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination(long starting_after) {
@@ -743,7 +745,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *            <br>
      *            true "desc" 降順 (デフォルト)<br>
      *            false "asc" 昇順
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -758,7 +760,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination(int limit, boolean order) {
@@ -774,7 +776,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *            最大表示件数
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -789,7 +791,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination(int limit, long starting_after) {
@@ -807,7 +809,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *            false "asc" 昇順
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -822,7 +824,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination(boolean order, long starting_after) {
@@ -842,7 +844,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *            false "asc" 昇順
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
-     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     * @return 【JSON】<br>
      *         <b>succecc</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
@@ -857,12 +859,78 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee_currency</b> 手数料の通貨<br>
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
-     *         <b>side</b> 売買 "sell" or "buy"
+     *         <b>side</b> 取引の種類 ( "buy", "sell" )
      */
     @Override
     public String getOrdersTransactionsPagination(int limit, boolean order, long starting_after) {
         return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&order="
                 + (order ? "desc" : "asc") + "&starting_after=" + starting_after);
+    }
+
+    /**
+     * <b>ポジション一覧</b><br>
+     * レバレッジ取引のポジション一覧を表示します。
+     * 
+     * @return 【JSON】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
+     *         <b>created_at</b> ポジションの作成日時<br>
+     *         <b>closed_at</b> ポジションの決済完了日時<br>
+     *         <b>open_rate</b> ポジションの平均取得価格<br>
+     *         <b>closed_rate</b> ポジションの平均決済価格<br>
+     *         <b>amount</b> 現在のポジションの数量（BTC）<br>
+     *         <b>all_amount</b> ポジションの数量（BTC）<br>
+     *         <b>side</b> ポジションの種類 ( "buy", "sell" )<br>
+     *         <b>pl</b> 利益<br>
+     *         <b>new_order</b> 新規注文についての情報 JSON(id, side, rate, amount,
+     *         pending_amount, status( "complete", "cancel" ), created_at )<br>
+     *         <b>close_orders</b> 決済注文についての情報 JSONArray(id, side, rate, amount,
+     *         pending_amount, status( "complete", "cancel" ), created_at)
+     */
+    @Override
+    public String getPositions() {
+        return getPrivateAPI(positionsURL);
+    }
+
+    /**
+     * <b>ポジション一覧</b><br>
+     * レバレッジ取引のポジション一覧を表示します。
+     * 
+     * @param status
+     *            <br>
+     *            true "open"<br>
+     *            false "closed"
+     * @return 【JSON】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
+     *         <b>created_at</b> ポジションの作成日時<br>
+     *         <b>closed_at</b> ポジションの決済完了日時<br>
+     *         <b>open_rate</b> ポジションの平均取得価格<br>
+     *         <b>closed_rate</b> ポジションの平均決済価格<br>
+     *         <b>amount</b> 現在のポジションの数量（BTC）<br>
+     *         <b>all_amount</b> ポジションの数量（BTC）<br>
+     *         <b>side</b> ポジションの種類 ( "buy", "sell" )<br>
+     *         <b>pl</b> 利益<br>
+     *         <b>new_order</b> 新規注文についての情報 JSON(id, side, rate, amount,
+     *         pending_amount, status( "complete", "cancel" ), created_at )<br>
+     *         <b>close_orders</b> 決済注文についての情報 JSONArray(id, side, rate, amount,
+     *         pending_amount, status( "complete", "cancel" ), created_at)
+     */
+    @Override
+    public String getPositions(boolean status) {
+        return getPrivateAPI(API + POSITIONS + "?status=" + (status? "open" : "closed"));
     }
 
     /**
