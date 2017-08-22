@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/08/21
+ * date: 2017/08/03 last_date: 2017/08/22
  * 
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -20,6 +20,7 @@ public class APIcoincheck extends API implements Coincheckable {
     static URL ordersURL;
     static URL ordersOpensURL;
     static URL ordersTransactions;
+    static URL ordersTransactionsPagination;
 
     static URL accountsURL;
 
@@ -31,6 +32,7 @@ public class APIcoincheck extends API implements Coincheckable {
             ordersURL = new URL(API + ORDERS);
             ordersOpensURL = new URL(API + ORDERS_OPENS);
             ordersTransactions = new URL(API + ORDERS_TRANSACTIONS);
+            ordersTransactionsPagination = new URL(API + ORDERS_TRANSACTIONS_PAGINATION);
 
             accountsURL = new URL(API + ACCOUNTS);
         } catch (MalformedURLException e) {
@@ -38,47 +40,16 @@ public class APIcoincheck extends API implements Coincheckable {
         }
     }
 
-    Function<String, String> getPubAPI     = (url) -> {
-                                               try {
-                                                   return getPublicAPI(new URL(url));
-                                               } catch (MalformedURLException e) {
-                                                   e.printStackTrace();
-                                               }
-                                               return null;
-                                           };
-
-    Function<URL, String>    getPrivAPI    = (url) -> {
-                                               try {
-                                                   if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
-                                                   if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
-                                                   return getPrivateAPI(url);
-                                               } catch (Exception e) {
-                                                   e.printStackTrace();
-                                               }
-                                               return null;
-                                           };
-
-    Function<URL, String>    postPrivAPI   = (url) -> {
-                                               try {
-                                                   if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
-                                                   if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
-                                                   return postPrivateAPI(url);
-                                               } catch (Exception e) {
-                                                   e.printStackTrace();
-                                               }
-                                               return null;
-                                           };
-
     Function<String, String> deletePrivAPI = (url) -> {
-                                               try {
-                                                   if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
-                                                   if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
-                                                   return deletePrivateAPI(new URL(url));
-                                               } catch (Exception e) {
-                                                   e.printStackTrace();
-                                               }
-                                               return null;
-                                           };
+        try {
+            if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
+            if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
+            return deletePrivateAPI(new URL(url));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    };
 
     /**
      * <b>ティッカー</b><br>
@@ -130,7 +101,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getTrades(int offset) {
-        return getPubAPI.apply(API + TRADES + "?offset=" + offset);
+        return getPublicAPI(API + TRADES + "?offset=" + offset);
     }
 
     /**
@@ -168,7 +139,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersRate_amount(OrderType order_type, Pair pair, double amount) {
-        return getPubAPI.apply(API + ORDERS_RATE + "?order_type=" + order_type + "&pair=" + pair + "&amount=" + amount);
+        return getPublicAPI(API + ORDERS_RATE + "?order_type=" + order_type + "&pair=" + pair + "&amount=" + amount);
     }
 
     /**
@@ -193,7 +164,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersRate_price(OrderType order_type, Pair pair, double price) {
-        return getPubAPI.apply(API + ORDERS_RATE + "?order_type=" + order_type + "&pair=" + pair + "&price=" + price);
+        return getPublicAPI(API + ORDERS_RATE + "?order_type=" + order_type + "&pair=" + pair + "&price=" + price);
     }
 
     /**
@@ -208,7 +179,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getRate(Pair pair) {
-        return getPubAPI.apply(API + RATE + pair);
+        return getPublicAPI(API + RATE + pair);
     }
 
     /**
@@ -240,7 +211,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("order_type", OrderType.buy.toString());
         addParameter("rate", String.valueOf(rate));
         addParameter("amount", String.valueOf(amount));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -272,7 +243,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("order_type", OrderType.sell.toString());
         addParameter("rate", String.valueOf(rate));
         addParameter("amount", String.valueOf(amount));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -301,7 +272,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("pair", pair.toString());
         addParameter("order_type", OrderType.market_buy.toString());
         addParameter("market_buy_amount", String.valueOf(market_buy_amount));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -330,7 +301,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("pair", pair.toString());
         addParameter("order_type", OrderType.market_sell.toString());
         addParameter("amount", String.valueOf(amount));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -359,7 +330,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("pair", pair.toString());
         addParameter("order_type", OrderType.leverage_buy.toString());
         addParameter("amount", String.valueOf(amount));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -391,7 +362,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("order_type", OrderType.leverage_buy.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("rate", String.valueOf(rate));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -420,7 +391,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("pair", pair.toString());
         addParameter("order_type", OrderType.leverage_sell.toString());
         addParameter("amount", String.valueOf(amount));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -452,7 +423,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("order_type", OrderType.leverage_sell.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("rate", String.valueOf(rate));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -484,7 +455,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("order_type", OrderType.close_long.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -519,7 +490,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
         addParameter("rate", String.valueOf(rate));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -551,7 +522,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("order_type", OrderType.close_short.toString());
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -586,7 +557,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter("amount", String.valueOf(amount));
         addParameter("position_id", String.valueOf(position_id));
         addParameter("rate", String.valueOf(rate));
-        return postPrivAPI.apply(ordersURL);
+        return postPrivateAPI(ordersURL);
     }
 
     /**
@@ -608,7 +579,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersOpens() {
-        return getPrivAPI.apply(ordersOpensURL);
+        return getPrivateAPI(ordersOpensURL);
     }
 
     /**
@@ -647,7 +618,251 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactions() {
-        return getPrivAPI.apply(ordersTransactions);
+        return getPrivateAPI(ordersTransactions);
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination() {
+        return getPrivateAPI(ordersTransactionsPagination);
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination(int limit) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit);
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @param order
+     *            <br>
+     *            true "desc" 降順 (デフォルト)<br>
+     *            false "asc" 昇順
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination(boolean order) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?order=" + (order ? "desc" : "asc"));
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination(long starting_after) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?starting_after=" + starting_after);
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @param order
+     *            <br>
+     *            true "desc" 降順 (デフォルト)<br>
+     *            false "asc" 昇順
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination(int limit, boolean order) {
+        return getPrivateAPI(
+                API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&order=" + (order ? "desc" : "asc"));
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination(int limit, long starting_after) {
+        return getPrivateAPI(
+                API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&starting_after=" + starting_after);
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @param order
+     *            <br>
+     *            true "desc" 降順 (デフォルト)<br>
+     *            false "asc" 昇順
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination(boolean order, long starting_after) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?order=" + (order ? "desc" : "asc")
+                + "&starting_after=" + starting_after);
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 自分の最近の取引履歴を参照できます。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @param order
+     *            <br>
+     *            true "desc" 降順 (デフォルト)<br>
+     *            false "asc" 昇順
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON(JSON, JSONObject, JSONArray)】<br>
+     *         <b>succecc</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         dataの配列<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>created_at</b> 取引日時<br>
+     *         <b>funds</b> 各残高の増減分 JSON(btc, jpy)<br>
+     *         <b>pair</b> 取引ペア<br>
+     *         <b>rate</b> 約定価格<br>
+     *         <b>fee_currency</b> 手数料の通貨<br>
+     *         <b>fee</b> 発生した手数料<br>
+     *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
+     *         <b>side</b> 売買 "sell" or "buy"
+     */
+    @Override
+    public String getOrdersTransactionsPagination(int limit, boolean order, long starting_after) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&order="
+                + (order ? "desc" : "asc") + "&starting_after=" + starting_after);
     }
 
     /**
@@ -666,6 +881,80 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getAccounts() {
-        return getPrivAPI.apply(accountsURL);
+        return getPrivateAPI(accountsURL);
+    }
+
+    protected String getPublicAPI(String url) {
+        try {
+            return getPublicAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected String getPrivateAPI(String url) {
+        try {
+            return getPrivateAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected String getPrivateAPI(URL url) {
+        try {
+            checkAPIkeys();
+            return super.getPrivateAPI(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected String postPrivateAPI(String url) {
+        try {
+            return postPrivateAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected String postPrivateAPI(URL url) {
+        try {
+            checkAPIkeys();
+            return super.postPrivateAPI(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected String deletePrivateAPI(String url) {
+        try {
+            return deletePrivateAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected String deletePrivateAPI(URL url) {
+        try {
+            checkAPIkeys();
+            return super.deletePrivateAPI(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void checkAPIkeys() throws Exception {
+        if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
+        if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
     }
 }

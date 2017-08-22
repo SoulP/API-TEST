@@ -29,7 +29,7 @@ import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/08/21
+ * date: 2017/08/03 last_date: 2017/08/22
  * 
  * @author ソウルP
  */
@@ -337,7 +337,7 @@ public class APIcoincheckUT extends APIkey {
         coincheck.setAPIkey(API_KEY);
         coincheck.setAPIsecret(API_SECRET);
         double amount = 0.005d;
-        double rate = 460000d;
+        double rate = 300000d;
         assertTrue(amount >= 0.005d);
         try {
             temp = new JSONObject(coincheck.postOrderLeverageBuy(Pair.btc_jpy, amount, rate));
@@ -367,7 +367,7 @@ public class APIcoincheckUT extends APIkey {
         coincheck.setAPIkey(API_KEY);
         coincheck.setAPIsecret(API_SECRET);
         double amount = 0.005d;
-        double rate = 460000d;
+        double rate = 450000d;
         assertTrue(amount >= 0.005d);
         try {
             temp = new JSONObject(coincheck.postOrderLeverageSell(Pair.btc_jpy, amount, rate));
@@ -398,7 +398,7 @@ public class APIcoincheckUT extends APIkey {
         coincheck.setAPIsecret(API_SECRET);
         double amount = 0.05d;
         long position_id = 193728148l;
-        double rate = 460000d;
+        double rate = 450000d;
         try {
             temp = new JSONObject(coincheck.postOrderCloseLong(Pair.btc_jpy, amount, position_id, rate));
             System.out.println(temp);
@@ -428,7 +428,7 @@ public class APIcoincheckUT extends APIkey {
         coincheck.setAPIsecret(API_SECRET);
         double amount = 0.05d;
         long position_id = 193728148l;
-        double rate = 460000d;
+        double rate = 500000d;
         try {
             temp = new JSONObject(coincheck.postOrderCloseShort(Pair.btc_jpy, amount, position_id, rate));
             System.out.println(temp);
@@ -539,6 +539,77 @@ public class APIcoincheckUT extends APIkey {
             System.out.println("取引履歴");
             System.out.println("success: " + (success = temp.getBoolean("success")));
             tempArray = temp.getJSONArray("transactions");
+            for (int i = 0; i < tempArray.length(); i++) {
+                JSONObject jObj = tempArray.getJSONObject(i);
+                OrderTransactionDTO dto = new OrderTransactionDTO();
+                dto.setId(jObj.getLong("id"));
+                dto.setOrderId(jObj.getLong("order_id"));
+                dto.setCreatedAt(jObj.getString("created_at"));
+                dto.setFundsBtc(Double.parseDouble(jObj.getJSONObject("funds").getString("btc")));
+                dto.setFundsJpy(Double.parseDouble(jObj.getJSONObject("funds").getString("jpy")));
+                dto.setPair(jObj.getString("pair"));
+                dto.setRate(Double.parseDouble(jObj.getString("rate")));
+                dto.setFeeCurrency(jObj.isNull("fee_currency") ? null : jObj.getString("fee_currency"));
+                dto.setFee(Double.parseDouble(jObj.getString("fee")));
+                dto.setLiquidity(jObj.getString("liquidity"));
+                dto.setSide(jObj.getString("side"));
+                list.add(dto);
+            }
+
+            for (OrderTransactionDTO transaction : list) {
+                System.out.println("id: " + transaction.getId());
+                System.out.println("order_id: " + transaction.getOrderId());
+                System.out.println("created_at: " + transaction.getCreatedAt());
+                System.out.println("funds_btc: " + transaction.getFundsBtc());
+                System.out.println("funds_jpy: " + transaction.getFundsJpy());
+                System.out.println("pair: " + transaction.getPair());
+                System.out.println("rate: " + transaction.getRate());
+                System.out.println("fee_currency: " + transaction.getFeeCurrency());
+                System.out.println("fee: " + transaction.getFee());
+                System.out.println("liquidity: " + transaction.getLiquidity());
+                System.out.println("side: " + transaction.getSide());
+                System.out.println();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertNotNull(tempArray);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>取引履歴（ページネーション）</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getOrdersTransactionsPagination() {
+        JSONObject temp = null;
+        JSONArray tempArray = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        List<OrderTransactionDTO> list = new ArrayList<>();
+        int limit = 5;
+        try {
+            temp = new JSONObject(coincheck.getOrdersTransactionsPagination(limit));
+            System.out.println("取引履歴");
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            JSONObject pagination = temp.isNull("pagination") ? null : temp.getJSONObject("pagination");
+            if (pagination != null) {
+                System.out.print("pagination_limit: ");
+                System.out.println(pagination.isNull("limit") ? "null" : pagination.getLong("limit"));
+                System.out.print("pagination_order: ");
+                System.out.println(pagination.isNull("order") ? "null" : pagination.getString("order"));
+                System.out.print("pagination_starting_after: ");
+                System.out.println(pagination.isNull("starting_after") ? "null" : pagination.getLong("starting_after"));
+                System.out.print("pagination_ending_before: ");
+                System.out.println(pagination.isNull("ending_before") ? "null" : pagination.getLong("ending_before"));
+            } else System.out.println("pagination: null");
+            System.out.println();
+
+            tempArray = temp.getJSONArray("data");
             for (int i = 0; i < tempArray.length(); i++) {
                 JSONObject jObj = tempArray.getJSONObject(i);
                 OrderTransactionDTO dto = new OrderTransactionDTO();
