@@ -31,7 +31,7 @@ import moe.soulp.api_test.coincheck.dto.PositionOrderDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/08/23
+ * date: 2017/08/03 last_date: 2017/08/24
  * 
  * @author ソウルP
  */
