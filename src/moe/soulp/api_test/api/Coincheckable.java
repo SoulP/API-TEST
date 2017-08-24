@@ -7,12 +7,13 @@ import java.time.format.DateTimeFormatter;
 /**
  * <b>インターフェース coincheck</b><br>
  * date: 2017/08/03 last_date: 2017/08/24
- * 
+ *
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
  * @see Pair 取引ペア
  * @see Type 種類
  * @see Sort ソート
+ * @see Status 状態
  */
 public interface Coincheckable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
@@ -118,7 +119,7 @@ public interface Coincheckable {
 
     public String getPositions(); // ポジション一覧
 
-    public String getPositions(boolean status); // ポジション一覧
+    public String getPositions(Status status); // ポジション一覧
 
     public String getPositions(int limit); // ポジション一覧
 
@@ -126,19 +127,19 @@ public interface Coincheckable {
 
     public String getPositions(long starting_after); // ポジション一覧
 
-    public String getPositions(boolean status, int limit); // ポジション一覧
+    public String getPositions(Status status, int limit); // ポジション一覧
 
-    public String getPositions(boolean status, Sort order); // ポジション一覧
+    public String getPositions(Status status, Sort order); // ポジション一覧
 
-    public String getPositions(boolean status, long starting_after); // ポジション一覧
+    public String getPositions(Status status, long starting_after); // ポジション一覧
 
-    public String getPositions(boolean status, int limit, Sort order); // ポジション一覧
+    public String getPositions(Status status, int limit, Sort order); // ポジション一覧
 
-    public String getPositions(boolean status, int limit, long starting_after); // ポジション一覧
+    public String getPositions(Status status, int limit, long starting_after); // ポジション一覧
 
-    public String getPositions(boolean status, Sort order, long starting_after); // ポジション一覧
+    public String getPositions(Status status, Sort order, long starting_after); // ポジション一覧
 
-    public String getPositions(boolean status, int limit, Sort order, long starting_after); // ポジション一覧
+    public String getPositions(Status status, int limit, Sort order, long starting_after); // ポジション一覧
 
     public String getPositions(int limit, Sort order); // ポジション一覧
 
@@ -154,7 +155,7 @@ public interface Coincheckable {
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String -> ZonedDateTime
-     * 
+     *
      * @param date
      *            日時 "yyyy-MM-dd'T'HH:mm:ss.SSSX"<br>
      *            例え： "2017-08-24T22:33:44.000Z"

@@ -1,12 +1,7 @@
 package moe.soulp.api_test.ut;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -32,7 +27,7 @@ import moe.soulp.api_test.coincheck.dto.PositionOrderDTO;
 /**
  * <b>UTテストケース</b><br>
  * date: 2017/08/03 last_date: 2017/08/24
- * 
+ *
  * @author ソウルP
  */
 public class APIcoincheckUT extends APIkey {
