@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/08/22
+ * date: 2017/08/03 last_date: 2017/08/24
  * 
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -701,10 +701,11 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
      *         <b>side</b> 取引の種類 ( "buy", "sell" )
+     * @see Sort ソート
      */
     @Override
-    public String getOrdersTransactionsPagination(boolean order) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?order=" + (order ? "desc" : "asc"));
+    public String getOrdersTransactionsPagination(Sort order) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?order=" + order);
     }
 
     /**
@@ -761,11 +762,11 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
      *         <b>side</b> 取引の種類 ( "buy", "sell" )
+     * @see Sort ソート
      */
     @Override
-    public String getOrdersTransactionsPagination(int limit, boolean order) {
-        return getPrivateAPI(
-                API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&order=" + (order ? "desc" : "asc"));
+    public String getOrdersTransactionsPagination(int limit, Sort order) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&order=" + order);
     }
 
     /**
@@ -825,11 +826,12 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
      *         <b>side</b> 取引の種類 ( "buy", "sell" )
+     * @see Sort ソート
      */
     @Override
-    public String getOrdersTransactionsPagination(boolean order, long starting_after) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?order=" + (order ? "desc" : "asc")
-                + "&starting_after=" + starting_after);
+    public String getOrdersTransactionsPagination(Sort order, long starting_after) {
+        return getPrivateAPI(
+                API + ORDERS_TRANSACTIONS_PAGINATION + "?order=" + order + "&starting_after=" + starting_after);
     }
 
     /**
@@ -860,11 +862,12 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>fee</b> 発生した手数料<br>
      *         <b>liquidity</b> 流動性 "T" ( Taker ) or "M" ( Maker )<br>
      *         <b>side</b> 取引の種類 ( "buy", "sell" )
+     * @see Sort ソート
      */
     @Override
-    public String getOrdersTransactionsPagination(int limit, boolean order, long starting_after) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&order="
-                + (order ? "desc" : "asc") + "&starting_after=" + starting_after);
+    public String getOrdersTransactionsPagination(int limit, Sort order, long starting_after) {
+        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + "?limit=" + limit + "&order=" + order
+                + "&starting_after=" + starting_after);
     }
 
     /**

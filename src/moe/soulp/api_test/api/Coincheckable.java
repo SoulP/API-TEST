@@ -6,12 +6,13 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>インターフェース coincheck</b><br>
- * date: 2017/08/03 last_date: 2017/08/22
+ * date: 2017/08/03 last_date: 2017/08/24
  * 
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
  * @see Pair 取引ペア
  * @see Type 種類
+ * @see Sort ソート
  */
 public interface Coincheckable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
@@ -103,21 +104,49 @@ public interface Coincheckable {
 
     public String getOrdersTransactionsPagination(int limit); // 取引履歴（ページネーション）
 
-    public String getOrdersTransactionsPagination(boolean order); // 取引履歴（ページネーション）
+    public String getOrdersTransactionsPagination(Sort order); // 取引履歴（ページネーション）
 
     public String getOrdersTransactionsPagination(long starting_after); // 取引履歴（ページネーション）
 
-    public String getOrdersTransactionsPagination(int limit, boolean order); // 取引履歴（ページネーション）
+    public String getOrdersTransactionsPagination(int limit, Sort order); // 取引履歴（ページネーション）
 
     public String getOrdersTransactionsPagination(int limit, long starting_after); // 取引履歴（ページネーション）
 
-    public String getOrdersTransactionsPagination(boolean order, long starting_after); // 取引履歴（ページネーション）
+    public String getOrdersTransactionsPagination(Sort order, long starting_after); // 取引履歴（ページネーション）
 
-    public String getOrdersTransactionsPagination(int limit, boolean order, long starting_after); // 取引履歴（ページネーション）
+    public String getOrdersTransactionsPagination(int limit, Sort order, long starting_after); // 取引履歴（ページネーション）
 
     public String getPositions(); // ポジション一覧
 
     public String getPositions(boolean status); // ポジション一覧
+
+    public String getPositions(int limit); // ポジション一覧
+
+    public String getPositions(Sort order); // ポジション一覧
+
+    public String getPositions(long starting_after); // ポジション一覧
+
+    public String getPositions(boolean status, int limit); // ポジション一覧
+
+    public String getPositions(boolean status, Sort order); // ポジション一覧
+
+    public String getPositions(boolean status, long starting_after); // ポジション一覧
+
+    public String getPositions(boolean status, int limit, Sort order); // ポジション一覧
+
+    public String getPositions(boolean status, int limit, long starting_after); // ポジション一覧
+
+    public String getPositions(boolean status, Sort order, long starting_after); // ポジション一覧
+
+    public String getPositions(boolean status, int limit, Sort order, long starting_after); // ポジション一覧
+
+    public String getPositions(int limit, Sort order); // ポジション一覧
+
+    public String getPositions(int limit, long starting_after); // ポジション一覧
+
+    public String getPositions(int limit, Sort order, long starting_after); // ポジション一覧
+
+    public String getPositions(Sort order, long starting_after); // ポジション一覧
 
     // アカウント
     public String getAccounts(); // アカウント情報取得
