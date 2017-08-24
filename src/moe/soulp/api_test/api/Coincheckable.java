@@ -127,7 +127,8 @@ public interface Coincheckable {
      * String -> ZonedDateTime
      * 
      * @param date
-     *            日時
+     *            日時 "yyyy-MM-dd'T'HH:mm:ss.SSSX"<br>
+     *            例え： "2017-08-24T22:33:44.000Z"
      * @return ZonedDateTime
      */
     public static ZonedDateTime string2zonedDateTime(String date) {
