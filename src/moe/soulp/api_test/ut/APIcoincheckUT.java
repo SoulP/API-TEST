@@ -26,10 +26,12 @@ import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.coincheck.CoincheckRate;
 import moe.soulp.api_test.coincheck.dto.OrderDTO;
 import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
+import moe.soulp.api_test.coincheck.dto.PositionDTO;
+import moe.soulp.api_test.coincheck.dto.PositionOrderDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/08/22
+ * date: 2017/08/03 last_date: 2017/08/23
  * 
  * @author ソウルP
  */
@@ -643,7 +645,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("side: " + transaction.getSide());
                 System.out.println();
             }
-            
+
             System.out.println("件数: " + list.size());
             System.out.println();
         } catch (JSONException e) {
@@ -654,14 +656,129 @@ public class APIcoincheckUT extends APIkey {
         assertNotNull(tempArray);
         assertTrue(success);
     }
-    
+
     /**
      * <b>ポジション一覧</b><br>
      * 成功テスト
      */
     @Test
-    public void getPositions(){
-        
+    public void getPositions() {
+        JSONObject temp = null;
+        JSONArray tempArray = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        try {
+            temp = new JSONObject(coincheck.getPositions());
+            JSONObject pagination = temp.isNull("pagination") ? null : temp.getJSONObject("pagination");
+            System.out.println("ポジション一覧");
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            if (pagination != null) {
+                System.out.print("pagination_limit: ");
+                System.out.println(pagination.isNull("limit") ? "null" : pagination.getLong("limit"));
+                System.out.print("pagination_order: ");
+                System.out.println(pagination.isNull("order") ? "null" : pagination.getString("order"));
+                System.out.print("pagination_starting_after: ");
+                System.out.println(pagination.isNull("starting_after") ? "null" : pagination.getLong("starting_after"));
+                System.out.print("pagination_ending_before: ");
+                System.out.println(pagination.isNull("ending_before") ? "null" : pagination.getLong("ending_before"));
+            } else System.out.println("pagination: null");
+            System.out.println();
+
+            tempArray = temp.getJSONArray("data");
+            List<PositionDTO> positions = new ArrayList<>();
+            for (int i = 0; i < tempArray.length(); i++) {
+                JSONObject jObj = tempArray.getJSONObject(i);
+                JSONObject new_orderJO = jObj.getJSONObject("new_order");
+                JSONArray close_ordersJA = jObj.getJSONArray("close_orders");
+                PositionDTO position = new PositionDTO();
+                PositionOrderDTO new_order = new PositionOrderDTO();
+
+                position.setId(jObj.getLong("id"));
+                position.setPair(jObj.getString("pair"));
+                position.setStatus(jObj.getString("status"));
+                position.setCreatedAt(jObj.getString("created_at"));
+                position.setClosedAt(jObj.isNull("closed_at") ? null : jObj.getString("closed_at"));
+                position.setAmount(Double.parseDouble(jObj.getString("amount")));
+                position.setAllAmount(Double.parseDouble(jObj.getString("all_amount")));
+                position.setSide(jObj.getString("side"));
+                position.setPl(Double.parseDouble(jObj.getString("pl")));
+
+                new_order.setId(new_orderJO.getLong("id"));
+                new_order.setSide(new_orderJO.getString("side"));
+                new_order.setRate(
+                        new_orderJO.isNull("rate") ? -1.0d : Double.parseDouble(new_orderJO.getString("rate")));
+                new_order.setAmount(
+                        new_orderJO.isNull("amount") ? -1.0d : Double.parseDouble(new_orderJO.getString("amount")));
+                new_order.setPendingAmount(new_orderJO.isNull("pending_amount") ? -1.0d
+                        : Double.parseDouble(new_orderJO.getString("pending_amount")));
+                new_order.setStatus(new_orderJO.getString("status"));
+                new_order.setCreatedAt(new_orderJO.getString("created_at"));
+
+                position.setNewOrder(new_order);
+
+                for (int n = 0; n < close_ordersJA.length(); n++) {
+                    JSONObject close_orderJO = close_ordersJA.getJSONObject(n);
+                    PositionOrderDTO close_order = new PositionOrderDTO();
+                    close_order.setId(close_orderJO.getLong("id"));
+                    close_order.setSide(close_orderJO.getString("side"));
+                    close_order.setRate(
+                            close_orderJO.isNull("rate") ? -1.0d : Double.parseDouble(close_orderJO.getString("rate")));
+                    close_order.setAmount(close_orderJO.isNull("amount") ? -1.0d
+                            : Double.parseDouble(close_orderJO.getString("amount")));
+                    close_order.setPendingAmount(close_orderJO.isNull("pending_amount") ? -1.0d
+                            : Double.parseDouble(close_orderJO.getString("pending_amount")));
+                    close_order.setStatus(close_orderJO.getString("status"));
+                    close_order.setCreatedAt(close_orderJO.getString("created_at"));
+
+                    position.addCloseOrders(close_order);
+                }
+
+                positions.add(position);
+            }
+
+            for (PositionDTO pos : positions) {
+                System.out.println("id: " + pos.getId());
+                System.out.println("pair: " + pos.getPair());
+                System.out.println("status: " + pos.getStatus());
+                System.out.println("created_at: " + pos.getCreatedAt());
+                System.out.println("closed_at: " + pos.getClosedAt());
+                System.out.println("open_rate: " + pos.getOpenRate());
+                System.out.println("closed_rate: " + pos.getClosedRate());
+                System.out.println("amount: " + pos.getAmount());
+                System.out.println("all_amount: " + pos.getAllAmount());
+                System.out.println("side: " + pos.getSide());
+                System.out.println("pl: " + pos.getPl());
+                System.out.println("------------------------------");
+                System.out.println("new_order:");
+                System.out.println("n_id: " + pos.getNewOrder().getId());
+                System.out.println("n_side: " + pos.getNewOrder().getSide());
+                System.out.println("n_rate: " + pos.getNewOrder().getRate());
+                System.out.println("n_amount: " + pos.getNewOrder().getAmount());
+                System.out.println("n_pending_amount: " + pos.getNewOrder().getPendingAmount());
+                System.out.println("n_status: " + pos.getNewOrder().getStatus());
+                System.out.println("n_created_at: " + pos.getNewOrder().getCreatedAt());
+                System.out.println("------------------------------");
+                System.out.println("close_orders:");
+                for (PositionOrderDTO close_order : pos.getCloseOrders()) {
+                    System.out.println("c_id: " + close_order.getId());
+                    System.out.println("c_side: " + close_order.getSide());
+                    System.out.println("c_rate: " + close_order.getRate());
+                    System.out.println("c_amount: " + close_order.getAmount());
+                    System.out.println("c_pending_amount: " + close_order.getPendingAmount());
+                    System.out.println("c_status: " + close_order.getStatus());
+                    System.out.println("c_created_at: " + close_order.getCreatedAt());
+                    System.out.println("------------------------------");
+                }
+                System.out.println();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertNotNull(tempArray);
+        assertTrue(success);
     }
 
     /**

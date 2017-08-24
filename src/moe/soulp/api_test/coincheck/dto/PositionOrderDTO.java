@@ -1,6 +1,5 @@
 package moe.soulp.api_test.coincheck.dto;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import moe.soulp.api_test.api.Coincheckable;
@@ -176,7 +175,6 @@ public class PositionOrderDTO {
      *            注文の作成日時
      */
     public void setCreatedAt(String created_at) {
-        this.created_at = ZonedDateTime.parse(created_at, Coincheckable.FORMAT)
-                .withZoneSameInstant(ZoneId.systemDefault());
+        this.created_at = Coincheckable.string2zonedDateTime(created_at);
     }
 }

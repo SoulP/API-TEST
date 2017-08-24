@@ -930,7 +930,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(boolean status) {
-        return getPrivateAPI(API + POSITIONS + "?status=" + (status? "open" : "closed"));
+        return getPrivateAPI(API + POSITIONS + "?status=" + (status ? "open" : "closed"));
     }
 
     /**

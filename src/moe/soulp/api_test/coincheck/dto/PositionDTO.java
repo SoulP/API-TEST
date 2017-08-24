@@ -1,6 +1,5 @@
 package moe.soulp.api_test.coincheck.dto;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,8 +136,7 @@ public class PositionDTO {
      *            ポジションの作成日時
      */
     public void setCreatedAt(String created_at) {
-        this.created_at = ZonedDateTime.parse(created_at, Coincheckable.FORMAT)
-                .withZoneSameInstant(ZoneId.systemDefault());
+        this.created_at = Coincheckable.string2zonedDateTime(created_at);
     }
 
     /**
@@ -167,8 +165,7 @@ public class PositionDTO {
      *            ポジションの決済完了日時
      */
     public void setClosedAt(String closed_at) {
-        this.closed_at = ZonedDateTime.parse(closed_at, Coincheckable.FORMAT)
-                .withZoneSameInstant(ZoneId.systemDefault());
+        this.closed_at = Coincheckable.string2zonedDateTime(closed_at);
     }
 
     /**

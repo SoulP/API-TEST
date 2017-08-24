@@ -1,5 +1,7 @@
 package moe.soulp.api_test.api;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -119,4 +121,17 @@ public interface Coincheckable {
 
     // アカウント
     public String getAccounts(); // アカウント情報取得
+
+    /**
+     * <b>日時 データ・タイプ変換</b><br>
+     * String -> ZonedDateTime
+     * 
+     * @param date
+     *            日時
+     * @return ZonedDateTime
+     */
+    public static ZonedDateTime string2zonedDateTime(String date) {
+        if (date == null || date.equals("")) return null;
+        else return ZonedDateTime.parse(date, Coincheckable.FORMAT).withZoneSameInstant(ZoneId.systemDefault());
+    }
 }
