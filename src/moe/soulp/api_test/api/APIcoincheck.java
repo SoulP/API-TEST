@@ -42,8 +42,8 @@ public class APIcoincheck extends API implements Coincheckable {
     private static URL          ordersTransactionsURL;
     private static URL          ordersTransactionsPaginationURL;
     private static URL          positionsURL;
-
     private static URL          accountsBalanceURL;
+    private static URL          accountsLeverageBalanceURL;
     private static URL          accountsURL;
 
     static {
@@ -57,7 +57,7 @@ public class APIcoincheck extends API implements Coincheckable {
             ordersTransactionsPaginationURL = new URL(API + ORDERS_TRANSACTIONS_PAGINATION);
             positionsURL = new URL(API + POSITIONS);
             accountsBalanceURL = new URL(API + ACCOUNTS_BALANCE);
-
+            accountsLeverageBalanceURL = new URL(API + ACCOUNTS_LEVERAGE_BALANCE);
             accountsURL = new URL(API + ACCOUNTS);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -1469,6 +1469,20 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String getAccountsBalance() {
         return getPrivateAPI(accountsBalanceURL);
+    }
+
+    /**
+     * <b>レバレッジアカウントの残高</b><br>
+     * レバレッジアカウントの残高を確認できます。
+     * 
+     * @return 【JSON】<br>
+     *         <b>margin</b> 証拠金 JSON(jpy)<br>
+     *         <b>margin_available</b> 利用可能な証拠金 JSON(jpy)<br>
+     *         <b>margin_level</b> 証拠金維持率
+     */
+    @Override
+    public String getAccountsLeverageBalance() {
+        return getPrivateAPI(accountsLeverageBalanceURL);
     }
 
     /**

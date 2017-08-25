@@ -152,6 +152,8 @@ public interface Coincheckable {
     // アカウント
     public String getAccountsBalance(); // 残高
 
+    public String getAccountsLeverageBalance(); // レバレッジアカウントの残高
+
     public String getAccounts(); // アカウント情報取得
 
     /**

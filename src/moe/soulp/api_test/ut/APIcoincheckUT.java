@@ -796,25 +796,58 @@ public class APIcoincheckUT extends APIkey {
             temp = new JSONObject(coincheck.getAccountsBalance());
             success = temp.getBoolean("success");
             System.out.print("jpy: ");
-            System.out.println(temp.isNull("jpy")? "null" : temp.getString("jpy"));
+            System.out.println(temp.isNull("jpy") ? "null" : temp.getString("jpy"));
             System.out.print("btc: ");
-            System.out.println(temp.isNull("btc")? "null" : temp.getString("btc"));
+            System.out.println(temp.isNull("btc") ? "null" : temp.getString("btc"));
             System.out.print("jpy_reserved: ");
-            System.out.println(temp.isNull("jpy_reserved")? "null" : temp.getString("jpy_reserved"));
+            System.out.println(temp.isNull("jpy_reserved") ? "null" : temp.getString("jpy_reserved"));
             System.out.print("btc_reserved: ");
-            System.out.println(temp.isNull("btc_reserved")? "null" : temp.getString("btc_reserved"));
+            System.out.println(temp.isNull("btc_reserved") ? "null" : temp.getString("btc_reserved"));
             System.out.print("jpy_lend_in_use: ");
-            System.out.println(temp.isNull("jpy_lend_in_use")? "null" : temp.getString("jpy_lend_in_use"));
+            System.out.println(temp.isNull("jpy_lend_in_use") ? "null" : temp.getString("jpy_lend_in_use"));
             System.out.print("btc_lend_in_use: ");
-            System.out.println(temp.isNull("btc_lend_in_use")? "null" : temp.getString("btc_lend_in_use"));
+            System.out.println(temp.isNull("btc_lend_in_use") ? "null" : temp.getString("btc_lend_in_use"));
             System.out.print("jpy_lent: ");
-            System.out.println(temp.isNull("jpy_lent")? "null" : temp.getString("jpy_lent"));
+            System.out.println(temp.isNull("jpy_lent") ? "null" : temp.getString("jpy_lent"));
             System.out.print("btc_lent");
-            System.out.println(temp.isNull("btc_lent")? "null" : temp.getString("btc_lent"));
+            System.out.println(temp.isNull("btc_lent") ? "null" : temp.getString("btc_lent"));
             System.out.print("jpy_dept: ");
-            System.out.println(temp.isNull("jpy_dept")? "null" : temp.getString("jpy_dept"));
+            System.out.println(temp.isNull("jpy_dept") ? "null" : temp.getString("jpy_dept"));
             System.out.print("btc_dept: ");
-            System.out.println(temp.isNull("btc_dept")? "null" : temp.getString("btc_dept"));
+            System.out.println(temp.isNull("btc_dept") ? "null" : temp.getString("btc_dept"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>レバレッジアカウントの残高</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getAccountsLeverageBalance() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        System.out.println("レバレッジアカウントの残高");
+        try {
+            temp = new JSONObject(coincheck.getAccountsLeverageBalance());
+            success = temp.getBoolean("success");
+            System.out.print("証拠金: ");
+            System.out.println(temp.isNull("margin") ? "null"
+                    : (temp.getJSONObject("margin").isNull("jpy") ? "null"
+                            : temp.getJSONObject("margin").getString("jpy")));
+            System.out.print("利用可能な証拠金");
+            System.out.println(temp.isNull("margin_available") ? "null"
+                    : (temp.getJSONObject("margin_available").isNull("jpy") ? "null"
+                            : temp.getJSONObject("margin_available").getString("jpy")));
+            System.out.print("証拠金維持率: ");
+            System.out.println(temp.isNull("margin_level") ? "null" : temp.getString("margin_level"));
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
