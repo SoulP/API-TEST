@@ -858,6 +858,41 @@ public class APIcoincheckUT extends APIkey {
     }
 
     /**
+     * <b>ビットコインの送金</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void postSendMoney() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        String address = "32EYfRM6P9D1WUBwxzdE8gyodb6R3Kx9Cg";
+        double amount = 0.005d;
+
+        System.out.println("ビットコインの送金");
+
+        try {
+            temp = new JSONObject(coincheck.postSendMoney(address, amount));
+            success = temp.getBoolean("success");
+            System.out.print("id: ");
+            System.out.println(temp.isNull("id") ? "null" : temp.getString("id"));
+            System.out.print("address: ");
+            System.out.println(temp.isNull("address") ? "null" : temp.getString("address"));
+            System.out.print("amount: ");
+            System.out.println(temp.isNull("amount") ? "null" : temp.getString("amount"));
+            System.out.print("fee: ");
+            System.out.println(temp.isNull("fee") ? "null" : temp.getString("fee"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
      * <b>アカウント情報</b><br>
      * 成功テスト
      */

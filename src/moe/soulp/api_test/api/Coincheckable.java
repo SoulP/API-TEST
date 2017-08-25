@@ -154,6 +154,8 @@ public interface Coincheckable {
 
     public String getAccountsLeverageBalance(); // レバレッジアカウントの残高
 
+    public String postSendMoney(String address, double amount); // ビットコインの送金
+
     public String getAccounts(); // アカウント情報取得
 
     /**

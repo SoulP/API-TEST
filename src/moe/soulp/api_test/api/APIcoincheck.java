@@ -33,6 +33,7 @@ public class APIcoincheck extends API implements Coincheckable {
     private final static String AMOUNT            = "amount";
     private final static String MARKET_BUY_AMOUNT = "market_buy_amount";
     private final static String POSITION_ID       = "position_id";
+    private final static String ADDRESS           = "address";
 
     private static URL          tickerURL;
     private static URL          tradesURL;
@@ -44,6 +45,7 @@ public class APIcoincheck extends API implements Coincheckable {
     private static URL          positionsURL;
     private static URL          accountsBalanceURL;
     private static URL          accountsLeverageBalanceURL;
+    private static URL          sendMoneyURL;
     private static URL          accountsURL;
 
     static {
@@ -58,6 +60,7 @@ public class APIcoincheck extends API implements Coincheckable {
             positionsURL = new URL(API + POSITIONS);
             accountsBalanceURL = new URL(API + ACCOUNTS_BALANCE);
             accountsLeverageBalanceURL = new URL(API + ACCOUNTS_LEVERAGE_BALANCE);
+            sendMoneyURL = new URL(API + SEND_MONEY);
             accountsURL = new URL(API + ACCOUNTS);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -615,7 +618,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * 自分の最近の取引履歴を参照できます。
      *
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <hr>
      *         transactionsの配列<br>
      *         <b>id</b> ID<br>
@@ -639,7 +642,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * 自分の最近の取引履歴を参照できます。
      *
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -667,7 +670,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param limit
      *            最大表示件数
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -695,7 +698,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param order
      *            ソート
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -724,7 +727,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -754,7 +757,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param order
      *            ソート
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -785,7 +788,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -816,7 +819,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -850,7 +853,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -878,7 +881,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * レバレッジ取引のポジション一覧を表示します。
      *
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -911,7 +914,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param status
      *            ポジションの状態
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -945,7 +948,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param limit
      *            最大表示件数
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -978,7 +981,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param order
      *            ソート
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1012,7 +1015,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1047,7 +1050,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param limit
      *            最大表示件数
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1082,7 +1085,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param order
      *            ソート
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1119,7 +1122,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1157,7 +1160,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param order
      *            ソート
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1196,7 +1199,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1234,7 +1237,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1275,7 +1278,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1313,7 +1316,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param order
      *            ソート
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1349,7 +1352,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1386,7 +1389,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1422,7 +1425,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
-     *         <b>succecc</b> 結果<br>
+     *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
@@ -1455,6 +1458,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * jpy, btc には未決済の注文に利用している jpy_reserved, btc_reserved は含まれていません。
      * 
      * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
      *         <b>jpy</b> 日本円の残高<br>
      *         <b>btc</b> ビットコインの残高<br>
      *         <b>jpy_reserved</b> 未決済の買い注文に利用している日本円の合計<br>
@@ -1476,6 +1480,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * レバレッジアカウントの残高を確認できます。
      * 
      * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
      *         <b>margin</b> 証拠金 JSON(jpy)<br>
      *         <b>margin_available</b> 利用可能な証拠金 JSON(jpy)<br>
      *         <b>margin_level</b> 証拠金維持率
@@ -1483,6 +1488,29 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String getAccountsLeverageBalance() {
         return getPrivateAPI(accountsLeverageBalanceURL);
+    }
+
+    /**
+     * <b>ビットコインの送金</b><br>
+     * 指定のアドレスにビットコインを送ります。
+     * 
+     * @param address
+     *            送り先のビットコインアドレス
+     * @param amount
+     *            送りたいビットコインの量
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>id</b> 送金のID<br>
+     *         <b>address</b> 送った先のbitcoinアドレス<br>
+     *         <b>amount</b> 送ったbitcoinの量<br>
+     *         <b>fee</b> 手数料
+     */
+    @Override
+    public String postSendMoney(String address, double amount) {
+        clearParameters();
+        addParameter(ADDRESS, address);
+        addParameter(AMOUNT, String.valueOf(amount));
+        return postPrivateAPI(sendMoneyURL);
     }
 
     /**
