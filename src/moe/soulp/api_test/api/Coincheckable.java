@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>インターフェース coincheck</b><br>
- * date: 2017/08/03 last_date: 2017/08/24
+ * date: 2017/08/03 last_date: 2017/08/25
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
@@ -150,6 +150,8 @@ public interface Coincheckable {
     public String getPositions(Sort order, long starting_after); // ポジション一覧
 
     // アカウント
+    public String getAccountsBalance(); // 残高
+
     public String getAccounts(); // アカウント情報取得
 
     /**

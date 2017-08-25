@@ -5,7 +5,7 @@ import java.net.URL;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/08/24
+ * date: 2017/08/03 last_date: 2017/08/25
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -43,6 +43,7 @@ public class APIcoincheck extends API implements Coincheckable {
     private static URL          ordersTransactionsPaginationURL;
     private static URL          positionsURL;
 
+    private static URL          accountsBalanceURL;
     private static URL          accountsURL;
 
     static {
@@ -55,6 +56,7 @@ public class APIcoincheck extends API implements Coincheckable {
             ordersTransactionsURL = new URL(API + ORDERS_TRANSACTIONS);
             ordersTransactionsPaginationURL = new URL(API + ORDERS_TRANSACTIONS_PAGINATION);
             positionsURL = new URL(API + POSITIONS);
+            accountsBalanceURL = new URL(API + ACCOUNTS_BALANCE);
 
             accountsURL = new URL(API + ACCOUNTS);
         } catch (MalformedURLException e) {
@@ -1445,6 +1447,28 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String getPositions(Sort order, long starting_after) {
         return getPrivateAPI(API + POSITIONS + Q_ORDER + order + A_STARTING_AFTER + starting_after);
+    }
+
+    /**
+     * <b>残高</b><br>
+     * アカウントの残高を確認できます。<br>
+     * jpy, btc には未決済の注文に利用している jpy_reserved, btc_reserved は含まれていません。
+     * 
+     * @return 【JSON】<br>
+     *         <b>jpy</b> 日本円の残高<br>
+     *         <b>btc</b> ビットコインの残高<br>
+     *         <b>jpy_reserved</b> 未決済の買い注文に利用している日本円の合計<br>
+     *         <b>btc_reserved</b> 未決済の売り注文に利用しているビットコインの合計<br>
+     *         <b>jpy_lend_in_use</b> 貸出申請をしている日本円の合計<br>
+     *         <b>btc_lend_in_use</b> 貸出申請をしているビットコインの合計<br>
+     *         <b>jpy_lent</b> 貸出をしている日本円の合計<br>
+     *         <b>btc_lent</b> 貸出をしているビットコインの合計<br>
+     *         <b>jpy_debt</b> 借りている日本円の合計<br>
+     *         <b>btc_debt</b> 借りているビットコインの合計
+     */
+    @Override
+    public String getAccountsBalance() {
+        return getPrivateAPI(accountsBalanceURL);
     }
 
     /**

@@ -1,7 +1,12 @@
 package moe.soulp.api_test.ut;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -26,8 +31,8 @@ import moe.soulp.api_test.coincheck.dto.PositionOrderDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/08/24
- *
+ * date: 2017/08/03 last_date: 2017/08/25
+ * 
  * @author ソウルP
  */
 public class APIcoincheckUT extends APIkey {
@@ -773,6 +778,49 @@ public class APIcoincheckUT extends APIkey {
         }
         assertNotNull(temp);
         assertNotNull(tempArray);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>残高</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getAccountsBalance() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        System.out.println("残高");
+        try {
+            temp = new JSONObject(coincheck.getAccountsBalance());
+            success = temp.getBoolean("success");
+            System.out.print("jpy: ");
+            System.out.println(temp.isNull("jpy")? "null" : temp.getString("jpy"));
+            System.out.print("btc: ");
+            System.out.println(temp.isNull("btc")? "null" : temp.getString("btc"));
+            System.out.print("jpy_reserved: ");
+            System.out.println(temp.isNull("jpy_reserved")? "null" : temp.getString("jpy_reserved"));
+            System.out.print("btc_reserved: ");
+            System.out.println(temp.isNull("btc_reserved")? "null" : temp.getString("btc_reserved"));
+            System.out.print("jpy_lend_in_use: ");
+            System.out.println(temp.isNull("jpy_lend_in_use")? "null" : temp.getString("jpy_lend_in_use"));
+            System.out.print("btc_lend_in_use: ");
+            System.out.println(temp.isNull("btc_lend_in_use")? "null" : temp.getString("btc_lend_in_use"));
+            System.out.print("jpy_lent: ");
+            System.out.println(temp.isNull("jpy_lent")? "null" : temp.getString("jpy_lent"));
+            System.out.print("btc_lent");
+            System.out.println(temp.isNull("btc_lent")? "null" : temp.getString("btc_lent"));
+            System.out.print("jpy_dept: ");
+            System.out.println(temp.isNull("jpy_dept")? "null" : temp.getString("jpy_dept"));
+            System.out.print("btc_dept: ");
+            System.out.println(temp.isNull("btc_dept")? "null" : temp.getString("btc_dept"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
         assertTrue(success);
     }
 
