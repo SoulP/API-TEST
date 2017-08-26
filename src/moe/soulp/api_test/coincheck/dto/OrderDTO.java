@@ -8,12 +8,12 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>未決済の注文</b><br>
- * date: 2017/08/06 last_date: 2017/08/22
+ * date: 2017-08-06 last_date: 2017-08-26
  * 
  * @author ソウルP
- * @version 1.0 2017/08/06 未決済の注文DTO作成
- * @version 1.1 2017/08/21 setCreatedAt(String)追加
- * @version 1.2 2017/08/21 created_atのLocalDateTime型をZonedDateTimeに変更
+ * @version 1.0 2017-08-06 未決済の注文DTO作成
+ * @version 1.1 2017-08-21 setCreatedAt(String)追加
+ * @version 1.2 2017-08-21 created_atのLocalDateTime型をZonedDateTimeに変更
  * @see Pair 取引ペア
  * @see Type 種類
  */

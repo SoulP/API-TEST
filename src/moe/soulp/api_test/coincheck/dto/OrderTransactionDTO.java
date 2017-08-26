@@ -1,52 +1,28 @@
 package moe.soulp.api_test.coincheck.dto;
 
-import java.time.ZonedDateTime;
-
-import moe.soulp.api_test.api.Coincheckable;
 import moe.soulp.api_test.api.Currency;
 import moe.soulp.api_test.api.Pair;
 import moe.soulp.api_test.api.Type;
 
 /**
  * <b>取引履歴</b><br>
- * date: 2017/08/21 last_date: 2017/08/22
+ * date: 2017/08/21 last_date: 2017/08/26
  * 
  * @author ソウルP
  * @version 1.0 OrderTransactionDTO作成
+ * @version 1.1 2017/08/26 継承することで不要な部分を排除
  * @see Pair 取引ペア
  * @see Type 種類
  */
-public class OrderTransactionDTO {
-    private long          id;           // ID
-    private long          order_id;     // 注文のID
-    private ZonedDateTime created_at;   // 取引日時
-    private double        funds_btc;    // btc残高の増減分
-    private double        funds_jpy;    // jpy残高の増減分
-    private Pair          pair;         // 取引ペア
-    private double        rate;         // 約定価格
-    private Currency      fee_currency; // 手数料の通貨
-    private double        fee;          // 発生した手数料
-    private String        liquidity;    // 流動性 "T" ( Taker ) or "M" ( Maker )
-    private Type          side;         // 取引の種類 "sell" or "buy"
-
-    /**
-     * <b>ID 出力</b>
-     * 
-     * @return id
-     */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * <b>ID 入力</b>
-     * 
-     * @param id
-     *            ID
-     */
-    public void setId(long id) {
-        this.id = id;
-    }
+public class OrderTransactionDTO extends Transaction {
+    private long     order_id;     // 注文のID
+    private double   funds_btc;    // btc残高の増減分
+    private double   funds_jpy;    // jpy残高の増減分
+    private Pair     pair;         // 取引ペア
+    private double   rate;         // 約定価格
+    private Currency fee_currency; // 手数料の通貨
+    private String   liquidity;    // 流動性 "T" ( Taker ) or "M" ( Maker )
+    private Type     side;         // 取引の種類 "sell" or "buy"
 
     /**
      * <b>注文のID 出力</b>
@@ -65,36 +41,6 @@ public class OrderTransactionDTO {
      */
     public void setOrderId(long order_id) {
         this.order_id = order_id;
-    }
-
-    /**
-     * <b>取引日時 出力</b>
-     * 
-     * @return created_at
-     */
-    public ZonedDateTime getCreatedAt() {
-        return created_at;
-    }
-
-    /**
-     * <b>取引日時 入力</b>
-     * 
-     * @param created_at
-     *            取引日時
-     */
-    public void setCreatedAt(ZonedDateTime created_at) {
-        this.created_at = created_at;
-    }
-
-    /**
-     * <b>取引日時 入力</b>
-     * 
-     * @param created_at
-     *            取引日時
-     * @see Coincheckable
-     */
-    public void setCreatedAt(String created_at) {
-        this.created_at = Coincheckable.string2zonedDateTime(created_at);
     }
 
     /**
@@ -216,25 +162,6 @@ public class OrderTransactionDTO {
      */
     public void setFeeCurrency(String fee_currency) {
         if (!(fee_currency == null || fee_currency.isEmpty())) setFeeCurrency(Currency.valueOf(fee_currency));
-    }
-
-    /**
-     * <b>発生した手数料 出力</b>
-     * 
-     * @return fee
-     */
-    public double getFee() {
-        return fee;
-    }
-
-    /**
-     * <b>発生した手数料 入力</b>
-     * 
-     * @param fee
-     *            発生した手数料
-     */
-    public void setFee(double fee) {
-        this.fee = fee;
     }
 
     /**

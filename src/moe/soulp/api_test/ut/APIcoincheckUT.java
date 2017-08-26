@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import moe.soulp.api_test.api.APIcoincheck;
 import moe.soulp.api_test.api.Coincheckable;
+import moe.soulp.api_test.api.Currency;
 import moe.soulp.api_test.api.Pair;
 import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.coincheck.CoincheckRate;
@@ -28,10 +29,11 @@ import moe.soulp.api_test.coincheck.dto.OrderDTO;
 import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
 import moe.soulp.api_test.coincheck.dto.PositionDTO;
 import moe.soulp.api_test.coincheck.dto.PositionOrderDTO;
+import moe.soulp.api_test.coincheck.dto.SendMoneyTransactionDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/08/25
+ * date: 2017-08-03 last_date: 2017-08-26
  * 
  * @author ソウルP
  */
@@ -883,6 +885,55 @@ public class APIcoincheckUT extends APIkey {
             System.out.println(temp.isNull("amount") ? "null" : temp.getString("amount"));
             System.out.print("fee: ");
             System.out.println(temp.isNull("fee") ? "null" : temp.getString("fee"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>送金履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getSendMoney() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        List<SendMoneyTransactionDTO> sendMoneyTransactions = new ArrayList<>();
+        try {
+            temp = new JSONObject(coincheck.getSendMoney(Currency.BTC));
+            success = temp.getBoolean("success");
+            JSONArray sends = temp.getJSONArray("sends");
+            for (int i = 0; i < sends.length(); i++) {
+                JSONObject send = sends.getJSONObject(i);
+                SendMoneyTransactionDTO sendMoney = new SendMoneyTransactionDTO();
+                sendMoney.setId(send.isNull("id") ? -1l : send.getLong("id"));
+                sendMoney.setAmount(send.isNull("amount") ? -1.0d : Double.parseDouble(send.getString("amount")));
+                sendMoney.setCurrency(send.isNull("currency") ? "" : send.getString("currency"));
+                sendMoney.setFee(send.isNull("fee") ? -1.0d : Double.parseDouble(send.getString("fee")));
+                sendMoney.setAddress(send.isNull("address") ? "null" : send.getString("address"));
+                sendMoney.setCreatedAt(send.isNull("created_at") ? null : send.getString("created_at"));
+
+                sendMoneyTransactions.add(sendMoney);
+            }
+
+            System.out.println("送金履歴");
+            System.out.println("success: " + success);
+            System.out.println("------------------------------");
+            for (SendMoneyTransactionDTO item : sendMoneyTransactions) {
+                System.out.println("ID: " + item.getId());
+                System.out.println("送った量: " + item.getAmount());
+                System.out.println("通貨: " + item.getCurrency());
+                System.out.println("手数料: " + item.getFee());
+                System.out.println("送金先のアドレス: " + item.getAddress());
+                System.out.println("日時: " + item.getCreatedAt());
+                System.out.println("------------------------------");
+            }
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();

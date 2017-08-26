@@ -6,14 +6,15 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>インターフェース coincheck</b><br>
- * date: 2017/08/03 last_date: 2017/08/25
+ * date: 2017-08-03 last_date: 2017-08-26
  *
  * @author ソウルP
- * @version 1.0 2017/08/03 Coincheckable作成
+ * @version 1.0 2017-08-03 Coincheckable作成
  * @see Pair 取引ペア
  * @see Type 種類
  * @see Sort ソート
  * @see Status 状態
+ * @see Currency 通貨
  */
 public interface Coincheckable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
@@ -155,6 +156,8 @@ public interface Coincheckable {
     public String getAccountsLeverageBalance(); // レバレッジアカウントの残高
 
     public String postSendMoney(String address, double amount); // ビットコインの送金
+
+    public String getSendMoney(Currency currency); // 送金履歴
 
     public String getAccounts(); // アカウント情報取得
 

@@ -6,29 +6,24 @@ import java.util.List;
 
 import moe.soulp.api_test.api.Coincheckable;
 import moe.soulp.api_test.api.Pair;
-import moe.soulp.api_test.api.Type;
 
 /**
  * <b>ポジション情報</b><br>
- * date: 2017/08/22 last_date: 2017/08/22
+ * date: 2017-08-22 last_date: 2017-08-26
  * 
  * @author ソウルP
- * @version 1.0 2017/08/22 PositionDTO作成
+ * @version 1.0 2017-08-22 PositionDTO作成
+ * @version 1.1 2017-08-26 継承することで不要な部分を排除
+ * @see Position ポジション
  * @see Pair 取引ペア
- * @see Type 種類
  * @see PositionOrderDTO ポジション情報の注文情報
  */
-public class PositionDTO {
-    private long                   id;          // ID
+public class PositionDTO extends Position {
     private Pair                   pair;        // 取引ペア
-    private String                 status;      // ポジションの状態
-    private ZonedDateTime          created_at;  // ポジションの作成日時
     private ZonedDateTime          closed_at;   // ポジションの決済完了日時
     private double                 open_rate;   // ポジションの平均取得価格
     private double                 closed_rate; // ポジションの平均決済価格
-    private double                 amount;      // 現在のポジションの数量（BTC）
     private double                 all_amount;  // ポジションの数量（BTC）
-    private Type                   side;        // ポジションの種類
     private double                 pl;          // 利益
     private PositionOrderDTO       new_order;   // 新規注文についての情報
     private List<PositionOrderDTO> close_orders;// 決済注文についての情報
@@ -38,25 +33,6 @@ public class PositionDTO {
      */
     public PositionDTO() {
         close_orders = new ArrayList<>();
-    }
-
-    /**
-     * <b>ID 出力</b>
-     * 
-     * @return id
-     */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * <b>ID 入力</b>
-     * 
-     * @param id
-     *            ID
-     */
-    public void setId(long id) {
-        this.id = id;
     }
 
     /**
@@ -89,54 +65,6 @@ public class PositionDTO {
      */
     public void setPair(String pair) {
         this.pair = Pair.valueOf(pair);
-    }
-
-    /**
-     * <b>ポジションの状態 出力</b>
-     * 
-     * @return status
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * <b>ポジションの状態 入力</b>
-     * 
-     * @param status
-     *            ポジションの状態
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    /**
-     * <b>ポジションの作成日時 出力</b>
-     * 
-     * @return created_at
-     */
-    public ZonedDateTime getCreatedAt() {
-        return created_at;
-    }
-
-    /**
-     * <b>ポジションの作成日時 入力</b>
-     * 
-     * @param created_at
-     *            ポジションの作成日時
-     */
-    public void setCreatedAt(ZonedDateTime created_at) {
-        this.created_at = created_at;
-    }
-
-    /**
-     * <b>ポジションの作成日時 入力</b>
-     * 
-     * @param created_at
-     *            ポジションの作成日時
-     */
-    public void setCreatedAt(String created_at) {
-        this.created_at = Coincheckable.string2zonedDateTime(created_at);
     }
 
     /**
@@ -207,25 +135,6 @@ public class PositionDTO {
     }
 
     /**
-     * <b>現在のポジションの数量（BTC） 出力</b>
-     * 
-     * @return amount
-     */
-    public double getAmount() {
-        return amount;
-    }
-
-    /**
-     * <b>現在のポジションの数量（BTC） 入力</b>
-     * 
-     * @param amount
-     *            現在のポジションの数量（BTC）
-     */
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    /**
      * <b>ポジションの数量（BTC） 出力</b>
      * 
      * @return all_amount
@@ -242,35 +151,6 @@ public class PositionDTO {
      */
     public void setAllAmount(double all_amount) {
         this.all_amount = all_amount;
-    }
-
-    /**
-     * <b>ポジションの種類 出力</b>
-     * 
-     * @return side
-     */
-    public Type getSide() {
-        return side;
-    }
-
-    /**
-     * <b>ポジションの種類 入力</b>
-     * 
-     * @param side
-     *            ポジションの種類
-     */
-    public void setSide(Type side) {
-        this.side = side;
-    }
-
-    /**
-     * <b>ポジションの種類 入力</b>
-     * 
-     * @param side
-     *            ポジションの種類
-     */
-    public void setSide(String side) {
-        this.side = Type.valueOf(side);
     }
 
     /**

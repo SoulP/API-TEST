@@ -5,10 +5,10 @@ import java.net.URL;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/08/25
+ * date: 2017-08-03 last_date: 2017-08-26
  *
  * @author ソウルP
- * @version 1.0 2017/08/03 APIcoincheck作成
+ * @version 1.0 2017-08-03 APIcoincheck作成
  * @see API 汎用API接続
  * @see Coincheckable coincheck
  */
@@ -19,6 +19,7 @@ public class APIcoincheck extends API implements Coincheckable {
     private final static String Q_ORDER           = "?order=";
     private final static String Q_STARTING_AFTER  = "?starting_after=";
     private final static String Q_STATUS          = "?status=";
+    private final static String Q_CURRENCY        = "?currency=";
 
     private final static String A_PAIR            = "&pair=";
     private final static String A_AMOUNT          = "&amount=";
@@ -1511,6 +1512,28 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(ADDRESS, address);
         addParameter(AMOUNT, String.valueOf(amount));
         return postPrivateAPI(sendMoneyURL);
+    }
+
+    /**
+     * <b>送金履歴</b>
+     * 
+     * @param currency
+     *            通貨
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <hr>
+     *         sendsの配列<br>
+     *         <b>id</b> 送金のID<br>
+     *         <b>amount</b> 送ったbitcoinの量<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>address</b> 送った先のbitcoinアドレス<br>
+     *         <b>created_at</b> 送金処理の作成日時
+     * @see Currency 通貨
+     */
+    @Override
+    public String getSendMoney(Currency currency) {
+        return getPrivateAPI(API + SEND_MONEY + Q_CURRENCY + currency);
     }
 
     /**

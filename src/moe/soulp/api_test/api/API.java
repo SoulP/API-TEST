@@ -16,11 +16,11 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * <b>汎用API接続</b><br>
- * date: 2017/08/03 last_date: 2017/08/21
+ * date: 2017-08-03 last_date: 2017-08-26
  * 
  * @author ソウルP
- * @version 1.0 2017/08/03 API作成
- * @version 1.1 2017/08/21 Private API用のdelete操作追加
+ * @version 1.0 2017-08-03 API作成
+ * @version 1.1 2017-08-21 Private API用のdelete操作追加
  */
 public abstract class API {
     final static String GET        = "GET";
