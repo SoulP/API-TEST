@@ -25,6 +25,7 @@ import moe.soulp.api_test.api.Currency;
 import moe.soulp.api_test.api.Pair;
 import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.coincheck.CoincheckRate;
+import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 import moe.soulp.api_test.coincheck.dto.DepositMoneyTransactionDTO;
 import moe.soulp.api_test.coincheck.dto.OrderDTO;
 import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
@@ -997,7 +998,8 @@ public class APIcoincheckUT extends APIkey {
     }
 
     /**
-     * <b>高速入金</b> 成功テスト
+     * <b>高速入金</b><br>
+     * 成功テスト
      */
     @Test
     public void postDepositMoneyFast() {
@@ -1009,6 +1011,121 @@ public class APIcoincheckUT extends APIkey {
         try {
             temp = new JSONObject(coincheck.postDepositMoneyFast(id));
             success = temp.getBoolean("success");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>銀行口座一覧</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getBankAccounts() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        List<BankAccountDTO> bankAccounts = new ArrayList<>();
+
+        System.out.println("銀行口座一覧");
+        try {
+            temp = new JSONObject(coincheck.getBankAcccounts());
+            success = temp.getBoolean("success");
+            JSONArray tempArray = temp.getJSONArray("data");
+            for (int i = 0; i < tempArray.length(); i++) {
+                JSONObject account = tempArray.getJSONObject(i);
+                BankAccountDTO bankAccount = new BankAccountDTO();
+
+                bankAccount.setId(account.getLong("id"));
+                bankAccount.setBankName(account.getString("bank_name"));
+                bankAccount.setBranchName(account.getString("branch_name"));
+                bankAccount.setBankAccountType(account.getString("bank_account_type"));
+                bankAccount.setNumber(account.getString("number"));
+                bankAccount.setName(account.getString("name"));
+
+                bankAccounts.add(bankAccount);
+            }
+            System.out.println("success: " + success);
+            System.out.println("------------------------------");
+            for (BankAccountDTO account : bankAccounts) {
+                System.out.println("ID: " + account.getId());
+                System.out.println("銀行名: " + account.getBankName());
+                System.out.println("支店名: " + account.getBranchName());
+                System.out.println("口座種類: " + account.getBankAccountType());
+                System.out.println("口座番号: " + account.getNumber());
+                System.out.println("口座名義: " + account.getName());
+                System.out.println("------------------------------");
+            }
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>銀行口座の登録</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void postBankAccounts() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        BankAccountDTO bankAccount = new BankAccountDTO();
+        bankAccount.setBankName("XXX銀行");
+        bankAccount.setBranchName("XXX支店");
+        bankAccount.setBankAccountType(Type.futsu);
+        bankAccount.setNumber("1234567");
+        bankAccount.setName("ツウカ　タロウ");
+
+        System.out.println("銀行口座の登録");
+        try {
+            temp = new JSONObject(coincheck.postBankAccounts(bankAccount));
+            success = temp.getBoolean("success");
+            temp = temp.getJSONObject("data");
+            System.out.println("success: " + success);
+            System.out.println("【登録された内容】");
+            System.out.println("ID: " + temp.getLong("id"));
+            System.out.println("銀行名: " + temp.getString("bank_name"));
+            System.out.println("支店名" + temp.getString("branch_name"));
+            System.out.println("口座種類: " + temp.getString("bank_account_type"));
+            System.out.println("口座番号: " + temp.getString("number"));
+            System.out.println("口座名義: " + temp.getString("name"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>銀行口座の削除</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void deleteBankAccounts() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        long id = 0l;
+
+        System.out.println("銀行口座の削除");
+        System.out.println("削除対象ID: " + id);
+        try {
+            temp = new JSONObject(coincheck.deleteBankAccounts(id));
+            success = temp.getBoolean("success");
+            System.out.println("success: " + success);
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());

@@ -4,6 +4,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
+
 /**
  * <b>インターフェース coincheck</b><br>
  * date: 2017-08-03 last_date: 2017-08-28
@@ -15,6 +17,7 @@ import java.time.format.DateTimeFormatter;
  * @see Sort ソート
  * @see Status 状態
  * @see Currency 通貨
+ * @see BankAccountDTO 銀行口座
  */
 public interface Coincheckable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
@@ -164,6 +167,16 @@ public interface Coincheckable {
     public String postDepositMoneyFast(long id); // 高速入金
 
     public String getAccounts(); // アカウント情報取得
+
+    // 日本円出金
+    public String getBankAcccounts(); // 銀行口座一覧
+
+    public String postBankAccounts(String bank_name, String branch_name, Type bank_account_type, String number,
+            String name); // 銀行口座の登録
+
+    public String postBankAccounts(BankAccountDTO bankAccount); // 銀行口座の登録
+
+    public String deleteBankAccounts(long id); // 銀行口座の削除
 
     /**
      * <b>日時 データ・タイプ変換</b><br>

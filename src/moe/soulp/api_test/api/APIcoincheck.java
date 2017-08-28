@@ -3,6 +3,8 @@ package moe.soulp.api_test.api;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
+
 /**
  * <b>coincheckのAPI操作</b><br>
  * date: 2017-08-03 last_date: 2017-08-28
@@ -36,6 +38,14 @@ public class APIcoincheck extends API implements Coincheckable {
     private final static String POSITION_ID       = "position_id";
     private final static String ADDRESS           = "address";
 
+    private final static String BANK_NAME         = "bank_name";
+    private final static String BRANCH_NAME       = "branch_name";
+    private final static String BANK_ACCOUNT_TYPE = "bank_account_type";
+    private final static String NUMBER            = "number";
+    private final static String NAME              = "name";
+
+    private final static String SLASH             = "/";
+
     private static URL          tickerURL;
     private static URL          tradesURL;
     private static URL          orderBooksURL;
@@ -48,6 +58,7 @@ public class APIcoincheck extends API implements Coincheckable {
     private static URL          accountsLeverageBalanceURL;
     private static URL          sendMoneyURL;
     private static URL          accountsURL;
+    private static URL          bankAccountsURL;
 
     static {
         try {
@@ -63,6 +74,7 @@ public class APIcoincheck extends API implements Coincheckable {
             accountsLeverageBalanceURL = new URL(API + ACCOUNTS_LEVERAGE_BALANCE);
             sendMoneyURL = new URL(API + SEND_MONEY);
             accountsURL = new URL(API + ACCOUNTS);
+            bankAccountsURL = new URL(API + BANK_ACCOUNTS);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -584,7 +596,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @return 【JSON】<br>
      *         <b>success</b> 情報取得結果<br>
      *         <hr>
-     *         ordersの配列<br>
+     *         orders 【JSONArray】<br>
      *         <b>id</b> 注文のID<br>
      *         <b>rate</b> 注文のレート<br>
      *         <b>pending_amount</b> 注文の未決済の量<br>
@@ -621,7 +633,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
-     *         transactionsの配列<br>
+     *         transactions 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -647,7 +659,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -675,7 +687,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -703,7 +715,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -732,7 +744,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -762,7 +774,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -793,7 +805,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -824,7 +836,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -858,7 +870,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>order_id</b> 注文のID<br>
      *         <b>created_at</b> 取引日時<br>
@@ -886,7 +898,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -919,7 +931,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -953,7 +965,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -986,7 +998,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1020,7 +1032,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1055,7 +1067,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1090,7 +1102,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1127,7 +1139,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1165,7 +1177,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1204,7 +1216,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1242,7 +1254,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1283,7 +1295,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1321,7 +1333,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1357,7 +1369,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1394,7 +1406,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1430,7 +1442,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
      *         ending_before)<br>
      *         <hr>
-     *         dataの配列<br>
+     *         data 【JSONArray】<br>
      *         <b>id</b> ID<br>
      *         <b>pair</b> 取引ペア<br>
      *         <b>status</b> ポジションの状態 ( "open", "closed" )<br>
@@ -1522,7 +1534,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
-     *         sendsの配列<br>
+     *         sends 【JSONArray】<br>
      *         <b>id</b> 送金のID<br>
      *         <b>amount</b> 送ったbitcoinの量<br>
      *         <b>fee</b> 手数料<br>
@@ -1544,7 +1556,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
-     *         depositsの配列<br>
+     *         deposits 【JSONArray】<br>
      *         <b>id</b> 受け取りのID<br>
      *         <b>amount</b> 受け取った量<br>
      *         <b>currency</b> 通貨<br>
@@ -1570,7 +1582,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String postDepositMoneyFast(long id) {
-        return postPrivateAPI(API + DEPOSIT_MONEY_ID_FAST.replaceAll("[id]", String.valueOf(id)));
+        return postPrivateAPI(API + DEPOSIT_MONEY_ID_FAST.replace("[id]", String.valueOf(id)));
     }
 
     /**
@@ -1590,6 +1602,104 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String getAccounts() {
         return getPrivateAPI(accountsURL);
+    }
+
+    /**
+     * <b>銀行口座一覧</b><br>
+     * お客様の出金用に登録された銀行口座の一覧を返します。
+     * 
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> ID<br>
+     *         <b>bank_name</b> 銀行名<br>
+     *         <b>branch_name</b> 支店名<br>
+     *         <b>bank_account_type</b> 銀行口座の種類（futsu : 普通口座, toza : 当座預金口座）<br>
+     *         <b>number</b> 口座番号<br>
+     *         <b>name</b> 口座名義
+     */
+    @Override
+    public String getBankAcccounts() {
+        return getPrivateAPI(bankAccountsURL);
+    }
+
+    /**
+     * <b>銀行口座の登録</b><br>
+     * 出金先の銀行口座を登録します。
+     * 
+     * @param bank_name
+     *            銀行名
+     * @param branch_name
+     *            支店名
+     * @param bank_account_type
+     *            銀行口座の種類
+     * @param number
+     *            口座番号
+     * @param name
+     *            口座名義
+     * 
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> ID<br>
+     *         <b>bank_name</b> 銀行名<br>
+     *         <b>branch_name</b> 支店名<br>
+     *         <b>bank_account_type</b> 銀行口座の種類（futsu : 普通口座, toza : 当座預金口座）<br>
+     *         <b>number</b> 口座番号<br>
+     *         <b>name</b> 口座名義
+     * @see Type 種類
+     */
+    @Override
+    public String postBankAccounts(String bank_name, String branch_name, Type bank_account_type, String number,
+            String name) {
+        clearParameters();
+        addParameter(BANK_NAME, bank_name);
+        addParameter(BRANCH_NAME, branch_name);
+        addParameter(BANK_ACCOUNT_TYPE, bank_account_type.toString());
+        addParameter(NUMBER, number);
+        addParameter(NAME, name);
+        return postPrivateAPI(bankAccountsURL);
+    }
+
+    /**
+     * <b>銀行口座の登録</b><br>
+     * 出金先の銀行口座を登録します。
+     * 
+     * @param bankAccount
+     *            銀行口座
+     * 
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <hr>
+     *         data 【JSONObject】<br>
+     *         <b>id</b> ID<br>
+     *         <b>bank_name</b> 銀行名<br>
+     *         <b>branch_name</b> 支店名<br>
+     *         <b>bank_account_type</b> 銀行口座の種類（futsu : 普通口座, toza : 当座預金口座）<br>
+     *         <b>number</b> 口座番号<br>
+     *         <b>name</b> 口座名義
+     * @see BankAccountDTO 銀行口座
+     */
+    @Override
+    public String postBankAccounts(BankAccountDTO bankAccount) {
+        return postBankAccounts(bankAccount.getBankName(), bankAccount.getBranchName(),
+                bankAccount.getBankAccountType(), bankAccount.getNumber(), bankAccount.getName());
+    }
+
+    /**
+     * <b>銀行口座の削除</b><br>
+     * 出金先の銀行口座を削除します。
+     * 
+     * @param id
+     *            銀行口座一覧のID
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果
+     */
+    @Override
+    public String deleteBankAccounts(long id) {
+        return deletePrivateAPI(API + BANK_ACCOUNTS + SLASH + id);
     }
 
     protected String getPublicAPI(String url) {
