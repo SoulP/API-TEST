@@ -4,7 +4,7 @@ import moe.soulp.api_test.api.Currency;
 
 /**
  * <b>送金履歴</b><br>
- * date: 2017-08-26 last_date: 2017-08-26
+ * date: 2017-08-26 last_date: 2017-08-28
  * 
  * @author ソウルP
  * @version 1.0 2017-08-26 SendMoneyTransaction作成
@@ -14,6 +14,7 @@ import moe.soulp.api_test.api.Currency;
 public class SendMoneyTransactionDTO extends Transaction {
     private double   amount;  // 量
     private Currency currency;// 通貨
+    private double   fee;     // 手数料
     private String   address; // アドレス
 
     /**
@@ -66,12 +67,32 @@ public class SendMoneyTransactionDTO extends Transaction {
     public void setCurrency(String currency) {
         this.currency = Currency.valueOf(currency);
     }
-    
+
+    /**
+     * <b>手数料 出力</b>
+     * 
+     * @return fee
+     */
+    public double getFee() {
+        return fee;
+    }
+
+    /**
+     * <b>手数料 入力</b>
+     * 
+     * @param fee
+     *            手数料
+     */
+    public void setFee(double fee) {
+        this.fee = fee;
+    }
+
     /**
      * <b>アドレス 出力</b>
+     * 
      * @return address
      */
-    public String getAddress(){
+    public String getAddress() {
         return address;
     }
 
@@ -81,7 +102,7 @@ public class SendMoneyTransactionDTO extends Transaction {
      * @param address
      *            アドレス
      */
-    public void setAddress(String address){
+    public void setAddress(String address) {
         this.address = address;
     }
 }

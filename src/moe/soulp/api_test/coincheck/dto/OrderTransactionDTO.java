@@ -6,13 +6,14 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>取引履歴</b><br>
- * date: 2017/08/21 last_date: 2017/08/26
+ * date: 2017-08-21 last_date: 2017-08-28
  * 
  * @author ソウルP
- * @version 1.0 OrderTransactionDTO作成
- * @version 1.1 2017/08/26 継承することで不要な部分を排除
+ * @version 1.0 2017-08-21 OrderTransactionDTO作成
+ * @version 1.1 2017-08-26 継承することで不要な部分を排除
  * @see Pair 取引ペア
  * @see Type 種類
+ * @see Currency 通貨
  */
 public class OrderTransactionDTO extends Transaction {
     private long     order_id;     // 注文のID
@@ -21,6 +22,7 @@ public class OrderTransactionDTO extends Transaction {
     private Pair     pair;         // 取引ペア
     private double   rate;         // 約定価格
     private Currency fee_currency; // 手数料の通貨
+    private double   fee;          // 手数料
     private String   liquidity;    // 流動性 "T" ( Taker ) or "M" ( Maker )
     private Type     side;         // 取引の種類 "sell" or "buy"
 
@@ -162,6 +164,25 @@ public class OrderTransactionDTO extends Transaction {
      */
     public void setFeeCurrency(String fee_currency) {
         if (!(fee_currency == null || fee_currency.isEmpty())) setFeeCurrency(Currency.valueOf(fee_currency));
+    }
+
+    /**
+     * <b>手数料 出力</b>
+     * 
+     * @return fee
+     */
+    public double getFee() {
+        return fee;
+    }
+
+    /**
+     * <b>手数料 入力</b>
+     * 
+     * @param fee
+     *            手数料
+     */
+    public void setFee(double fee) {
+        this.fee = fee;
     }
 
     /**

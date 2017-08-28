@@ -25,6 +25,7 @@ import moe.soulp.api_test.api.Currency;
 import moe.soulp.api_test.api.Pair;
 import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.coincheck.CoincheckRate;
+import moe.soulp.api_test.coincheck.dto.DepositMoneyTransactionDTO;
 import moe.soulp.api_test.coincheck.dto.OrderDTO;
 import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
 import moe.soulp.api_test.coincheck.dto.PositionDTO;
@@ -33,7 +34,7 @@ import moe.soulp.api_test.coincheck.dto.SendMoneyTransactionDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017-08-03 last_date: 2017-08-26
+ * date: 2017-08-03 last_date: 2017-08-28
  * 
  * @author ソウルP
  */
@@ -931,7 +932,59 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("通貨: " + item.getCurrency());
                 System.out.println("手数料: " + item.getFee());
                 System.out.println("送金先のアドレス: " + item.getAddress());
-                System.out.println("日時: " + item.getCreatedAt());
+                System.out.println("作成日時: " + item.getCreatedAt());
+                System.out.println("------------------------------");
+            }
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>受け取り履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getDepositMoney() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        List<DepositMoneyTransactionDTO> depositMoneyTransactions = new ArrayList<>();
+        try {
+            temp = new JSONObject(coincheck.getDepositMoney(Currency.XMR));
+            success = temp.getBoolean("success");
+            JSONArray deposits = temp.getJSONArray("deposits");
+            for (int i = 0; i < deposits.length(); i++) {
+                JSONObject deposit = deposits.getJSONObject(i);
+                DepositMoneyTransactionDTO depositMoney = new DepositMoneyTransactionDTO();
+                depositMoney.setId(deposit.isNull("id") ? -1l : deposit.getLong("id"));
+                depositMoney
+                        .setAmount(deposit.isNull("amount") ? -1.0d : Double.parseDouble(deposit.getString("amount")));
+                depositMoney.setCurrency(deposit.isNull("currency") ? "" : deposit.getString("currency"));
+                depositMoney.setAddress(deposit.isNull("address") ? "null" : deposit.getString("address"));
+                depositMoney.setStatus(deposit.isNull("status") ? "" : deposit.getString("status"));
+                depositMoney.setConfirmedAt(deposit.isNull("confirmed_at") ? null : deposit.getString("confirmed_at"));
+                depositMoney.setCreatedAt(deposit.isNull("created_at") ? null : deposit.getString("created_at"));
+
+                depositMoneyTransactions.add(depositMoney);
+            }
+
+            System.out.println("受け取り履歴");
+            System.out.println("success: " + success);
+            System.out.println("------------------------------");
+            for (DepositMoneyTransactionDTO item : depositMoneyTransactions) {
+                System.out.println("ID: " + item.getId());
+                System.out.println("受け取った量: " + item.getAmount());
+                System.out.println("通貨: " + item.getCurrency());
+                System.out.println("受け取り元のアドレス: " + item.getAddress());
+                System.out.println("状態: " + item.getStatus());
+                System.out.println("承認日時: " + item.getConfirmedAt());
+                System.out.println("作成日時: " + item.getCreatedAt());
                 System.out.println("------------------------------");
             }
             System.out.println();

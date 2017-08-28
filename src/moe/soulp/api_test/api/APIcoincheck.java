@@ -5,7 +5,7 @@ import java.net.URL;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017-08-03 last_date: 2017-08-26
+ * date: 2017-08-03 last_date: 2017-08-28
  *
  * @author ソウルP
  * @version 1.0 2017-08-03 APIcoincheck作成
@@ -1534,6 +1534,29 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String getSendMoney(Currency currency) {
         return getPrivateAPI(API + SEND_MONEY + Q_CURRENCY + currency);
+    }
+
+    /**
+     * <b>受け取り履歴</b>
+     * 
+     * @param currency
+     *            通貨
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <hr>
+     *         depositsの配列<br>
+     *         <b>id</b> 受け取りのID<br>
+     *         <b>amount</b> 受け取った量<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>address</b> 受け取り元のアドレス<br>
+     *         <b>status</b> 状態<br>
+     *         <b>confirmed_at</b> 受け取りの承認日時<br>
+     *         <b>created_at</b> 受け取り処理の作成日時
+     * @see Currency 通貨
+     */
+    @Override
+    public String getDepositMoney(Currency currency) {
+        return getPrivateAPI(API + DEPOSIT_MONEY + Q_CURRENCY + currency);
     }
 
     /**
