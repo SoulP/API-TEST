@@ -1560,6 +1560,20 @@ public class APIcoincheck extends API implements Coincheckable {
     }
 
     /**
+     * <b>高速入金</b><br>
+     * 受取中のビットコインを高速入金します。
+     * 
+     * @param id
+     *            受け取りのID
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果
+     */
+    @Override
+    public String postDepositMoneyFast(long id) {
+        return postPrivateAPI(API + DEPOSIT_MONEY_ID_FAST.replaceAll("[id]", String.valueOf(id)));
+    }
+
+    /**
      * <b>アカウント情報</b><br>
      * アカウントの情報を表示します。
      *

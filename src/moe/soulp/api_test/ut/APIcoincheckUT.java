@@ -997,6 +997,27 @@ public class APIcoincheckUT extends APIkey {
     }
 
     /**
+     * <b>高速入金</b> 成功テスト
+     */
+    @Test
+    public void postDepositMoneyFast() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        long id = 0l;
+        try {
+            temp = new JSONObject(coincheck.postDepositMoneyFast(id));
+            success = temp.getBoolean("success");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
      * <b>アカウント情報</b><br>
      * 成功テスト
      */

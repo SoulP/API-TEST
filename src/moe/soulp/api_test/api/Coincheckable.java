@@ -161,6 +161,8 @@ public interface Coincheckable {
 
     public String getDepositMoney(Currency currency); // 受け取り履歴
 
+    public String postDepositMoneyFast(long id); // 高速入金
+
     public String getAccounts(); // アカウント情報取得
 
     /**
