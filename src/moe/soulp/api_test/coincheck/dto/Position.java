@@ -8,10 +8,10 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>ポジション</b><br>
- * date: 2017-08-26 last_date: 2017-08-26
+ * date: 2017/08/26 last_date: 2017/08/26
  * 
  * @author ソウルP
- * @version 1.0 2017-08-26 Position作成
+ * @version 1.0 2017/08/26 Position作成
  * @see Type 種類
  * @see Status 状態
  */

@@ -32,10 +32,11 @@ import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
 import moe.soulp.api_test.coincheck.dto.PositionDTO;
 import moe.soulp.api_test.coincheck.dto.PositionOrderDTO;
 import moe.soulp.api_test.coincheck.dto.SendMoneyTransactionDTO;
+import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017-08-03 last_date: 2017-08-28
+ * date: 2017/08/03 last_date: 2017/08/29
  * 
  * @author ソウルP
  */
@@ -1020,6 +1021,60 @@ public class APIcoincheckUT extends APIkey {
     }
 
     /**
+     * <b>アカウント情報</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getAccounts() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        int id = -1;
+        String email = null;
+        String identity_status = null;
+        String bitcoin_address = null;
+        double lending_leverage = -1.0d;
+        double taker_fee = -1.0d;
+        double maker_fee = -1.0d;
+        try {
+            temp = new JSONObject(coincheck.getAccounts());
+            success = temp.getBoolean("success");
+            id = temp.getInt("id");
+            email = temp.getString("email");
+            identity_status = temp.getString("identity_status");
+            bitcoin_address = temp.getString("bitcoin_address");
+            lending_leverage = temp.getDouble("lending_leverage");
+            taker_fee = temp.getDouble("taker_fee");
+            maker_fee = temp.getDouble("maker_fee");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+
+        System.out.println("id: " + id);
+        System.out.println("email: " + email);
+        System.out.println("identity_status: " + identity_status);
+        System.out.println("bitcoin_address: " + bitcoin_address);
+        System.out.println("lending_leverage" + lending_leverage);
+        System.out.println("taker_fee: " + taker_fee);
+        System.out.println("maker_fee: " + maker_fee);
+        System.out.println();
+
+        assertNotNull(temp);
+        assertFalse(coincheck.apiKeyIsEmpty());
+        assertFalse(coincheck.apiSecretIsEmpty());
+        assertTrue(success);
+        assertThat(id, is(not(-1)));
+        assertNotNull(email);
+        assertNotNull(identity_status);
+        assertNotNull(bitcoin_address);
+        assertThat(lending_leverage, is(not(-1.0d)));
+        assertThat(taker_fee, is(not(-1.0d)));
+        assertThat(maker_fee, is(not(-1.0d)));
+    }
+
+    /**
      * <b>銀行口座一覧</b><br>
      * 成功テスト
      */
@@ -1095,7 +1150,7 @@ public class APIcoincheckUT extends APIkey {
             System.out.println("【登録された内容】");
             System.out.println("ID: " + temp.getLong("id"));
             System.out.println("銀行名: " + temp.getString("bank_name"));
-            System.out.println("支店名" + temp.getString("branch_name"));
+            System.out.println("支店名: " + temp.getString("branch_name"));
             System.out.println("口座種類: " + temp.getString("bank_account_type"));
             System.out.println("口座番号: " + temp.getString("number"));
             System.out.println("口座名義: " + temp.getString("name"));
@@ -1135,56 +1190,120 @@ public class APIcoincheckUT extends APIkey {
     }
 
     /**
-     * <b>アカウント情報</b><br>
+     * <b>出金履歴</b><br>
      * 成功テスト
      */
     @Test
-    public void getAccounts() {
+    public void getWithdraws() {
         JSONObject temp = null;
         coincheck.setAPIkey(API_KEY);
         coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
-        int id = -1;
-        String email = null;
-        String identity_status = null;
-        String bitcoin_address = null;
-        double lending_leverage = -1.0d;
-        double taker_fee = -1.0d;
-        double maker_fee = -1.0d;
+        List<WithdrawTransactionDTO> withdraws = new ArrayList<>();
+        System.out.println("出金履歴");
         try {
-            temp = new JSONObject(coincheck.getAccounts());
-            success = temp.getBoolean("success");
-            id = temp.getInt("id");
-            email = temp.getString("email");
-            identity_status = temp.getString("identity_status");
-            bitcoin_address = temp.getString("bitcoin_address");
-            lending_leverage = temp.getDouble("lending_leverage");
-            taker_fee = temp.getDouble("taker_fee");
-            maker_fee = temp.getDouble("maker_fee");
+            temp = new JSONObject(coincheck.getWithdraws());
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            JSONObject pagination = temp.getJSONObject("pagination");
+            System.out.println("pagination_limit: " + pagination.getInt("limit"));
+            System.out.println("pagination_order: " + pagination.getString("order"));
+            System.out.println("pagination_starting_after: "
+                    + (pagination.isNull("starting_after") ? "null" : pagination.getLong("starting_after")));
+            System.out.println("pagination_ending_before: "
+                    + (pagination.isNull("ending_before") ? "null" : pagination.getLong("ending_before")));
+
+            JSONArray datas = temp.getJSONArray("data");
+            for (int i = 0; i < datas.length(); i++) {
+                JSONObject data = datas.getJSONObject(i);
+                WithdrawTransactionDTO withdraw = new WithdrawTransactionDTO();
+                withdraw.setId(data.getLong("id"));
+                withdraw.setStatus(data.getString("status"));
+                withdraw.setAmount(Double.parseDouble(data.getString("amount")));
+                withdraw.setCurrency(data.getString("currency"));
+                withdraw.setCreatedAt(data.getString("created_at"));
+                withdraw.setBankAccountId(data.getLong("bank_account_id"));
+                withdraw.setFee(Double.parseDouble(data.getString("fee")));
+                withdraw.setIsFast(data.getBoolean("is_fast"));
+
+                withdraws.add(withdraw);
+            }
+            System.out.println("------------------------------");
+            for (WithdrawTransactionDTO item : withdraws) {
+                System.out.println("出金申請のID: " + item.getId());
+                System.out.println("出金の状態: " + item.getStatus());
+                System.out.println("通貨: " + item.getCurrency());
+                System.out.println("作成日時: " + item.getCreatedAt());
+                System.out.println("銀行口座のID: " + item.getBankAccountId());
+                System.out.println("手数料: " + item.getFee());
+                System.out.println("高速出金のオプション: " + item.getIsFast());
+                System.out.println("------------------------------");
+            }
+            System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
-
-        System.out.println("id: " + id);
-        System.out.println("email: " + email);
-        System.out.println("identity_status: " + identity_status);
-        System.out.println("bitcoin_address: " + bitcoin_address);
-        System.out.println("lending_leverage" + lending_leverage);
-        System.out.println("taker_fee: " + taker_fee);
-        System.out.println("maker_fee: " + maker_fee);
-        System.out.println();
-
         assertNotNull(temp);
-        assertFalse(coincheck.apiKeyIsEmpty());
-        assertFalse(coincheck.apiSecretIsEmpty());
         assertTrue(success);
-        assertThat(id, is(not(-1)));
-        assertNotNull(email);
-        assertNotNull(identity_status);
-        assertNotNull(bitcoin_address);
-        assertThat(lending_leverage, is(not(-1.0d)));
-        assertThat(taker_fee, is(not(-1.0d)));
-        assertThat(maker_fee, is(not(-1.0d)));
+    }
+
+    /**
+     * <b>出金申請の作成</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void postWithdraws() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        long bank_account_id = 0l;
+        double amount = 0d;
+        Currency currency = Currency.JPY;
+
+        System.out.println("出金申請の作成");
+        try {
+            temp = new JSONObject(coincheck.postWithdraws(bank_account_id, amount, currency));
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            temp = temp.getJSONObject("data");
+            System.out.println("出金申請のID: " + temp.getLong("id"));
+            System.out.println("出金の状態: " + temp.getString("status"));
+            System.out.println("金額: " + temp.getString("amount"));
+            System.out.println("通貨: " + temp.getString("currency"));
+            System.out.println("作成日時: " + Coincheckable.string2zonedDateTime(temp.getString("created_at")));
+            System.out.println("銀行口座のID: " + temp.getLong("bank_account_id"));
+            System.out.println("手数料: " + temp.getString("fee"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>出金申請のキャンセル</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void deleteWithdraws() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        long id = 0l;
+
+        System.out.println("出金申請のキャンセル");
+        try {
+            temp = new JSONObject(coincheck.deleteWithdraws(id));
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
     }
 }

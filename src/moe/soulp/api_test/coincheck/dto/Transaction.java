@@ -6,10 +6,10 @@ import moe.soulp.api_test.api.Coincheckable;
 
 /**
  * <b>トランザクション</b><br>
- * date: 2017-08-26 last_date: 2017-08-28
+ * date: 2017/08/26 last_date: 2017/08/29
  * 
  * @author ソウルP
- * @version 1.0 2017-08-26 Transaction作成
+ * @version 1.0 2017/08/26 Transaction作成
  */
 public abstract class Transaction {
     private long          id;         // ID

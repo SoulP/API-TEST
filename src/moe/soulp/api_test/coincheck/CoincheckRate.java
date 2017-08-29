@@ -10,10 +10,10 @@ import moe.soulp.api_test.api.Pair;
 
 /**
  * <b>販売レート</b><br>
- * date: 2017-08-06 last_date: 2017-08-26
+ * date: 2017/08/06 last_date: 2017/08/29
  * 
  * @author ソウルP
- * @version 1.0 2017-08-06 CoincheckRate作成
+ * @version 1.0 2017/08/06 CoincheckRate作成
  */
 public class CoincheckRate {
     private final static APIcoincheck           coincheck = new APIcoincheck();

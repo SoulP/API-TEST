@@ -2,11 +2,11 @@ package moe.soulp.api_test.coincheck.dto;
 
 /**
  * <b>ポジション情報の注文情報</b><br>
- * date: 2017-08-22 last_date: 2017-08-26
+ * date: 2017/08/22 last_date: 2017/08/29
  * 
  * @author ソウルP
- * @version 1.0 2017-08-22 PositionOrderDTO作成
- * @version 1.1 2017-08-26 継承することで不要な部分を排除
+ * @version 1.0 2017/08/22 PositionOrderDTO作成
+ * @version 1.1 2017/08/26 継承することで不要な部分を排除
  * @see Position ポジション
  */
 public class PositionOrderDTO extends Position {

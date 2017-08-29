@@ -4,20 +4,17 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
-
 /**
  * <b>インターフェース coincheck</b><br>
- * date: 2017-08-03 last_date: 2017-08-28
+ * date: 2017/08/03 last_date: 2017/08/29
  *
  * @author ソウルP
- * @version 1.0 2017-08-03 Coincheckable作成
+ * @version 1.0 2017/08/03 Coincheckable作成
  * @see Pair 取引ペア
  * @see Type 種類
  * @see Sort ソート
  * @see Status 状態
  * @see Currency 通貨
- * @see BankAccountDTO 銀行口座
  */
 public interface Coincheckable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
@@ -174,9 +171,27 @@ public interface Coincheckable {
     public String postBankAccounts(String bank_name, String branch_name, Type bank_account_type, String number,
             String name); // 銀行口座の登録
 
-    public String postBankAccounts(BankAccountDTO bankAccount); // 銀行口座の登録
-
     public String deleteBankAccounts(long id); // 銀行口座の削除
+
+    public String getWithdraws(); // 出金履歴
+
+    public String getWithdraws(int limit); // 出金履歴
+
+    public String getWithdraws(Sort order); // 出金履歴
+
+    public String getWithdraws(long starting_after); // 出金履歴
+
+    public String getWithdraws(int limit, Sort order); // 出金履歴
+
+    public String getWithdraws(int limit, long starting_after); // 出金履歴
+
+    public String getWithdraws(int limit, Sort order, long starting_after); // 出金履歴
+
+    public String getWithdraws(Sort order, long starting_after); // 出金履歴
+
+    public String postWithdraws(long bank_account_id, double amount, Currency currency); // 出金申請の作成
+
+    public String deleteWithdraws(long id); // 出金申請のキャンセル
 
     /**
      * <b>日時 データ・タイプ変換</b><br>

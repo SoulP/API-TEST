@@ -4,10 +4,10 @@ import moe.soulp.api_test.api.Currency;
 
 /**
  * <b>送金履歴</b><br>
- * date: 2017-08-26 last_date: 2017-08-28
+ * date: 2017/08/26 last_date: 2017/08/29
  * 
  * @author ソウルP
- * @version 1.0 2017-08-26 SendMoneyTransaction作成
+ * @version 1.0 2017/08/26 SendMoneyTransaction作成
  * @see Transaction トランザクション
  * @see Currecny 通貨
  */

@@ -6,11 +6,11 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>取引履歴</b><br>
- * date: 2017-08-21 last_date: 2017-08-28
+ * date: 2017/08/21 last_date: 2017/08/29
  * 
  * @author ソウルP
- * @version 1.0 2017-08-21 OrderTransactionDTO作成
- * @version 1.1 2017-08-26 継承することで不要な部分を排除
+ * @version 1.0 2017/08/21 OrderTransactionDTO作成
+ * @version 1.1 2017/08/26 継承することで不要な部分を排除
  * @see Pair 取引ペア
  * @see Type 種類
  * @see Currency 通貨

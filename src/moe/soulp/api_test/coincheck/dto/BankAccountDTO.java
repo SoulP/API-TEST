@@ -4,10 +4,10 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>銀行口座</b><br>
- * date: 2017-08-28 last_date: 2017-08-28
+ * date: 2017/08/28 last_date: 2017/08/29
  * 
  * @author ソウルP
- * @version 1.0 2017-08-28 BankAccountDTO作成
+ * @version 1.0 2017/08/28 BankAccountDTO作成
  * @see Type 種類
  */
 public class BankAccountDTO {

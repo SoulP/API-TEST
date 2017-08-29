@@ -7,10 +7,10 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017-08-03 last_date: 2017-08-28
+ * date: 2017/08/03 last_date: 2017/08/29
  *
  * @author ソウルP
- * @version 1.0 2017-08-03 APIcoincheck作成
+ * @version 1.0 2017/08/03 APIcoincheck作成
  * @see API 汎用API接続
  * @see Coincheckable coincheck
  */
@@ -43,6 +43,8 @@ public class APIcoincheck extends API implements Coincheckable {
     private final static String BANK_ACCOUNT_TYPE = "bank_account_type";
     private final static String NUMBER            = "number";
     private final static String NAME              = "name";
+    private final static String BANK_ACCOUNT_ID   = "bank_account_id";
+    private final static String CURRENCY          = "currency";
 
     private final static String SLASH             = "/";
 
@@ -59,6 +61,7 @@ public class APIcoincheck extends API implements Coincheckable {
     private static URL          sendMoneyURL;
     private static URL          accountsURL;
     private static URL          bankAccountsURL;
+    private static URL          withdrawsURL;
 
     static {
         try {
@@ -75,6 +78,7 @@ public class APIcoincheck extends API implements Coincheckable {
             sendMoneyURL = new URL(API + SEND_MONEY);
             accountsURL = new URL(API + ACCOUNTS);
             bankAccountsURL = new URL(API + BANK_ACCOUNTS);
+            withdrawsURL = new URL(API + WITHDRAWS);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -1612,7 +1616,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>success</b> 結果<br>
      *         <hr>
      *         data 【JSONArray】<br>
-     *         <b>id</b> ID<br>
+     *         <b>id</b> 銀行口座のID<br>
      *         <b>bank_name</b> 銀行名<br>
      *         <b>branch_name</b> 支店名<br>
      *         <b>bank_account_type</b> 銀行口座の種類（futsu : 普通口座, toza : 当座預金口座）<br>
@@ -1643,7 +1647,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>success</b> 結果<br>
      *         <hr>
      *         data 【JSONArray】<br>
-     *         <b>id</b> ID<br>
+     *         <b>id</b> 銀行口座のID<br>
      *         <b>bank_name</b> 銀行名<br>
      *         <b>branch_name</b> 支店名<br>
      *         <b>bank_account_type</b> 銀行口座の種類（futsu : 普通口座, toza : 当座預金口座）<br>
@@ -1674,7 +1678,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>success</b> 結果<br>
      *         <hr>
      *         data 【JSONObject】<br>
-     *         <b>id</b> ID<br>
+     *         <b>id</b> 銀行口座のID<br>
      *         <b>bank_name</b> 銀行名<br>
      *         <b>branch_name</b> 支店名<br>
      *         <b>bank_account_type</b> 銀行口座の種類（futsu : 普通口座, toza : 当座預金口座）<br>
@@ -1682,7 +1686,6 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>name</b> 口座名義
      * @see BankAccountDTO 銀行口座
      */
-    @Override
     public String postBankAccounts(BankAccountDTO bankAccount) {
         return postBankAccounts(bankAccount.getBankName(), bankAccount.getBranchName(),
                 bankAccount.getBankAccountType(), bankAccount.getNumber(), bankAccount.getName());
@@ -1693,13 +1696,279 @@ public class APIcoincheck extends API implements Coincheckable {
      * 出金先の銀行口座を削除します。
      * 
      * @param id
-     *            銀行口座一覧のID
+     *            銀行口座のID
      * @return 【JSON】<br>
      *         <b>success</b> 結果
      */
     @Override
     public String deleteBankAccounts(long id) {
         return deletePrivateAPI(API + BANK_ACCOUNTS + SLASH + id);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     */
+    @Override
+    public String getWithdraws() {
+        return getPrivateAPI(withdrawsURL);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     */
+    @Override
+    public String getWithdraws(int limit) {
+        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @param order
+     *            ソート
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     * @see Sort ソート
+     */
+    @Override
+    public String getWithdraws(Sort order) {
+        return getPrivateAPI(API + WITHDRAWS + Q_ORDER + order);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     */
+    @Override
+    public String getWithdraws(long starting_after) {
+        return getPrivateAPI(API + WITHDRAWS + Q_STARTING_AFTER + starting_after);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @param order
+     *            ソート
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     * @see Sort ソート
+     */
+    @Override
+    public String getWithdraws(int limit, Sort order) {
+        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_ORDER + order);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     */
+    @Override
+    public String getWithdraws(int limit, long starting_after) {
+        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_STARTING_AFTER + starting_after);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @param limit
+     *            最大表示件数
+     * @param order
+     *            ソート
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     * @see Sort ソート
+     */
+    @Override
+    public String getWithdraws(int limit, Sort order, long starting_after) {
+        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER + starting_after);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 出金の申請の履歴を表示します。
+     * 
+     * @param order
+     *            ソート
+     * @param starting_after
+     *            指定したIDより後の取引履歴 starting_after < id
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
+     *         ending_before)<br>
+     *         <hr>
+     *         data 【JSONArray】<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>is_fast</b> 高速出金のオプション
+     * @see Sort ソート
+     */
+    @Override
+    public String getWithdraws(Sort order, long starting_after) {
+        return getPrivateAPI(API + WITHDRAWS + Q_ORDER + order + A_STARTING_AFTER + starting_after);
+    }
+
+    /**
+     * <b>出金申請の作成</b><br>
+     * 出金申請をします。
+     * 
+     * @param bank_account_id
+     *            銀行口座のID
+     * @param amount
+     *            金額
+     * @param currency
+     *            通貨
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <hr>
+     *         data JSONObject<br>
+     *         <b>id</b> 出金申請のID<br>
+     *         <b>status</b> 出金の状態<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 作成日時<br>
+     *         <b>bank_account_id</b> 銀行口座のID<br>
+     *         <b>fee</b> 手数料
+     * @see Currency 通貨
+     */
+    @Override
+    public String postWithdraws(long bank_account_id, double amount, Currency currency) {
+        clearParameters();
+        addParameter(BANK_ACCOUNT_ID, String.valueOf(bank_account_id));
+        addParameter(AMOUNT, String.valueOf(amount));
+        addParameter(CURRENCY, currency.toString());
+        return postPrivateAPI(withdrawsURL);
+    }
+
+    /**
+     * <b>出金申請のキャンセル</b><br>
+     * 出金申請をキャンセルします。
+     * 
+     * @param id
+     *            出金申請のID
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果
+     */
+    @Override
+    public String deleteWithdraws(long id) {
+        return deletePrivateAPI(API + WITHDRAWS + SLASH + id);
     }
 
     protected String getPublicAPI(String url) {

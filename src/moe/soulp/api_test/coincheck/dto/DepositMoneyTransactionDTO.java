@@ -8,10 +8,10 @@ import moe.soulp.api_test.api.Status;
 
 /**
  * <b>受け取り履歴</b><br>
- * date: 2017-08-26 last_date: 2017-08-26
+ * date: 2017/08/26 last_date: 2017/08/29
  * 
  * @author ソウルP
- * @version 1.0 2017-08-26 DepostMoneyTransactionDTO作成
+ * @version 1.0 2017/08/26 DepostMoneyTransactionDTO作成
  * @see Currency 通貨
  * @see Status 状態
  */
