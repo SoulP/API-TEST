@@ -7,7 +7,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/01
+ * date: 2017/08/03 last_date: 2017/09/06
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -64,6 +64,8 @@ public class APIcoincheck extends API implements Coincheckable {
     private static URL          withdrawsURL;
     private static URL          lendingBorrowsURL;
     private static URL          lendingBorrowsMatchesURL;
+    private static URL          toLeverageURL;
+    private static URL          fromLeverageURL;
 
     static {
         try {
@@ -83,6 +85,8 @@ public class APIcoincheck extends API implements Coincheckable {
             withdrawsURL = new URL(API + WITHDRAWS);
             lendingBorrowsURL = new URL(API + LENDING_BORROWS);
             lendingBorrowsMatchesURL = new URL(API + LENDING_BORROWS_MATCHES);
+            toLeverageURL = new URL(API + EXCHANGE_TRANSFERS_TO_LEVERAGE);
+            fromLeverageURL = new URL(API + EXCHANGE_TRANSFERS_FROM_LEVERAGE);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -2037,6 +2041,46 @@ public class APIcoincheck extends API implements Coincheckable {
     public String postLendingBorrowsIdRepay(long id) {
         clearParameters();
         return postPrivateAPI(API + LENDING_BORROWS_ID_REPAY.replace("[id]", String.valueOf(id)));
+    }
+
+    /**
+     * <b>レバレッジアカウントへ振替</b><br>
+     * 現物取引アカウントからレバレッジアカウントへ振替します。
+     * 
+     * @param currency
+     *            通貨
+     * @param amount
+     *            移動する数量
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果
+     * @see Currency 通貨
+     */
+    @Override
+    public String postToLeverage(Currency currency, double amount) {
+        clearParameters();
+        addParameter(CURRENCY, currency.toString());
+        addParameter(AMOUNT, String.valueOf(amount));
+        return postPrivateAPI(toLeverageURL);
+    }
+
+    /**
+     * <b>レバレッジアカウントから振替</b><br>
+     * レバレッジアカウントから現物取引アカウントへ振替します。
+     * 
+     * @param currency
+     *            通貨
+     * @param amount
+     *            移動する数量
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果
+     * @see Currency 通貨
+     */
+    @Override
+    public String postFromLeverage(Currency currency, double amount) {
+        clearParameters();
+        addParameter(CURRENCY, currency.toString());
+        addParameter(AMOUNT, String.valueOf(amount));
+        return postPrivateAPI(fromLeverageURL);
     }
 
     protected String getPublicAPI(String url) {

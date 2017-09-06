@@ -1414,4 +1414,60 @@ public class APIcoincheckUT extends APIkey {
         assertNotNull(temp);
         assertTrue(success);
     }
+
+    /**
+     * <b>レバレッジアカウントへ振替</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void postToLeverage() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        Currency currency = Currency.JPY;
+        double amount = 0d;
+
+        System.out.println("レバレッジアカウントへ振替");
+        try {
+            temp = new JSONObject(coincheck.postToLeverage(currency, amount));
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            System.out.println("通貨: " + currency);
+            System.out.println("移動する数量: " + amount);
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>レバレッジアカウントへ振替</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void postFromLeverage() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        Currency currency = Currency.JPY;
+        double amount = 0d;
+
+        System.out.println("レバレッジアカウントから振替");
+        try {
+            temp = new JSONObject(coincheck.postFromLeverage(currency, amount));
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            System.out.println("通貨: " + currency);
+            System.out.println("移動する数量: " + amount);
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
 }

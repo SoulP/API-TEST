@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>インターフェース coincheck</b><br>
- * date: 2017/08/03 last_date: 2017/09/01
+ * date: 2017/08/03 last_date: 2017/09/06
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
@@ -193,12 +193,17 @@ public interface Coincheckable {
 
     public String deleteWithdraws(long id); // 出金申請のキャンセル
 
-    //信用取引
+    // 信用取引
     public String postLendingBorrows(double amount, Currency currency); // 借入申請
 
     public String getLendingBorrowsMatches(); // 借入中一覧
 
     public String postLendingBorrowsIdRepay(long id); // 返済
+
+    // 為替
+    public String postToLeverage(Currency currency, double amount); // レバレッジアカウントへ振替
+
+    public String postFromLeverage(Currency currency, double amount); // レバレッジアカウントから振替
 
     /**
      * <b>日時 データ・タイプ変換</b><br>
