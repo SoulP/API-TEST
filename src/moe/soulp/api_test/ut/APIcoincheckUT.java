@@ -27,6 +27,7 @@ import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.coincheck.CoincheckRate;
 import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 import moe.soulp.api_test.coincheck.dto.DepositMoneyTransactionDTO;
+import moe.soulp.api_test.coincheck.dto.LendingBorrowDTO;
 import moe.soulp.api_test.coincheck.dto.OrderDTO;
 import moe.soulp.api_test.coincheck.dto.OrderTransactionDTO;
 import moe.soulp.api_test.coincheck.dto.PositionDTO;
@@ -36,7 +37,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
  * <b>UTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/08/29
+ * date: 2017/08/03 last_date: 2017/09/06
  * 
  * @author ソウルP
  */
@@ -1298,6 +1299,113 @@ public class APIcoincheckUT extends APIkey {
         try {
             temp = new JSONObject(coincheck.deleteWithdraws(id));
             System.out.println("success: " + (success = temp.getBoolean("success")));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>借入申請</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void postLendingBorrows() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        double amount = 0.05d;
+        Currency currency = Currency.BTC;
+
+        System.out.println("借入申請");
+        try {
+            temp = new JSONObject(coincheck.postLendingBorrows(amount, currency));
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            System.out.println("借入申請のID: " + temp.getLong("id"));
+            System.out.println("日当たりのレート: " + temp.getString("rate"));
+            System.out.println("注文の量: " + temp.getString("amount"));
+            System.out.println("通貨: " + temp.getString("currency"));
+            System.out.println("注文の作成日時: " + Coincheckable.string2zonedDateTime(temp.getString("created_at")));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>借入中一覧</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getLendingBorrowsMatches() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+
+        System.out.println("借入中一覧");
+        try {
+            temp = new JSONObject(coincheck.getLendingBorrowsMatches());
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            JSONArray matches = temp.getJSONArray("matches");
+            List<LendingBorrowDTO> borrows = new ArrayList<>();
+            for (int i = 0; i < matches.length(); i++) {
+                JSONObject match = matches.getJSONObject(i);
+                LendingBorrowDTO borrow = new LendingBorrowDTO();
+                borrow.setId(match.getLong("id"));
+                borrow.setBorrowId(match.getLong("borrow_id"));
+                borrow.setRate(Double.parseDouble(match.getString("rate")));
+                borrow.setAmount(Double.parseDouble(match.getString("amount")));
+                borrow.setPendingAmount(Double.parseDouble(match.getString("pending_amount")));
+                borrow.setCurrency(match.getString("currency"));
+                borrow.setDeadline(match.getString("deadline"));
+
+                borrows.add(borrow);
+            }
+            System.out.println("------------------------------");
+            borrows.forEach(item -> {
+                System.out.println("借入中一覧のID: " + item.getId());
+                System.out.println("借入申請のID: " + item.getBorrowId());
+                System.out.println("日当たりのレート: " + item.getRate());
+                System.out.println("借りた量: " + item.getAmount());
+                System.out.println("借りている量（利子付き）: " + item.getPendingAmount());
+                System.out.println("通貨: " + item.getCurrency());
+                System.out.println("返却期日: " + item.getDeadline());
+                System.out.println("------------------------------");
+            });
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+        assertTrue(success);
+    }
+
+    /**
+     * <b>返済</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void postLendingBorrowsIdRepay() {
+        JSONObject temp = null;
+        coincheck.setAPIkey(API_KEY);
+        coincheck.setAPIsecret(API_SECRET);
+        boolean success = false;
+        long id = 0l;
+
+        System.out.println("返済");
+        try {
+            temp = new JSONObject(coincheck.postLendingBorrowsIdRepay(id));
+            System.out.println("success: " + (success = temp.getBoolean("success")));
+            System.out.println("id: " + temp.getLong("id"));
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();

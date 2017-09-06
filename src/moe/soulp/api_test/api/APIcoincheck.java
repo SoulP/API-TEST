@@ -7,7 +7,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/08/29
+ * date: 2017/08/03 last_date: 2017/09/01
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -62,6 +62,8 @@ public class APIcoincheck extends API implements Coincheckable {
     private static URL          accountsURL;
     private static URL          bankAccountsURL;
     private static URL          withdrawsURL;
+    private static URL          lendingBorrowsURL;
+    private static URL          lendingBorrowsMatchesURL;
 
     static {
         try {
@@ -79,6 +81,8 @@ public class APIcoincheck extends API implements Coincheckable {
             accountsURL = new URL(API + ACCOUNTS);
             bankAccountsURL = new URL(API + BANK_ACCOUNTS);
             withdrawsURL = new URL(API + WITHDRAWS);
+            lendingBorrowsURL = new URL(API + LENDING_BORROWS);
+            lendingBorrowsMatchesURL = new URL(API + LENDING_BORROWS_MATCHES);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -1586,6 +1590,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String postDepositMoneyFast(long id) {
+        clearParameters();
         return postPrivateAPI(API + DEPOSIT_MONEY_ID_FAST.replace("[id]", String.valueOf(id)));
     }
 
@@ -1969,6 +1974,69 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String deleteWithdraws(long id) {
         return deletePrivateAPI(API + WITHDRAWS + SLASH + id);
+    }
+
+    /**
+     * <b>借入申請</b><br>
+     * 借入の申請をします。
+     * 
+     * @param amount
+     *            借りたい量
+     * @param currency
+     *            通貨
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>id</b> 借入申請のID<br>
+     *         <b>rate</b> 日当たりのレート<br>
+     *         <b>amount</b> 注文の量<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>created_at</b> 注文の作成日時
+     * @see Currency 通貨
+     */
+    @Override
+    public String postLendingBorrows(double amount, Currency currency) {
+        clearParameters();
+        addParameter(AMOUNT, String.valueOf(amount));
+        addParameter(CURRENCY, currency.toString());
+        return postPrivateAPI(lendingBorrowsURL);
+    }
+
+    /**
+     * <b>借入中一覧</b><br>
+     * 借り入れしている通貨の一覧を表示します。<br>
+     * この id を元に返却をすることができます。
+     * 
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <hr>
+     *         matches 【JSONArray】<br>
+     *         <b>id</b> 借入中一覧のID<br>
+     *         <b>borrow_id</b> 借入申請のID<br>
+     *         <b>rate</b> 日当たりのレート<br>
+     *         <b>amount</b> 借りた量<br>
+     *         <b>pending_amount</b> 借りている量（利子付き）<br>
+     *         <b>currency</b> 通貨<br>
+     *         <b>deadline</b> 返却期日
+     */
+    @Override
+    public String getLendingBorrowsMatches() {
+        return getPrivateAPI(lendingBorrowsMatchesURL);
+    }
+
+    /**
+     * <b>返済</b><br>
+     * 返却をすることができます。
+     * 
+     * @param id
+     *            借入中一覧のID
+     * @return 【JSON】<br>
+     *         <b>success</b> 結果<br>
+     *         <b>id</b> ID
+     */
+    @Override
+    public String postLendingBorrowsIdRepay(long id) {
+        clearParameters();
+        return postPrivateAPI(API + LENDING_BORROWS_ID_REPAY.replace("[id]", String.valueOf(id)));
     }
 
     protected String getPublicAPI(String url) {
