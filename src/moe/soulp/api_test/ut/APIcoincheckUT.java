@@ -42,7 +42,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
  * @author ソウルP
  */
 public class APIcoincheckUT extends APIkey {
-    final static APIcoincheck coincheck = new APIcoincheck();
+    final static APIcoincheck coincheck = new APIcoincheck(API_KEY, API_SECRET);
 
     /**
      * <b>ティッカー</b><br>
@@ -174,7 +174,7 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void getOrderBooks() {
+    public void getBoard() {
         JSONArray asks = null;
         JSONArray bids = null;
         JSONObject temp = null;
@@ -191,7 +191,7 @@ public class APIcoincheckUT extends APIkey {
         double minBidPrice = -1.0d;
         double minBidAmount = -1.0d;
         try {
-            temp = new JSONObject(coincheck.getOrderBooks());
+            temp = new JSONObject(coincheck.getBoard());
             asks = temp.getJSONArray("asks");
             bids = temp.getJSONArray("bids");
             maxAsk = asks.getJSONArray((asks.length() - 1));
@@ -336,19 +336,39 @@ public class APIcoincheckUT extends APIkey {
     }
 
     /**
+     * <b>チャット受信</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getChat() {
+        try {
+            JSONArray temp = new JSONObject(coincheck.getChat()).getJSONArray("chats");
+            JSONObject newChat = temp.getJSONObject(temp.length() - 1);
+            System.out.println("チャット受信");
+            System.out.println("id: " + newChat.getLong("id"));
+            System.out.println("ニックネーム: " + newChat.getString("name"));
+            System.out.println("内容: " + newChat.getString("content"));
+            System.out.println("作成日時: " + Coincheckable.string2zonedDateTime(newChat.getString("created_at")));
+            System.out.println("検証状態: " + newChat.getString("verify_status"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    /**
      * <b>指値注文 レバレッジ取引新規 買い</b><br>
      * 成功テスト
      */
     @Test
-    public void postOrderLeverageBuy() {
+    public void leverageBuy() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         double amount = 0.005d;
         double rate = 300000d;
         assertTrue(amount >= 0.005d);
         try {
-            temp = new JSONObject(coincheck.postOrderLeverageBuy(Pair.btc_jpy, amount, rate));
+            temp = new JSONObject(coincheck.leverageBuy(Pair.btc_jpy, amount, rate));
             System.out.println("id: " + temp.getInt("id"));
             System.out.println("rate: " + temp.getDouble("rate"));
             System.out.println("amount: " + temp.getDouble("amount"));
@@ -370,15 +390,13 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postOrderLeverageSell() {
+    public void leverageSell() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         double amount = 0.005d;
         double rate = 450000d;
         assertTrue(amount >= 0.005d);
         try {
-            temp = new JSONObject(coincheck.postOrderLeverageSell(Pair.btc_jpy, amount, rate));
+            temp = new JSONObject(coincheck.leverageSell(Pair.btc_jpy, amount, rate));
             System.out.println("id: " + temp.getInt("id"));
             System.out.println("rate: " + temp.getDouble("rate"));
             System.out.println("amount: " + temp.getDouble("amount"));
@@ -400,15 +418,13 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postOrderCloseLong() {
+    public void closeLong() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         double amount = 0.05d;
         long position_id = 193728148l;
         double rate = 450000d;
         try {
-            temp = new JSONObject(coincheck.postOrderCloseLong(Pair.btc_jpy, amount, position_id, rate));
+            temp = new JSONObject(coincheck.closeLong(Pair.btc_jpy, amount, position_id, rate));
             System.out.println(temp);
             System.out.println("id: " + temp.getInt("id"));
             System.out.println("rate: " + temp.getDouble("rate"));
@@ -430,15 +446,13 @@ public class APIcoincheckUT extends APIkey {
      * <b>成行注文 レバレッジ取引決済 買い</b><br>
      * 成功テスト
      */
-    public void postOrderCloseShort() {
+    public void closeShort() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         double amount = 0.05d;
         long position_id = 193728148l;
         double rate = 500000d;
         try {
-            temp = new JSONObject(coincheck.postOrderCloseShort(Pair.btc_jpy, amount, position_id, rate));
+            temp = new JSONObject(coincheck.closeShort(Pair.btc_jpy, amount, position_id, rate));
             System.out.println(temp);
             System.out.println("id: " + temp.getInt("id"));
             System.out.println("rate: " + temp.getDouble("rate"));
@@ -466,8 +480,6 @@ public class APIcoincheckUT extends APIkey {
         boolean success = false;
         JSONArray orders = null;
         List<OrderDTO> list = new ArrayList<>();
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         try {
             temp = new JSONObject(coincheck.getOrdersOpens());
             success = temp.getBoolean("success");
@@ -488,7 +500,7 @@ public class APIcoincheckUT extends APIkey {
                 list.add(tempOrder);
             }
             System.out.println("未決済の注文一覧");
-            for (OrderDTO obj : list) {
+            list.forEach(obj -> {
                 System.out.println("id: " + obj.getId());
                 System.out.println("order_type: " + obj.getOrderType());
                 System.out.println("rate: " + obj.getRate());
@@ -498,7 +510,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("stop_less_rate: " + obj.getStopLessRate());
                 System.out.println("created_at: " + obj.getCreatedAt());
                 System.out.println();
-            }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -511,14 +523,14 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void deleteOrdersId() {
+    public void deleteOrder() {
         JSONObject temp = null;
         coincheck.setAPIkey(API_KEY);
         coincheck.setAPIsecret(API_SECRET);
         long id = 210480568l;
         boolean success = false;
         try {
-            temp = new JSONObject(coincheck.deleteOrdersId(id));
+            temp = new JSONObject(coincheck.deleteOrder(String.valueOf(id)));
             System.out.println("注文のキャンセル");
             System.out.println("success: " + (success = temp.getBoolean("success")));
             System.out.println("id: " + temp.getLong("id"));
@@ -538,8 +550,6 @@ public class APIcoincheckUT extends APIkey {
     public void getOrdersTransactions() {
         JSONObject temp = null;
         JSONArray tempArray = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         List<OrderTransactionDTO> list = new ArrayList<>();
         try {
@@ -564,20 +574,20 @@ public class APIcoincheckUT extends APIkey {
                 list.add(dto);
             }
 
-            for (OrderTransactionDTO transaction : list) {
-                System.out.println("id: " + transaction.getId());
-                System.out.println("order_id: " + transaction.getOrderId());
-                System.out.println("created_at: " + transaction.getCreatedAt());
-                System.out.println("funds_btc: " + transaction.getFundsBtc());
-                System.out.println("funds_jpy: " + transaction.getFundsJpy());
-                System.out.println("pair: " + transaction.getPair());
-                System.out.println("rate: " + transaction.getRate());
-                System.out.println("fee_currency: " + transaction.getFeeCurrency());
-                System.out.println("fee: " + transaction.getFee());
-                System.out.println("liquidity: " + transaction.getLiquidity());
-                System.out.println("side: " + transaction.getSide());
+            list.forEach(t -> {
+                System.out.println("id: " + t.getId());
+                System.out.println("order_id: " + t.getOrderId());
+                System.out.println("created_at: " + t.getCreatedAt());
+                System.out.println("funds_btc: " + t.getFundsBtc());
+                System.out.println("funds_jpy: " + t.getFundsJpy());
+                System.out.println("pair: " + t.getPair());
+                System.out.println("rate: " + t.getRate());
+                System.out.println("fee_currency: " + t.getFeeCurrency());
+                System.out.println("fee: " + t.getFee());
+                System.out.println("liquidity: " + t.getLiquidity());
+                System.out.println("side: " + t.getSide());
                 System.out.println();
-            }
+            });
             System.out.println("件数: " + list.size());
             System.out.println();
         } catch (JSONException e) {
@@ -597,8 +607,6 @@ public class APIcoincheckUT extends APIkey {
     public void getOrdersTransactionsPagination() {
         JSONObject temp = null;
         JSONArray tempArray = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         List<OrderTransactionDTO> list = new ArrayList<>();
         int limit = 5;
@@ -637,20 +645,20 @@ public class APIcoincheckUT extends APIkey {
                 list.add(dto);
             }
 
-            for (OrderTransactionDTO transaction : list) {
-                System.out.println("id: " + transaction.getId());
-                System.out.println("order_id: " + transaction.getOrderId());
-                System.out.println("created_at: " + transaction.getCreatedAt());
-                System.out.println("funds_btc: " + transaction.getFundsBtc());
-                System.out.println("funds_jpy: " + transaction.getFundsJpy());
-                System.out.println("pair: " + transaction.getPair());
-                System.out.println("rate: " + transaction.getRate());
-                System.out.println("fee_currency: " + transaction.getFeeCurrency());
-                System.out.println("fee: " + transaction.getFee());
-                System.out.println("liquidity: " + transaction.getLiquidity());
-                System.out.println("side: " + transaction.getSide());
+            list.forEach(t -> {
+                System.out.println("id: " + t.getId());
+                System.out.println("order_id: " + t.getOrderId());
+                System.out.println("created_at: " + t.getCreatedAt());
+                System.out.println("funds_btc: " + t.getFundsBtc());
+                System.out.println("funds_jpy: " + t.getFundsJpy());
+                System.out.println("pair: " + t.getPair());
+                System.out.println("rate: " + t.getRate());
+                System.out.println("fee_currency: " + t.getFeeCurrency());
+                System.out.println("fee: " + t.getFee());
+                System.out.println("liquidity: " + t.getLiquidity());
+                System.out.println("side: " + t.getSide());
                 System.out.println();
-            }
+            });
 
             System.out.println("件数: " + list.size());
             System.out.println();
@@ -671,8 +679,6 @@ public class APIcoincheckUT extends APIkey {
     public void getPositions() {
         JSONObject temp = null;
         JSONArray tempArray = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         try {
             temp = new JSONObject(coincheck.getPositions());
@@ -743,7 +749,7 @@ public class APIcoincheckUT extends APIkey {
                 positions.add(position);
             }
 
-            for (PositionDTO pos : positions) {
+            positions.forEach(pos -> {
                 System.out.println("id: " + pos.getId());
                 System.out.println("pair: " + pos.getPair());
                 System.out.println("status: " + pos.getStatus());
@@ -766,7 +772,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("n_created_at: " + pos.getNewOrder().getCreatedAt());
                 System.out.println("------------------------------");
                 System.out.println("close_orders:");
-                for (PositionOrderDTO close_order : pos.getCloseOrders()) {
+                pos.getCloseOrders().forEach(close_order -> {
                     System.out.println("c_id: " + close_order.getId());
                     System.out.println("c_side: " + close_order.getSide());
                     System.out.println("c_rate: " + close_order.getRate());
@@ -775,9 +781,9 @@ public class APIcoincheckUT extends APIkey {
                     System.out.println("c_status: " + close_order.getStatus());
                     System.out.println("c_created_at: " + close_order.getCreatedAt());
                     System.out.println("------------------------------");
-                }
+                });
                 System.out.println();
-            }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -792,14 +798,12 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void getAccountsBalance() {
+    public void getBalance() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         System.out.println("残高");
         try {
-            temp = new JSONObject(coincheck.getAccountsBalance());
+            temp = new JSONObject(coincheck.getBalance());
             success = temp.getBoolean("success");
             System.out.print("jpy: ");
             System.out.println(temp.isNull("jpy") ? "null" : temp.getString("jpy"));
@@ -835,14 +839,12 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void getAccountsLeverageBalance() {
+    public void getLeverageBalance() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         System.out.println("レバレッジアカウントの残高");
         try {
-            temp = new JSONObject(coincheck.getAccountsLeverageBalance());
+            temp = new JSONObject(coincheck.getLeverageBalance());
             success = temp.getBoolean("success");
             System.out.print("証拠金: ");
             System.out.println(temp.isNull("margin") ? "null"
@@ -868,10 +870,8 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postSendMoney() {
+    public void sendMoney() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         String address = "32EYfRM6P9D1WUBwxzdE8gyodb6R3Kx9Cg";
         double amount = 0.005d;
@@ -879,7 +879,7 @@ public class APIcoincheckUT extends APIkey {
         System.out.println("ビットコインの送金");
 
         try {
-            temp = new JSONObject(coincheck.postSendMoney(address, amount));
+            temp = new JSONObject(coincheck.sendMoney(address, amount));
             success = temp.getBoolean("success");
             System.out.print("id: ");
             System.out.println(temp.isNull("id") ? "null" : temp.getString("id"));
@@ -905,12 +905,10 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void getSendMoney() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         List<SendMoneyTransactionDTO> sendMoneyTransactions = new ArrayList<>();
         try {
-            temp = new JSONObject(coincheck.getSendMoney(Currency.BTC));
+            temp = new JSONObject(coincheck.getSendCoin(Currency.BTC));
             success = temp.getBoolean("success");
             JSONArray sends = temp.getJSONArray("sends");
             for (int i = 0; i < sends.length(); i++) {
@@ -954,12 +952,10 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void getDepositMoney() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         List<DepositMoneyTransactionDTO> depositMoneyTransactions = new ArrayList<>();
         try {
-            temp = new JSONObject(coincheck.getDepositMoney(Currency.XMR));
+            temp = new JSONObject(coincheck.getDepositCoin(Currency.XMR));
             success = temp.getBoolean("success");
             JSONArray deposits = temp.getJSONArray("deposits");
             for (int i = 0; i < deposits.length(); i++) {
@@ -980,7 +976,7 @@ public class APIcoincheckUT extends APIkey {
             System.out.println("受け取り履歴");
             System.out.println("success: " + success);
             System.out.println("------------------------------");
-            for (DepositMoneyTransactionDTO item : depositMoneyTransactions) {
+            depositMoneyTransactions.forEach(item -> {
                 System.out.println("ID: " + item.getId());
                 System.out.println("受け取った量: " + item.getAmount());
                 System.out.println("通貨: " + item.getCurrency());
@@ -989,7 +985,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("承認日時: " + item.getConfirmedAt());
                 System.out.println("作成日時: " + item.getCreatedAt());
                 System.out.println("------------------------------");
-            }
+            });
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1004,14 +1000,14 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postDepositMoneyFast() {
+    public void depositMoneyFast() {
         JSONObject temp = null;
         coincheck.setAPIkey(API_KEY);
         coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         long id = 0l;
         try {
-            temp = new JSONObject(coincheck.postDepositMoneyFast(id));
+            temp = new JSONObject(coincheck.depositMoneyFast(id));
             success = temp.getBoolean("success");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1028,8 +1024,6 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void getAccounts() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         int id = -1;
         String email = null;
@@ -1082,8 +1076,6 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void getBankAccounts() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         List<BankAccountDTO> bankAccounts = new ArrayList<>();
 
@@ -1107,15 +1099,15 @@ public class APIcoincheckUT extends APIkey {
             }
             System.out.println("success: " + success);
             System.out.println("------------------------------");
-            for (BankAccountDTO account : bankAccounts) {
-                System.out.println("ID: " + account.getId());
-                System.out.println("銀行名: " + account.getBankName());
-                System.out.println("支店名: " + account.getBranchName());
-                System.out.println("口座種類: " + account.getBankAccountType());
-                System.out.println("口座番号: " + account.getNumber());
-                System.out.println("口座名義: " + account.getName());
+            bankAccounts.forEach(a -> {
+                System.out.println("ID: " + a.getId());
+                System.out.println("銀行名: " + a.getBankName());
+                System.out.println("支店名: " + a.getBranchName());
+                System.out.println("口座種類: " + a.getBankAccountType());
+                System.out.println("口座番号: " + a.getNumber());
+                System.out.println("口座名義: " + a.getName());
                 System.out.println("------------------------------");
-            }
+            });
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1130,10 +1122,8 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postBankAccounts() {
+    public void addBankAccount() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         BankAccountDTO bankAccount = new BankAccountDTO();
         bankAccount.setBankName("XXX銀行");
@@ -1144,7 +1134,7 @@ public class APIcoincheckUT extends APIkey {
 
         System.out.println("銀行口座の登録");
         try {
-            temp = new JSONObject(coincheck.postBankAccounts(bankAccount));
+            temp = new JSONObject(coincheck.addBankAccount(bankAccount));
             success = temp.getBoolean("success");
             temp = temp.getJSONObject("data");
             System.out.println("success: " + success);
@@ -1169,17 +1159,15 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void deleteBankAccounts() {
+    public void deleteBankAccount() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         long id = 0l;
 
         System.out.println("銀行口座の削除");
         System.out.println("削除対象ID: " + id);
         try {
-            temp = new JSONObject(coincheck.deleteBankAccounts(id));
+            temp = new JSONObject(coincheck.deleteBankAccount(id));
             success = temp.getBoolean("success");
             System.out.println("success: " + success);
         } catch (JSONException e) {
@@ -1197,8 +1185,6 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void getWithdraws() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         List<WithdrawTransactionDTO> withdraws = new ArrayList<>();
         System.out.println("出金履歴");
@@ -1229,7 +1215,7 @@ public class APIcoincheckUT extends APIkey {
                 withdraws.add(withdraw);
             }
             System.out.println("------------------------------");
-            for (WithdrawTransactionDTO item : withdraws) {
+            withdraws.forEach(item -> {
                 System.out.println("出金申請のID: " + item.getId());
                 System.out.println("出金の状態: " + item.getStatus());
                 System.out.println("通貨: " + item.getCurrency());
@@ -1238,7 +1224,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("手数料: " + item.getFee());
                 System.out.println("高速出金のオプション: " + item.getIsFast());
                 System.out.println("------------------------------");
-            }
+            });
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1253,10 +1239,8 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postWithdraws() {
+    public void withdraws() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         long bank_account_id = 0l;
         double amount = 0d;
@@ -1264,7 +1248,7 @@ public class APIcoincheckUT extends APIkey {
 
         System.out.println("出金申請の作成");
         try {
-            temp = new JSONObject(coincheck.postWithdraws(bank_account_id, amount, currency));
+            temp = new JSONObject(coincheck.withdraw(bank_account_id, amount, currency));
             System.out.println("success: " + (success = temp.getBoolean("success")));
             temp = temp.getJSONObject("data");
             System.out.println("出金申請のID: " + temp.getLong("id"));
@@ -1288,16 +1272,14 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void deleteWithdraws() {
+    public void deleteWithdraw() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         long id = 0l;
 
         System.out.println("出金申請のキャンセル");
         try {
-            temp = new JSONObject(coincheck.deleteWithdraws(id));
+            temp = new JSONObject(coincheck.deleteWithdraw(id));
             System.out.println("success: " + (success = temp.getBoolean("success")));
             System.out.println();
         } catch (JSONException e) {
@@ -1313,17 +1295,15 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postLendingBorrows() {
+    public void lendingBorrow() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         double amount = 0.05d;
         Currency currency = Currency.BTC;
 
         System.out.println("借入申請");
         try {
-            temp = new JSONObject(coincheck.postLendingBorrows(amount, currency));
+            temp = new JSONObject(coincheck.lendingBorrow(amount, currency));
             System.out.println("success: " + (success = temp.getBoolean("success")));
             System.out.println("借入申請のID: " + temp.getLong("id"));
             System.out.println("日当たりのレート: " + temp.getString("rate"));
@@ -1346,8 +1326,6 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void getLendingBorrowsMatches() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
 
         System.out.println("借入中一覧");
@@ -1394,16 +1372,14 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postLendingBorrowsIdRepay() {
+    public void lendingBorrowRepay() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         long id = 0l;
 
         System.out.println("返済");
         try {
-            temp = new JSONObject(coincheck.postLendingBorrowsIdRepay(id));
+            temp = new JSONObject(coincheck.lendingBorrowRepay(id));
             System.out.println("success: " + (success = temp.getBoolean("success")));
             System.out.println("id: " + temp.getLong("id"));
             System.out.println();
@@ -1420,17 +1396,15 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postToLeverage() {
+    public void toLeverage() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         Currency currency = Currency.JPY;
         double amount = 0d;
 
         System.out.println("レバレッジアカウントへ振替");
         try {
-            temp = new JSONObject(coincheck.postToLeverage(currency, amount));
+            temp = new JSONObject(coincheck.toLeverage(currency, amount));
             System.out.println("success: " + (success = temp.getBoolean("success")));
             System.out.println("通貨: " + currency);
             System.out.println("移動する数量: " + amount);
@@ -1448,17 +1422,15 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void postFromLeverage() {
+    public void fromLeverage() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         Currency currency = Currency.JPY;
         double amount = 0d;
 
         System.out.println("レバレッジアカウントから振替");
         try {
-            temp = new JSONObject(coincheck.postFromLeverage(currency, amount));
+            temp = new JSONObject(coincheck.fromLeverage(currency, amount));
             System.out.println("success: " + (success = temp.getBoolean("success")));
             System.out.println("通貨: " + currency);
             System.out.println("移動する数量: " + amount);

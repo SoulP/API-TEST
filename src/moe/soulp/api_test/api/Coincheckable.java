@@ -5,18 +5,20 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * <b>インターフェース coincheck</b><br>
+ * <b>Coincheck</b><br>
  * date: 2017/08/03 last_date: 2017/09/06
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
+ * @version 1.1 2017/09/06 Exchangeable継承
+ * @see Exchangeable 取引所
  * @see Pair 取引ペア
  * @see Type 種類
  * @see Sort ソート
  * @see Status 状態
  * @see Currency 通貨
  */
-public interface Coincheckable {
+public interface Coincheckable extends Exchangeable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
     // Public API
@@ -56,13 +58,8 @@ public interface Coincheckable {
     String            CHAT_RECEIVE                     = "/ja/chats/list";                                         // チャット受信
 
     // Public API
-    public String getTicker(); // ティッカー
-
-    public String getTrades(); // 全取引履歴
 
     public String getTrades(int offset); // 全取引履歴
-
-    public String getOrderBooks(); // 板情報
 
     public String getOrdersRate_amount(Type order_type, Pair pair, double amount); // レート取得
 
@@ -70,37 +67,33 @@ public interface Coincheckable {
 
     public String getRate(Pair pair); // 販売レート取得
 
+    public String getChat(long since_id); // チャット受信
+
     // Private API
     // 注文
-    public String postOrderBuy(Pair pair, double rate, double amount); // 指値注文 現物取引 買い
+    public String leverageBuy(Pair pair, double amount); // 成行注文 レバレッジ取引新規 買い
 
-    public String postOrderSell(Pair pair, double rate, double amount); // 指値注文 現物取引 売り
+    public String leverageBuy(Pair pair, double amount, double rate); // 指値注文 レバレッジ取引新規 買い
 
-    public String postOrderMarketBuy(Pair pair, double market_buy_amount); // 成行注文 現物取引 買い
+    public String leverageSell(Pair pair, double amount); // 成行注文 レバレッジ取引新規 売り
 
-    public String postOrderMarketSell(Pair pair, double amount); // 成行注文 現物取引 売り
+    public String leverageSell(Pair pair, double amount, double rate); // 指値注文 レバレッジ取引新規 売り
 
-    public String postOrderLeverageBuy(Pair pair, double amount); // 成行注文 レバレッジ取引新規 買い
+    public String closeLong(double amount, long position_id); // 成行注文 レバレッジ取引決済 売り
 
-    public String postOrderLeverageBuy(Pair pair, double amount, double rate); // 指値注文 レバレッジ取引新規 買い
+    public String closeLong(Pair pair, double amount, long position_id); // 成行注文 レバレッジ取引決済 売り
 
-    public String postOrderLeverageSell(Pair pair, double amount); // 成行注文 レバレッジ取引新規 売り
+    public String closeLong(double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 売り
 
-    public String postOrderLeverageSell(Pair pair, double amount, double rate); // 指値注文 レバレッジ取引新規 売り
+    public String closeLong(Pair pair, double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 売り
 
-    public String postOrderCloseLong(Pair pair, double amount, long position_id); // 成行注文 レバレッジ取引決済 売り
+    public String closeShort(double amount, long position_id); // 成行注文 レバレッジ取引決済 買い
 
-    public String postOrderCloseLong(Pair pair, double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 売り
+    public String closeShort(Pair pair, double amount, long position_id); // 成行注文 レバレッジ取引決済 買い
 
-    public String postOrderCloseShort(Pair pair, double amount, long position_id); // 成行注文 レバレッジ取引決済 買い
+    public String closeShort(double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 買い
 
-    public String postOrderCloseShort(Pair pair, double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 買い
-
-    public String getOrdersOpens(); // 未決済の注文一覧
-
-    public String deleteOrdersId(long id); // 注文のキャンセル
-
-    public String getOrdersTransactions(); // 取引履歴
+    public String closeShort(Pair pair, double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 買い
 
     public String getOrdersTransactionsPagination(); // 取引履歴（ページネーション）
 
@@ -117,8 +110,6 @@ public interface Coincheckable {
     public String getOrdersTransactionsPagination(Sort order, long starting_after); // 取引履歴（ページネーション）
 
     public String getOrdersTransactionsPagination(int limit, Sort order, long starting_after); // 取引履歴（ページネーション）
-
-    public String getPositions(); // ポジション一覧
 
     public String getPositions(Status status); // ポジション一覧
 
@@ -151,29 +142,22 @@ public interface Coincheckable {
     public String getPositions(Sort order, long starting_after); // ポジション一覧
 
     // アカウント
-    public String getAccountsBalance(); // 残高
 
-    public String getAccountsLeverageBalance(); // レバレッジアカウントの残高
+    public String sendMoney(String address, double amount); // ビットコインの送金
 
-    public String postSendMoney(String address, double amount); // ビットコインの送金
+    public String getSendCoin(Currency currency); // 送金履歴
 
-    public String getSendMoney(Currency currency); // 送金履歴
+    public String getDepositCoin(Currency currency); // 受け取り履歴
 
-    public String getDepositMoney(Currency currency); // 受け取り履歴
-
-    public String postDepositMoneyFast(long id); // 高速入金
+    public String depositMoneyFast(long id); // 高速入金
 
     public String getAccounts(); // アカウント情報取得
 
-    // 日本円出金
-    public String getBankAcccounts(); // 銀行口座一覧
-
-    public String postBankAccounts(String bank_name, String branch_name, Type bank_account_type, String number,
+    // 入出金
+    public String addBankAccount(String bank_name, String branch_name, Type bank_account_type, String number,
             String name); // 銀行口座の登録
 
-    public String deleteBankAccounts(long id); // 銀行口座の削除
-
-    public String getWithdraws(); // 出金履歴
+    public String deleteBankAccount(long id); // 銀行口座の削除
 
     public String getWithdraws(int limit); // 出金履歴
 
@@ -189,21 +173,19 @@ public interface Coincheckable {
 
     public String getWithdraws(Sort order, long starting_after); // 出金履歴
 
-    public String postWithdraws(long bank_account_id, double amount, Currency currency); // 出金申請の作成
-
-    public String deleteWithdraws(long id); // 出金申請のキャンセル
+    public String deleteWithdraw(long id); // 出金申請のキャンセル
 
     // 信用取引
-    public String postLendingBorrows(double amount, Currency currency); // 借入申請
+    public String lendingBorrow(double amount, Currency currency); // 借入申請
 
     public String getLendingBorrowsMatches(); // 借入中一覧
 
-    public String postLendingBorrowsIdRepay(long id); // 返済
+    public String lendingBorrowRepay(long id); // 返済
 
     // 為替
-    public String postToLeverage(Currency currency, double amount); // レバレッジアカウントへ振替
+    public String toLeverage(Currency currency, double amount); // レバレッジアカウントへ振替
 
-    public String postFromLeverage(Currency currency, double amount); // レバレッジアカウントから振替
+    public String fromLeverage(Currency currency, double amount); // レバレッジアカウントから振替
 
     /**
      * <b>日時 データ・タイプ変換</b><br>
