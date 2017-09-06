@@ -21,39 +21,48 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
  * @see Coincheckable coincheck
  */
 public class APIcoincheck extends API implements Coincheckable {
-    private final static String Q_OFFSET          = "?offset=";
-    private final static String Q_ORDER_TYPE      = "?order_type=";
-    private final static String Q_LIMIT           = "?limit=";
-    private final static String Q_ORDER           = "?order=";
-    private final static String Q_STARTING_AFTER  = "?starting_after=";
-    private final static String Q_STATUS          = "?status=";
-    private final static String Q_CURRENCY        = "?currency=";
-    private final static String Q_SINCE_ID        = "?since_id=";
+    private final static String Q_OFFSET              = "?offset=";
+    private final static String Q_ORDER_TYPE          = "?order_type=";
+    private final static String Q_LIMIT               = "?limit=";
+    private final static String Q_ORDER               = "?order=";
+    private final static String Q_STARTING_AFTER      = "?starting_after=";
+    private final static String Q_STATUS              = "?status=";
+    private final static String Q_CURRENCY            = "?currency=";
+    private final static String Q_SINCE_ID            = "?since_id=";
 
-    private final static String A_PAIR            = "&pair=";
-    private final static String A_AMOUNT          = "&amount=";
-    private final static String A_PRICE           = "&price=";
-    private final static String A_ORDER           = "&order=";
-    private final static String A_STARTING_AFTER  = "&starting_after=";
-    private final static String A_LIMIT           = "&limit=";
+    private final static String A_PAIR                = "&pair=";
+    private final static String A_AMOUNT              = "&amount=";
+    private final static String A_PRICE               = "&price=";
+    private final static String A_ORDER               = "&order=";
+    private final static String A_STARTING_AFTER      = "&starting_after=";
+    private final static String A_LIMIT               = "&limit=";
 
-    private final static String PAIR              = "pair";
-    private final static String ORDER_TYPE        = "order_type";
-    private final static String RATE              = "rate";
-    private final static String AMOUNT            = "amount";
-    private final static String MARKET_BUY_AMOUNT = "market_buy_amount";
-    private final static String POSITION_ID       = "position_id";
-    private final static String ADDRESS           = "address";
+    private final static String PAIR                  = "pair";
+    private final static String ORDER_TYPE            = "order_type";
+    private final static String RATE                  = "rate";
+    private final static String AMOUNT                = "amount";
+    private final static String MARKET_BUY_AMOUNT     = "market_buy_amount";
+    private final static String POSITION_ID           = "position_id";
+    private final static String ADDRESS               = "address";
 
-    private final static String BANK_NAME         = "bank_name";
-    private final static String BRANCH_NAME       = "branch_name";
-    private final static String BANK_ACCOUNT_TYPE = "bank_account_type";
-    private final static String NUMBER            = "number";
-    private final static String NAME              = "name";
-    private final static String BANK_ACCOUNT_ID   = "bank_account_id";
-    private final static String CURRENCY          = "currency";
+    private final static String BANK_NAME             = "bank_name";
+    private final static String BRANCH_NAME           = "branch_name";
+    private final static String BANK_ACCOUNT_TYPE     = "bank_account_type";
+    private final static String NUMBER                = "number";
+    private final static String NAME                  = "name";
+    private final static String BANK_ACCOUNT_ID       = "bank_account_id";
+    private final static String CURRENCY              = "currency";
 
-    private final static String SLASH             = "/";
+    private final static String SLASH                 = "/";
+    private final static String ORDERS                = "orders";
+    private final static String ID                    = "id";
+    private final static String SUCCESS               = "success";
+    private final static String SUCCESS_TRUE          = "{\"success\": true}";
+    private final static String SUCCESS_FALSE         = "{\"success\": false}";
+
+    private final static String ERROR_ORDERS_CANCEL   = "注文キャンセル失敗 ID: ";
+    private final static String ERROR_NULL_API_KEY    = "apiKeyの値がありません。";
+    private final static String ERROR_NULL_API_SECRET = "apiSecretの値がありません。";
 
     private static URL          tickerURL;
     private static URL          tradesURL;
@@ -1034,16 +1043,16 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String deleteOrders() {
         try {
-            JSONArray orders = new JSONObject(getOrdersOpens()).getJSONArray("orders");
+            JSONArray orders = new JSONObject(getOrdersOpens()).getJSONArray(ORDERS);
             for (int i = 0; i < orders.length(); i++) {
-                long id = orders.getJSONObject(i).getLong("id");
-                if (!(new JSONObject(deleteOrder(String.valueOf(id))).getBoolean("success")))
-                    throw new NullPointerException("注文キャンセル失敗 ID: " + id);
+                long id = orders.getJSONObject(i).getLong(ID);
+                if (!(new JSONObject(deleteOrder(String.valueOf(id))).getBoolean(SUCCESS)))
+                    throw new NullPointerException(ERROR_ORDERS_CANCEL + id);
             }
-            return "{\"success\": true}";
+            return SUCCESS_TRUE;
         } catch (JSONException e) {
             e.printStackTrace();
-            return "{\"success\": false}";
+            return SUCCESS_FALSE;
         }
     }
 
@@ -2627,7 +2636,7 @@ public class APIcoincheck extends API implements Coincheckable {
     }
 
     private void checkAPIkeys() throws Exception {
-        if (apiKeyIsEmpty()) throw new Exception("apiKeyの値がありません。");
-        if (apiSecretIsEmpty()) throw new Exception("apiSecretの値がありません。");
+        if (apiKeyIsEmpty()) throw new Exception(ERROR_NULL_API_KEY);
+        if (apiSecretIsEmpty()) throw new Exception(ERROR_NULL_API_SECRET);
     }
 }
