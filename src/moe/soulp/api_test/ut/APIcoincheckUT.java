@@ -42,7 +42,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
  * @author ソウルP
  */
 public class APIcoincheckUT extends APIkey {
-    final static APIcoincheck coincheck = new APIcoincheck(API_KEY, API_SECRET);
+    final static APIcoincheck coincheck = new APIcoincheck(COINCHECK_API_KEY, COINCHECK_API_SECRET);
 
     /**
      * <b>ティッカー</b><br>
@@ -525,8 +525,6 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void deleteOrder() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         long id = 210480568l;
         boolean success = false;
         try {
@@ -1002,8 +1000,6 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void depositMoneyFast() {
         JSONObject temp = null;
-        coincheck.setAPIkey(API_KEY);
-        coincheck.setAPIsecret(API_SECRET);
         boolean success = false;
         long id = 0l;
         try {
