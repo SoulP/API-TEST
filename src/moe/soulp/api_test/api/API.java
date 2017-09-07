@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -16,23 +17,35 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * <b>汎用API接続</b><br>
- * date: 2017/08/03 last_date: 2017/08/29
+ * date: 2017/08/03 last_date: 2017/09/07
  * 
  * @author ソウルP
  * @version 1.0 2017/08/03 API作成
  * @version 1.1 2017/08/21 Private API用のdelete操作追加
+ * @version 1.2 2017/09/07 APIcoincheckの一部をAPIに移動
  */
 public abstract class API {
-    final static String GET        = "GET";
-    final static String POST       = "POST";
-    final static String HEAD       = "HEAD";
-    final static String OPTIONS    = "OPTIONS";
-    final static String PUT        = "PUT";
-    final static String DELETE     = "DELETE";
-    final static String TRACE      = "TRACE";
-    private String      parameters = "";
-    private String      apiKey     = "";
-    private String      apiSecret  = "";
+    private final static String ERROR_NULL_API_KEY    = "apiKeyの値がありません。";
+    private final static String ERROR_NULL_API_SECRET = "apiSecretの値がありません。";
+    final static String         GET                   = "GET";
+    final static String         POST                  = "POST";
+    final static String         HEAD                  = "HEAD";
+    final static String         OPTIONS               = "OPTIONS";
+    final static String         PUT                   = "PUT";
+    final static String         DELETE                = "DELETE";
+    final static String         TRACE                 = "TRACE";
+    private String              parameters            = "";
+    private String              apiKey                = "";
+    private String              apiSecret             = "";
+
+    protected String getPublicAPI(String url) {
+        try {
+            return getPublicAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     protected String getPublicAPI(URL url) {
         HttpURLConnection connection = null;
@@ -61,12 +74,22 @@ public abstract class API {
         return result;
     }
 
+    protected String getPrivateAPI(String url) {
+        try {
+            return getPrivateAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected String getPrivateAPI(URL url) {
         clearParameters();
         HttpURLConnection connection = null;
         String result = null;
         String nonce = createNonce();
         try {
+            checkAPIkeys();
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(GET);
             connection.setRequestProperty("ACCESS-KEY", apiKey);
@@ -85,7 +108,7 @@ public abstract class API {
             } else {
                 throw new IOException("HTTP CODE: " + code);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (connection != null) connection.disconnect();
@@ -93,11 +116,21 @@ public abstract class API {
         return result;
     }
 
+    protected String postPrivateAPI(String url) {
+        try {
+            return postPrivateAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected String postPrivateAPI(URL url) {
         HttpURLConnection connection = null;
         String result = null;
         String nonce = createNonce();
         try {
+            checkAPIkeys();
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(POST);
             connection.setUseCaches(false);
@@ -124,7 +157,7 @@ public abstract class API {
             } else {
                 throw new IOException("HTTP CODE: " + code);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (connection != null) connection.disconnect();
@@ -133,12 +166,22 @@ public abstract class API {
         return result;
     }
 
+    protected String deletePrivateAPI(String url) {
+        try {
+            return deletePrivateAPI(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected String deletePrivateAPI(URL url) {
         clearParameters();
         HttpURLConnection connection = null;
         String result = null;
         String nonce = createNonce();
         try {
+            checkAPIkeys();
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(DELETE);
             connection.setRequestProperty("ACCESS-KEY", apiKey);
@@ -157,7 +200,7 @@ public abstract class API {
             } else {
                 throw new IOException("HTTP CODE: " + code);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (connection != null) connection.disconnect();
@@ -176,7 +219,7 @@ public abstract class API {
         return HMAC_SHA256Encode(apiSecret, message);
     }
 
-    public static String HMAC_SHA256Encode(String secretKey, String message) {
+    private static String HMAC_SHA256Encode(String secretKey, String message) {
 
         SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "hmacSHA256");
 
@@ -191,6 +234,58 @@ public abstract class API {
         }
         byte[] rawHmac = mac.doFinal(message.getBytes());
         return DatatypeConverter.printHexBinary(rawHmac).toLowerCase();
+    }
+
+    /**
+     * <b>APIキー 設定</b>
+     * 
+     * @param apiKey
+     *            APIキー
+     */
+    public void setAPIkey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
+     * <b>APIシークレット 設定</b>
+     * 
+     * @param apiSecret
+     *            APIシークレット
+     */
+    public void setAPIsecret(String apiSecret) {
+        this.apiSecret = apiSecret;
+    }
+
+    /**
+     * <b>API認証情報 全消去</b>
+     */
+    public void clearAuthInfo() {
+        apiKey = "";
+        apiSecret = "";
+    }
+
+    /**
+     * <b>APIキーの有無</b>
+     * 
+     * @return <b>true</b> ない<br>
+     *         <b>false</b> ある
+     */
+    public boolean apiKeyIsEmpty() {
+        if (apiKey == null) return true;
+        if (apiKey.equals("")) return true;
+        return false;
+    }
+
+    /**
+     * <b>APIシークレットの有無</b>
+     * 
+     * @return <b>true</b> ない<br>
+     *         <b>false</b> ある
+     */
+    public boolean apiSecretIsEmpty() {
+        if (apiSecret == null) return true;
+        if (apiSecret.equals("")) return true;
+        return false;
     }
 
     protected void setParameters(String parameters) {
@@ -211,28 +306,8 @@ public abstract class API {
         parameters = "";
     }
 
-    public void setAPIkey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public void setAPIsecret(String apiSecret) {
-        this.apiSecret = apiSecret;
-    }
-
-    public void clearAuthInfo() {
-        apiKey = "";
-        apiSecret = "";
-    }
-
-    public boolean apiKeyIsEmpty() {
-        if (apiKey == null) return true;
-        if (apiKey.equals("")) return true;
-        return false;
-    }
-
-    public boolean apiSecretIsEmpty() {
-        if (apiSecret == null) return true;
-        if (apiSecret.equals("")) return true;
-        return false;
+    protected void checkAPIkeys() throws Exception {
+        if (apiKeyIsEmpty()) throw new Exception(ERROR_NULL_API_KEY);
+        if (apiSecretIsEmpty()) throw new Exception(ERROR_NULL_API_SECRET);
     }
 }

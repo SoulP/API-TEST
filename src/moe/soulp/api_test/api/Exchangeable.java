@@ -2,7 +2,7 @@ package moe.soulp.api_test.api;
 
 /**
  * <b>取引所</b><br>
- * date: 2017/09/06 last_date: 2017/09/06
+ * date: 2017/09/06 last_date: 2017/09/07
  * 
  * @author ソウルP
  * @version 1.0 2017/09/06 Exchangeable作成
@@ -15,7 +15,9 @@ public interface Exchangeable {
 
     public String getTrades(); // 全取引履歴
 
-    public String getChat(); // チャット受信
+    public String getChats(); // チャット受信
+    
+    public String getRate(); // レート取得
 
     //Private API
     // 注文

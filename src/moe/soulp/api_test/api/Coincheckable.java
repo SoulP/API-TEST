@@ -5,8 +5,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * <b>Coincheck</b><br>
- * date: 2017/08/03 last_date: 2017/09/06
+ * <b>coincheck</b><br>
+ * date: 2017/08/03 last_date: 2017/09/07
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
@@ -21,8 +21,10 @@ import java.time.format.DateTimeFormatter;
 public interface Coincheckable extends Exchangeable {
     DateTimeFormatter FORMAT                           = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
-    // Public API
+    // Base API
     String            API                              = "https://coincheck.com";                                  // API接続先
+
+    // Public API
     String            TICKER                           = "/api/ticker";                                            // ティッカー
     String            TRADES                           = "/api/trades";                                            // 全取引履歴
     String            ORDER_BOOKS                      = "/api/order_books";                                       // 板情報
@@ -58,7 +60,6 @@ public interface Coincheckable extends Exchangeable {
     String            CHAT_RECEIVE                     = "/ja/chats/list";                                         // チャット受信
 
     // Public API
-
     public String getTrades(int offset); // 全取引履歴
 
     public String getOrdersRate_amount(Type order_type, Pair pair, double amount); // レート取得
@@ -189,7 +190,7 @@ public interface Coincheckable extends Exchangeable {
 
     /**
      * <b>日時 データ・タイプ変換</b><br>
-     * String -> ZonedDateTime
+     * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
      *
      * @param date
      *            日時 "yyyy-MM-dd'T'HH:mm:ss.SSSX"<br>
@@ -198,6 +199,6 @@ public interface Coincheckable extends Exchangeable {
      */
     public static ZonedDateTime string2zonedDateTime(String date) {
         if (date == null || date.equals("")) return null;
-        else return ZonedDateTime.parse(date, Coincheckable.FORMAT).withZoneSameInstant(ZoneId.systemDefault());
+        else return ZonedDateTime.parse(date, FORMAT).withZoneSameInstant(ZoneId.systemDefault());
     }
 }

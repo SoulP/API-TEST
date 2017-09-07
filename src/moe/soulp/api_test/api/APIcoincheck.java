@@ -11,58 +11,57 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/06
+ * date: 2017/08/03 last_date: 2017/09/07
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
  * @version 1.1 2017/09/06 チャット受信と全ての注文をキャンセル追加
  * @version 1.2 2017/09/06 Exchangeableに合わせて書き直し
+ * @version 1.3 2017/09/07 APIcoincheck一部をAPIに移動
  * @see API 汎用API接続
  * @see Coincheckable coincheck
  */
 public class APIcoincheck extends API implements Coincheckable {
-    private final static String Q_OFFSET              = "?offset=";
-    private final static String Q_ORDER_TYPE          = "?order_type=";
-    private final static String Q_LIMIT               = "?limit=";
-    private final static String Q_ORDER               = "?order=";
-    private final static String Q_STARTING_AFTER      = "?starting_after=";
-    private final static String Q_STATUS              = "?status=";
-    private final static String Q_CURRENCY            = "?currency=";
-    private final static String Q_SINCE_ID            = "?since_id=";
+    private final static String Q_OFFSET            = "?offset=";
+    private final static String Q_ORDER_TYPE        = "?order_type=";
+    private final static String Q_LIMIT             = "?limit=";
+    private final static String Q_ORDER             = "?order=";
+    private final static String Q_STARTING_AFTER    = "?starting_after=";
+    private final static String Q_STATUS            = "?status=";
+    private final static String Q_CURRENCY          = "?currency=";
+    private final static String Q_SINCE_ID          = "?since_id=";
 
-    private final static String A_PAIR                = "&pair=";
-    private final static String A_AMOUNT              = "&amount=";
-    private final static String A_PRICE               = "&price=";
-    private final static String A_ORDER               = "&order=";
-    private final static String A_STARTING_AFTER      = "&starting_after=";
-    private final static String A_LIMIT               = "&limit=";
+    private final static String A_PAIR              = "&pair=";
+    private final static String A_AMOUNT            = "&amount=";
+    private final static String A_PRICE             = "&price=";
+    private final static String A_ORDER             = "&order=";
+    private final static String A_STARTING_AFTER    = "&starting_after=";
+    private final static String A_LIMIT             = "&limit=";
 
-    private final static String PAIR                  = "pair";
-    private final static String ORDER_TYPE            = "order_type";
-    private final static String RATE                  = "rate";
-    private final static String AMOUNT                = "amount";
-    private final static String MARKET_BUY_AMOUNT     = "market_buy_amount";
-    private final static String POSITION_ID           = "position_id";
-    private final static String ADDRESS               = "address";
+    private final static String PAIR                = "pair";
+    private final static String ORDER_TYPE          = "order_type";
+    private final static String RATE                = "rate";
+    private final static String AMOUNT              = "amount";
+    private final static String MARKET_BUY_AMOUNT   = "market_buy_amount";
+    private final static String POSITION_ID         = "position_id";
+    private final static String ADDRESS             = "address";
 
-    private final static String BANK_NAME             = "bank_name";
-    private final static String BRANCH_NAME           = "branch_name";
-    private final static String BANK_ACCOUNT_TYPE     = "bank_account_type";
-    private final static String NUMBER                = "number";
-    private final static String NAME                  = "name";
-    private final static String BANK_ACCOUNT_ID       = "bank_account_id";
-    private final static String CURRENCY              = "currency";
+    private final static String BANK_NAME           = "bank_name";
+    private final static String BRANCH_NAME         = "branch_name";
+    private final static String BANK_ACCOUNT_TYPE   = "bank_account_type";
+    private final static String NUMBER              = "number";
+    private final static String NAME                = "name";
+    private final static String BANK_ACCOUNT_ID     = "bank_account_id";
+    private final static String CURRENCY            = "currency";
 
-    private final static String SLASH                 = "/";
-    private final static String ORDERS                = "orders";
-    private final static String ID                    = "id";
-    private final static String SUCCESS               = "success";
-    private final static String SUCCESS_TRUE          = "{\"success\": true}";
-    private final static String SUCCESS_FALSE         = "{\"success\": false}";
+    private final static String SLASH               = "/";
+    private final static String ORDERS              = "orders";
+    private final static String ID                  = "id";
+    private final static String SUCCESS             = "success";
+    private final static String SUCCESS_TRUE        = "{\"success\": true}";
+    private final static String SUCCESS_FALSE       = "{\"success\": false}";
 
-    private final static String ERROR_ORDERS_CANCEL   = "注文キャンセル失敗 ID: ";
-    private final static String ERROR_NULL_API_KEY    = "apiKeyの値がありません。";
-    private final static String ERROR_NULL_API_SECRET = "apiSecretの値がありません。";
+    private final static String ERROR_ORDERS_CANCEL = "注文キャンセル失敗 ID: ";
 
     private static URL          tickerURL;
     private static URL          tradesURL;
@@ -111,13 +110,13 @@ public class APIcoincheck extends API implements Coincheckable {
     }
 
     /**
-     * <b>CoincheckのAPI</b>
+     * <b>coincheckのAPI</b>
      */
     public APIcoincheck() {
     };
 
     /**
-     * <b>CoincheckのAPI</b>
+     * <b>coincheckのAPI</b>
      * 
      * @param apiKey
      *            APIキー
@@ -247,6 +246,20 @@ public class APIcoincheck extends API implements Coincheckable {
 
     /**
      * <b>販売レート取得</b><br>
+     * 販売所のレートを取得します。<br>
+     * 取引ペア(デフォルト): btc_jpy
+     * 
+     * @return 【JSON】<br>
+     *         <b>rate</b> 販売のレート
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String getRate() {
+        return getRate(Pair.btc_jpy);
+    }
+
+    /**
+     * <b>販売レート取得</b><br>
      * 販売所のレートを取得します。
      *
      * @param pair
@@ -273,7 +286,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>verify_status</b> 検証状態
      */
     @Override
-    public String getChat() {
+    public String getChats() {
         return getPublicAPI(chatReceiveURL);
     }
 
@@ -2564,79 +2577,5 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(CURRENCY, currency.toString());
         addParameter(AMOUNT, String.valueOf(amount));
         return postPrivateAPI(fromLeverageURL);
-    }
-
-    protected String getPublicAPI(String url) {
-        try {
-            return getPublicAPI(new URL(url));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected String getPrivateAPI(String url) {
-        try {
-            return getPrivateAPI(new URL(url));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected String getPrivateAPI(URL url) {
-        try {
-            checkAPIkeys();
-            return super.getPrivateAPI(url);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected String postPrivateAPI(String url) {
-        try {
-            return postPrivateAPI(new URL(url));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected String postPrivateAPI(URL url) {
-        try {
-            checkAPIkeys();
-            return super.postPrivateAPI(url);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected String deletePrivateAPI(String url) {
-        try {
-            return deletePrivateAPI(new URL(url));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected String deletePrivateAPI(URL url) {
-        try {
-            checkAPIkeys();
-            return super.deletePrivateAPI(url);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void checkAPIkeys() throws Exception {
-        if (apiKeyIsEmpty()) throw new Exception(ERROR_NULL_API_KEY);
-        if (apiSecretIsEmpty()) throw new Exception(ERROR_NULL_API_SECRET);
     }
 }

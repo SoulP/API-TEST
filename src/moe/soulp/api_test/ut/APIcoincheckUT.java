@@ -37,7 +37,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
  * <b>Coincheck用のUTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/09/06
+ * date: 2017/08/03 last_date: 2017/09/07
  * 
  * @author ソウルP
  */
@@ -342,7 +342,7 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void getChat() {
         try {
-            JSONArray temp = new JSONObject(coincheck.getChat()).getJSONArray("chats");
+            JSONArray temp = new JSONObject(coincheck.getChats()).getJSONArray("chats");
             JSONObject newChat = temp.getJSONObject(temp.length() - 1);
             System.out.println("チャット受信");
             System.out.println("id: " + newChat.getLong("id"));
