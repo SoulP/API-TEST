@@ -7,7 +7,7 @@ package moe.soulp.api_test.bitFlyer.dto;
  * @author ソウルP
  * @version 1.0 2017/09/07 GetExecutionDTO作成
  */
-public class ExecutionGetDTO extends Execution {
+public class ExecutionGetDTO extends ExecutionTransaction {
     private String buy_child_order_acceptance_id;  // 新規注文の買いのID
     private String sell_child_order_acceptance_id; // 新規注文の売りのID
 

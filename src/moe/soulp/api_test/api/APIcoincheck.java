@@ -1999,8 +1999,8 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Currency 通貨
      */
     @Override
-    public String getSendCoin() {
-        return getSendCoin(Currency.BTC);
+    public String getSendCoins() {
+        return getSendCoins(Currency.BTC);
     }
 
     /**
@@ -2021,7 +2021,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Currency 通貨
      */
     @Override
-    public String getSendCoin(Currency currency) {
+    public String getSendCoins(Currency currency) {
         return privateAPI(API + SEND_MONEY + Q_CURRENCY + currency, HttpMethod.GET);
     }
 
@@ -2043,8 +2043,8 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Currency 通貨
      */
     @Override
-    public String getDepositCoin() {
-        return getDepositCoin(Currency.BTC);
+    public String getDepositCoins() {
+        return getDepositCoins(Currency.BTC);
     }
 
     /**
@@ -2066,7 +2066,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Currency 通貨
      */
     @Override
-    public String getDepositCoin(Currency currency) {
+    public String getDepositCoins(Currency currency) {
         return privateAPI(API + DEPOSIT_MONEY + Q_CURRENCY + currency, HttpMethod.GET);
     }
 
@@ -2089,7 +2089,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getDeposits() {
-        return getDepositCoin(Currency.JPY);
+        return getDepositCoins(Currency.JPY);
     }
 
     /**
@@ -2174,7 +2174,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String addBankAccount(String bank_name, String branch_name, Type bank_account_type, String number,
+    public String addBankAccount(String bank_name, String branch_name, String bank_account_type, String number,
             String name) {
         clearParameters();
         addParameter(BANK_NAME, bank_name);

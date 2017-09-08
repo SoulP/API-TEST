@@ -62,9 +62,9 @@ public interface Exchangeable {
 
     public String getLeverageBalance(); // レバレッジアカウントの残高
 
-    public String getSendCoin(); // 送金履歴
+    public String getSendCoins(); // 送金履歴
 
-    public String getDepositCoin(); // 受け取り履歴
+    public String getDepositCoins(); // 受け取り履歴
 
     // 入出金
     public String getBankAcccounts(); // 銀行口座一覧

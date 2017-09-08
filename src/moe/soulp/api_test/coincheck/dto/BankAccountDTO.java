@@ -4,17 +4,17 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>銀行口座</b><br>
- * date: 2017/08/28 last_date: 2017/08/29
+ * date: 2017/08/28 last_date: 2017/09/08
  * 
  * @author ソウルP
  * @version 1.0 2017/08/28 BankAccountDTO作成
- * @see Type 種類
+ * @version 1.1 2017/09/08 口座種類のデータ・タイプ変更
  */
 public class BankAccountDTO {
     private long   id;                // ID
     private String bank_name;         // 銀行名
     private String branch_name;       // 支店名
-    private Type   bank_account_type; // 銀行口座の種類
+    private String bank_account_type; // 口座種類
     private String number;            // 口座番号
     private String name;              // 口座名義
 
@@ -79,32 +79,36 @@ public class BankAccountDTO {
      * <b>銀行口座の種類 出力</b>
      * 
      * @return bank_account_type
-     * @see Type 種類
      */
-    public Type getBankAccountType() {
+    public String getBankAccountType() {
         return bank_account_type;
     }
 
     /**
-     * <b>銀行口座の種類 入力</b>
+     * <b>銀行口座の種類 入力</b><br>
      * 
      * @param bank_account_type
-     *            銀行口座の種類
+     *            銀行口座の種類<br>
+     *            Type.futsu -> "futsu"<br>
+     *            Type.toza -> "toza"
      * @see Type 種類
      */
     public void setBankAccountType(Type bank_account_type) {
-        this.bank_account_type = bank_account_type;
+        this.bank_account_type = bank_account_type.toString();
     }
 
     /**
-     * <b>銀行口座の種類 入力</b>
+     * <b>銀行口座の種類 入力</b><br>
      * 
      * @param bank_account_type
-     *            銀行口座の種類
-     * @see Type 種類
+     *            銀行口座の種類<br>
+     *            "futsu" -> "普通"<br>
+     *            "toza" -> "当座"
      */
     public void setBankAccountType(String bank_account_type) {
-        this.bank_account_type = Type.valueOf(bank_account_type);
+        if (bank_account_type.startsWith(Type.futsu.toString())) bank_account_type = "普通";
+        if (bank_account_type.startsWith(Type.toza.toString())) bank_account_type = "当座";
+        this.bank_account_type = bank_account_type;
     }
 
     /**

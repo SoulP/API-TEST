@@ -37,7 +37,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
  * <b>Coincheck用のUTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/09/07
+ * date: 2017/08/03 last_date: 2017/09/08
  * 
  * @author ソウルP
  */
@@ -906,7 +906,7 @@ public class APIcoincheckUT extends APIkey {
         boolean success = false;
         List<SendMoneyTransactionDTO> sendMoneyTransactions = new ArrayList<>();
         try {
-            temp = new JSONObject(coincheck.getSendCoin(Currency.BTC));
+            temp = new JSONObject(coincheck.getSendCoins(Currency.BTC));
             success = temp.getBoolean("success");
             JSONArray sends = temp.getJSONArray("sends");
             for (int i = 0; i < sends.length(); i++) {
@@ -953,7 +953,7 @@ public class APIcoincheckUT extends APIkey {
         boolean success = false;
         List<DepositMoneyTransactionDTO> depositMoneyTransactions = new ArrayList<>();
         try {
-            temp = new JSONObject(coincheck.getDepositCoin(Currency.XMR));
+            temp = new JSONObject(coincheck.getDepositCoins(Currency.XMR));
             success = temp.getBoolean("success");
             JSONArray deposits = temp.getJSONArray("deposits");
             for (int i = 0; i < deposits.length(); i++) {

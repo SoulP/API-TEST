@@ -15,11 +15,14 @@ import org.junit.Test;
 import moe.soulp.api_test.api.APIbitFlyer;
 import moe.soulp.api_test.api.BitFlyerable;
 import moe.soulp.api_test.api.Pair;
+import moe.soulp.api_test.bitFlyer.dto.BankAccountDTO;
+import moe.soulp.api_test.bitFlyer.dto.CoinInDTO;
+import moe.soulp.api_test.bitFlyer.dto.CoinOutDTO;
 import moe.soulp.api_test.bitFlyer.dto.ExecutionGetDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
- * date: 2017/09/07 last_date: 2017/09/07
+ * date: 2017/09/07 last_date: 2017/09/08
  * 
  * @author ソウルP
  */
@@ -371,6 +374,189 @@ public class APIbitFlyerUT extends APIkey {
                 System.out.println(balance.getString("currency_code") + ": " + balance.getDouble("amount") + "(利用可能: "
                         + balance.getDouble("available") + ")");
             }
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>通貨別の証拠金の数量を取得</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getCollateralAccounts() {
+        JSONArray temp = null;
+        System.out.println("通貨別の証拠金の数量を取得");
+        try {
+            temp = new JSONArray(bitFlyer.getCollateralAccounts());
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject collateral = temp.getJSONObject(i);
+                System.out.println(collateral.getString("currency_code") + ": " + collateral.getDouble("amount"));
+            }
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>預入用ビットコイン・イーサリアムアドレス取得</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getAddresses() {
+        JSONArray temp = null;
+        System.out.println("預入用ビットコイン・イーサリアムアドレス取得");
+        try {
+            temp = new JSONArray(bitFlyer.getAddresses());
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject address = temp.getJSONObject(i);
+                System.out.println("種類: " + address.getString("type"));
+                System.out.println(address.getString("currency_code") + "アドレス: " + address.getString("address"));
+                System.out.println();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getDepositCoin() {
+        JSONArray temp = null;
+        System.out.println("ビットコイン・イーサ預入履歴");
+        try {
+            temp = new JSONArray(bitFlyer.getDepositCoins());
+            List<CoinInDTO> ins = new ArrayList<>();
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject coin = temp.getJSONObject(i);
+                CoinInDTO in = new CoinInDTO();
+                in.setId(coin.getLong("id"));
+                in.setOrderId(coin.getString("order_id"));
+                in.setCurrencyCode(coin.getString("currency_code"));
+                in.setAmount(coin.getDouble("amount"));
+                in.setAddress(coin.getString("address"));
+                in.setTxHash(coin.getString("tx_hash"));
+                in.setStatus(coin.getString("status"));
+                in.setEventDate(coin.getString("event_date"));
+
+                ins.add(in);
+            }
+            System.out.println("------------------------------");
+            ins.forEach(in -> {
+                System.out.println("ID: " + in.getId());
+                System.out.println("注文のID: " + in.getOrderId());
+                System.out.println("通貨: " + in.getCurrencyCode());
+                System.out.println("量: " + in.getAmount());
+                System.out.println("アドレス: " + in.getAddress());
+                System.out.println("トランザクションのハッシュ: " + in.getTxHash());
+                System.out.println("状態: " + in.getStatus());
+                System.out.println("日時: " + in.getEventDate());
+                System.out.println("------------------------------");
+            });
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getSendCoin() {
+        JSONArray temp = null;
+        System.out.println("ビットコイン・イーサ預入履歴");
+        try {
+            temp = new JSONArray(bitFlyer.getSendCoins());
+            List<CoinOutDTO> outs = new ArrayList<>();
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject coin = temp.getJSONObject(i);
+                CoinOutDTO out = new CoinOutDTO();
+                out.setId(coin.getLong("id"));
+                out.setOrderId(coin.getString("order_id"));
+                out.setCurrencyCode(coin.getString("currency_code"));
+                out.setAmount(coin.getDouble("amount"));
+                out.setAddress(coin.getString("address"));
+                out.setTxHash(coin.getString("tx_hash"));
+                out.setFee(coin.getDouble("fee"));
+                out.setAdditionalFee(coin.getDouble("additional_fee"));
+                out.setStatus(coin.getString("status"));
+                out.setEventDate(coin.getString("event_date"));
+
+                outs.add(out);
+            }
+            System.out.println("------------------------------");
+            outs.forEach(out -> {
+                System.out.println("ID: " + out.getId());
+                System.out.println("注文のID: " + out.getOrderId());
+                System.out.println("通貨: " + out.getCurrencyCode());
+                System.out.println("量: " + out.getAmount());
+                System.out.println("アドレス: " + out.getAddress());
+                System.out.println("トランザクションのハッシュ: " + out.getTxHash());
+                System.out.println("手数料: " + out.getFee());
+                System.out.println("追加手数料: " + out.getAdditionalFee());
+                System.out.println("状態: " + out.getStatus());
+                System.out.println("日時: " + out.getEventDate());
+                System.out.println("------------------------------");
+            });
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>銀行口座一覧取得</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getBankAccounts() {
+        JSONArray temp = null;
+        System.out.println("銀行口座一覧取得");
+        try {
+            temp = new JSONArray(bitFlyer.getBankAccounts());
+            List<BankAccountDTO> accounts = new ArrayList<>();
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject info = temp.getJSONObject(i);
+                BankAccountDTO account = new BankAccountDTO();
+                account.setId(info.getLong("id"));
+                account.setIsVerified(info.getBoolean("is_verified"));
+                account.setBankName(info.getString("bank_name"));
+                account.setBranchName(info.getString("branch_name"));
+                account.setAccountType(info.getString("account_type"));
+                account.setAccountNumber(info.getString("account_number"));
+                account.setAccountName(info.getString("account_name"));
+
+                accounts.add(account);
+            }
+
+            System.out.println("------------------------------");
+            accounts.forEach(account -> {
+                System.out.println("口座のID: " + account.getId());
+                System.out.println("承認有無: " + account.getIsVerified());
+                System.out.println("銀行名: " + account.getBankName());
+                System.out.println("支店名: " + account.getBranchName());
+                System.out.println("口座種類: " + account.getAccountType());
+                System.out.println("口座番号: " + account.getAccountNumber());
+                System.out.println("口座名義: " + account.getAccountName());
+                System.out.println("------------------------------");
+            });
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();

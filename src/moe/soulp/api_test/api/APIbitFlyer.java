@@ -37,6 +37,12 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          apiPriceURL;
     private static URL          getPermissionsURL;
     private static URL          getBalanceURL;
+    private static URL          getCollateralURL;
+    private static URL          getCollateralAccountsURL;
+    private static URL          getAddressesURL;
+    private static URL          getCoinInsURL;
+    private static URL          getCoinOutsURL;
+    private static URL          getBankAccountsURL;
 
     static {
         try {
@@ -49,6 +55,12 @@ public class APIbitFlyer extends API implements BitFlyerable {
             apiPriceURL = new URL(API_PRICE);
             getPermissionsURL = new URL(API + GET_PERMISSIONS);
             getBalanceURL = new URL(API + GET_BALANCE);
+            getCollateralURL = new URL(API + GET_COLLATERAL);
+            getCollateralAccountsURL = new URL(API + GET_COLLATERAL_ACCOUNTS);
+            getAddressesURL = new URL(API + GET_ADDRESSES);
+            getCoinInsURL = new URL(API + GET_COIN_INS);
+            getCoinOutsURL = new URL(API + GET_COIN_OUTS);
+            getBankAccountsURL = new URL(API + GET_BANK_ACCOUNTS);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -774,6 +786,485 @@ public class APIbitFlyer extends API implements BitFlyerable {
     @Override
     public String getBalance() {
         return privateAPI(getBalanceURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>証拠金の状態を取得</b>
+     * 
+     * @return 【JSON】<br>
+     *         <b>collateral</b> 預け入れた証拠金の評価額<br>
+     *         <b>open_position_pnl</b> 建玉の評価損益<br>
+     *         <b>require_collateral</b> 現在の必要証拠金<br>
+     *         <b>keep_rate</b> 現在の証拠金維持率
+     */
+    @Override
+    public String getLeverageBalance() {
+        return privateAPI(getCollateralURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>通貨別の証拠金の数量を取得</b>
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量
+     */
+    @Override
+    public String getCollateralAccounts() {
+        return privateAPI(getCollateralAccountsURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>預入用ビットコイン・イーサリアムアドレス取得</b>
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>type</b> 種類<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>address</b> アドレス
+     */
+    @Override
+    public String getAddresses() {
+        return privateAPI(getAddressesURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositCoins() {
+        return privateAPI(getCoinInsURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositCoins(int count) {
+        return privateAPI(API + GET_COIN_INS + Q_COUNT + count, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositCoins(int count, long before, long after) {
+        return privateAPI(API + GET_COIN_INS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositCoinsBefore(long before) {
+        return privateAPI(API + GET_COIN_INS + Q_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositCoinsBefore(int count, long before) {
+        return privateAPI(API + GET_COIN_INS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositCoinsAfter(long after) {
+        return privateAPI(API + GET_COIN_INS + Q_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ預入履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositCoinsAfter(int count, long after) {
+        return privateAPI(API + GET_COIN_INS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ送付履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>additional_fee</b> 追加手数料<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getSendCoins() {
+        return privateAPI(getCoinOutsURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ送付履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>additional_fee</b> 追加手数料<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getSendCoins(int count) {
+        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ送付履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>additional_fee</b> 追加手数料<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getSendCoins(int count, long before, long after) {
+        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ送付履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>additional_fee</b> 追加手数料<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getSendCoinsBefore(long before) {
+        return privateAPI(API + GET_COIN_OUTS + Q_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ送付履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>additional_fee</b> 追加手数料<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getSendCoinsBefore(int count, long before) {
+        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ送付履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>additional_fee</b> 追加手数料<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getSendCoinsAfter(long after) {
+        return privateAPI(API + GET_COIN_OUTS + Q_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>ビットコイン・イーサ送付履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> ID<br>
+     *         <b>order_id</b> 注文ID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>address</b> アドレス<br>
+     *         <b>tx_hash</b> ハッシュ<br>
+     *         <b>fee</b> 手数料<br>
+     *         <b>additional_fee</b> 追加手数料<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getSendCoinsAfter(int count, long after) {
+        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>銀行口座一覧取得</b><br>
+     * アカウントに登録された銀行口座の一覧を取得します。
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 口座のID<br>
+     *         <b>is_verified</b> 承認有無<br>
+     *         <b>bank_name</b> 銀行名<br>
+     *         <b>branch_name</b> 支店名<br>
+     *         <b>account_type</b> 口座種類<br>
+     *         <b>account_number</b> 口座番号<br>
+     *         <b>account_name</b> 口座名義
+     */
+    @Override
+    public String getBankAccounts() {
+        return privateAPI(getBankAccountsURL, HttpMethod.GET);
     }
 
     @Override

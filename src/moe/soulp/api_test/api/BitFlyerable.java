@@ -33,9 +33,10 @@ public interface BitFlyerable {
     // 資産
     String            GET_BALANCE               = "/v1/me/getbalance";                                      // 資産残高を取得
     String            GET_COLLATERAL            = "/v1/me/getcollateral";                                   // 証拠金の状態を取得
+    String            GET_COLLATERAL_ACCOUNTS   = "/v1/me/getcollateralaccounts";                           // 通貨別の証拠金の数量を取得
 
     // 入出金
-    String            GET_ADDRESS               = "/v1/me/getaddresses";                                    // 預入用ビットコイン・イーサリアムアドレス取得
+    String            GET_ADDRESSES             = "/v1/me/getaddresses";                                    // 預入用ビットコイン・イーサリアムアドレス取得
     String            GET_COIN_INS              = "/v1/me/getcoinins";                                      // ビットコイン・イーサ預入履歴
     String            GET_COIN_OUTS             = "/v1/me/getcoinouts";                                     // ビットコイン・イーサ送付履歴
     String            GET_BANK_ACCOUNTS         = "/v1/me/getbankaccounts";                                 // 銀行口座一覧取得
@@ -110,6 +111,38 @@ public interface BitFlyerable {
     // API
     public String getPermissions(); // API キーの権限を取得
 
+    // 資産
+    public String getCollateralAccounts(); // 通貨別の証拠金の数量を取得
+
+    // 入出金
+    public String getAddresses(); // 預入用ビットコイン・イーサリアムアドレス取得
+
+    public String getDepositCoins(int count); // ビットコイン・イーサ預入履歴
+
+    public String getDepositCoins(int count, long before, long after); // ビットコイン・イーサ預入履歴
+
+    public String getDepositCoinsBefore(long before); // ビットコイン・イーサ預入履歴
+
+    public String getDepositCoinsBefore(int count, long before); // ビットコイン・イーサ預入履歴
+
+    public String getDepositCoinsAfter(long after); // ビットコイン・イーサ預入履歴
+
+    public String getDepositCoinsAfter(int count, long after); // ビットコイン・イーサ預入履歴
+
+    public String getSendCoins(int count); // ビットコイン・イーサ預入履歴
+
+    public String getSendCoins(int count, long before, long after); // ビットコイン・イーサ預入履歴
+
+    public String getSendCoinsBefore(long before); // ビットコイン・イーサ預入履歴
+
+    public String getSendCoinsBefore(int count, long before); // ビットコイン・イーサ預入履歴
+
+    public String getSendCoinsAfter(long after); // ビットコイン・イーサ預入履歴
+
+    public String getSendCoinsAfter(int count, long after); // ビットコイン・イーサ預入履歴
+
+    public String getBankAccounts(); // 銀行口座一覧取得
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
@@ -140,4 +173,10 @@ public interface BitFlyerable {
 
     // Private API
     public String getBalance(); // 残高
+
+    public String getLeverageBalance(); // 証拠金の状態を取得
+
+    public String getDepositCoins(); // 受け取り履歴
+
+    public String getSendCoins(); // 送金履歴
 }
