@@ -11,7 +11,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/07
+ * date: 2017/08/03 last_date: 2017/09/08
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -60,6 +60,9 @@ public class APIcoincheck extends API implements Coincheckable {
     private final static String SUCCESS             = "success";
     private final static String SUCCESS_TRUE        = "{\"success\": true}";
     private final static String SUCCESS_FALSE       = "{\"success\": false}";
+    private final static String ACCESS_KEY          = "ACCESS-KEY";
+    private final static String ACCESS_NONCE        = "ACCESS-NONCE";
+    private final static String ACCESS_SIGNATURE    = "ACCESS-SIGNATURE";
 
     private final static String ERROR_ORDERS_CANCEL = "注文キャンセル失敗 ID: ";
 
@@ -88,7 +91,7 @@ public class APIcoincheck extends API implements Coincheckable {
             tickerURL = new URL(API + TICKER);
             tradesURL = new URL(API + TRADES);
             orderBooksURL = new URL(API + ORDER_BOOKS);
-            ordersURL = new URL(API + ORDERS);
+            ordersURL = new URL(API + EXCHANGE_ORDERS);
             ordersOpensURL = new URL(API + ORDERS_OPENS);
             ordersTransactionsURL = new URL(API + ORDERS_TRANSACTIONS);
             ordersTransactionsPaginationURL = new URL(API + ORDERS_TRANSACTIONS_PAGINATION);
@@ -113,6 +116,10 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>coincheckのAPI</b>
      */
     public APIcoincheck() {
+        super();
+        setAPIkeyProperty(ACCESS_KEY);
+        setAPInonceProperty(ACCESS_NONCE);
+        setAPIsignProperty(ACCESS_SIGNATURE);
     };
 
     /**
@@ -124,6 +131,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *            APIシークレット
      */
     public APIcoincheck(String apiKey, String apiSecret) {
+        this();
         setAPIkey(apiKey);
         setAPIsecret(apiSecret);
     }
@@ -143,7 +151,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getTicker() {
-        return getPublicAPI(tickerURL);
+        return publicAPI(tickerURL, HttpMethod.GET);
     }
 
     /**
@@ -159,7 +167,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getTrades() {
-        return getPublicAPI(tradesURL);
+        return publicAPI(tradesURL, HttpMethod.GET);
     }
 
     /**
@@ -178,7 +186,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getTrades(int offset) {
-        return getPublicAPI(API + TRADES + Q_OFFSET + offset);
+        return publicAPI(API + TRADES + Q_OFFSET + offset, HttpMethod.GET);
     }
 
     /**
@@ -191,7 +199,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getBoard() {
-        return getPublicAPI(orderBooksURL);
+        return publicAPI(orderBooksURL, HttpMethod.GET);
     }
 
     /**
@@ -216,7 +224,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersRate_amount(Type order_type, Pair pair, double amount) {
-        return getPublicAPI(API + ORDERS_RATE + Q_ORDER_TYPE + order_type + A_PAIR + pair + A_AMOUNT + amount);
+        return publicAPI(API + ORDERS_RATE + Q_ORDER_TYPE + order_type + A_PAIR + pair + A_AMOUNT + amount,
+                HttpMethod.GET);
     }
 
     /**
@@ -241,7 +250,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersRate_price(Type order_type, Pair pair, double price) {
-        return getPublicAPI(API + ORDERS_RATE + Q_ORDER_TYPE + order_type + A_PAIR + pair + A_PRICE + price);
+        return publicAPI(API + ORDERS_RATE + Q_ORDER_TYPE + order_type + A_PAIR + pair + A_PRICE + price,
+                HttpMethod.GET);
     }
 
     /**
@@ -270,7 +280,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getRate(Pair pair) {
-        return getPublicAPI(API + RATE + pair);
+        return publicAPI(API + RATE + pair, HttpMethod.GET);
     }
 
     /**
@@ -287,7 +297,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getChats() {
-        return getPublicAPI(chatReceiveURL);
+        return publicAPI(chatReceiveURL, HttpMethod.GET);
     }
 
     /**
@@ -306,7 +316,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getChat(long since_id) {
-        return getPublicAPI(API + CHAT_RECEIVE + Q_SINCE_ID + since_id);
+        return publicAPI(API + CHAT_RECEIVE + Q_SINCE_ID + since_id, HttpMethod.GET);
     }
 
     /**
@@ -364,7 +374,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(ORDER_TYPE, Type.buy.toString());
         addParameter(RATE, String.valueOf(rate));
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -422,7 +432,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(ORDER_TYPE, Type.sell.toString());
         addParameter(RATE, String.valueOf(rate));
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -475,7 +485,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.market_buy.toString());
         addParameter(MARKET_BUY_AMOUNT, String.valueOf(market_buy_amount));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -528,7 +538,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.market_sell.toString());
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -581,7 +591,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.leverage_buy.toString());
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -639,7 +649,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(ORDER_TYPE, Type.leverage_buy.toString());
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(RATE, String.valueOf(rate));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -692,7 +702,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.leverage_sell.toString());
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -750,7 +760,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(ORDER_TYPE, Type.leverage_sell.toString());
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(RATE, String.valueOf(rate));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -808,7 +818,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(ORDER_TYPE, Type.close_long.toString());
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(POSITION_ID, String.valueOf(position_id));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -871,7 +881,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(POSITION_ID, String.valueOf(position_id));
         addParameter(RATE, String.valueOf(rate));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -929,7 +939,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(ORDER_TYPE, Type.close_short.toString());
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(POSITION_ID, String.valueOf(position_id));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -992,7 +1002,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(POSITION_ID, String.valueOf(position_id));
         addParameter(RATE, String.valueOf(rate));
-        return postPrivateAPI(ordersURL);
+        return privateAPI(ordersURL, HttpMethod.POST);
     }
 
     /**
@@ -1014,7 +1024,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersOpens() {
-        return getPrivateAPI(ordersOpensURL);
+        return privateAPI(ordersOpensURL, HttpMethod.GET);
     }
 
     /**
@@ -1029,7 +1039,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String deleteOrder(String id) {
-        return deletePrivateAPI(API + ORDERS_ID + id);
+        return privateAPI(API + ORDERS_ID + id, HttpMethod.DELETE);
     }
 
     /**
@@ -1046,7 +1056,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String deleteOrder(String id, Pair pair) {
-        return deletePrivateAPI(API + ORDERS_ID + id);
+        return privateAPI(API + ORDERS_ID + id, HttpMethod.DELETE);
     }
 
     /**
@@ -1090,7 +1100,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactions() {
-        return getPrivateAPI(ordersTransactionsURL);
+        return privateAPI(ordersTransactionsURL, HttpMethod.GET);
     }
 
     /**
@@ -1116,7 +1126,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination() {
-        return getPrivateAPI(ordersTransactionsPaginationURL);
+        return privateAPI(ordersTransactionsPaginationURL, HttpMethod.GET);
     }
 
     /**
@@ -1144,7 +1154,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination(int limit) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit);
+        return privateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit, HttpMethod.GET);
     }
 
     /**
@@ -1173,7 +1183,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination(Sort order) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_ORDER + order);
+        return privateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -1201,7 +1211,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination(long starting_after) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_STARTING_AFTER + starting_after);
+        return privateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -1232,7 +1242,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination(int limit, Sort order) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit + A_ORDER + order);
+        return privateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit + A_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -1262,8 +1272,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination(int limit, long starting_after) {
-        return getPrivateAPI(
-                API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit + A_STARTING_AFTER + starting_after,
+                HttpMethod.GET);
     }
 
     /**
@@ -1294,8 +1304,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination(Sort order, long starting_after) {
-        return getPrivateAPI(
-                API + ORDERS_TRANSACTIONS_PAGINATION + Q_ORDER + order + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_ORDER + order + A_STARTING_AFTER + starting_after,
+                HttpMethod.GET);
     }
 
     /**
@@ -1328,8 +1338,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getOrdersTransactionsPagination(int limit, Sort order, long starting_after) {
-        return getPrivateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER
-                + starting_after);
+        return privateAPI(API + ORDERS_TRANSACTIONS_PAGINATION + Q_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER
+                + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -1360,7 +1370,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions() {
-        return getPrivateAPI(positionsURL);
+        return privateAPI(positionsURL, HttpMethod.GET);
     }
 
     /**
@@ -1394,7 +1404,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status);
+        return privateAPI(API + POSITIONS + Q_STATUS + status, HttpMethod.GET);
     }
 
     /**
@@ -1427,7 +1437,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(int limit) {
-        return getPrivateAPI(API + POSITIONS + Q_LIMIT + limit);
+        return privateAPI(API + POSITIONS + Q_LIMIT + limit, HttpMethod.GET);
     }
 
     /**
@@ -1461,7 +1471,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Sort order) {
-        return getPrivateAPI(API + POSITIONS + Q_ORDER + order);
+        return privateAPI(API + POSITIONS + Q_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -1494,7 +1504,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_STARTING_AFTER + starting_after);
+        return privateAPI(API + POSITIONS + Q_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -1529,7 +1539,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status, int limit) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit);
+        return privateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit, HttpMethod.GET);
     }
 
     /**
@@ -1566,7 +1576,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status, Sort order) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status + A_ORDER + order);
+        return privateAPI(API + POSITIONS + Q_STATUS + status + A_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -1602,7 +1612,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status, long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + POSITIONS + Q_STATUS + status + A_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -1641,7 +1651,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status, int limit, Sort order) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit + A_ORDER + order);
+        return privateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit + A_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -1679,7 +1689,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status, int limit, long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit + A_STARTING_AFTER + starting_after,
+                HttpMethod.GET);
     }
 
     /**
@@ -1718,7 +1729,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status, Sort order, long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status + A_ORDER + order + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + POSITIONS + Q_STATUS + status + A_ORDER + order + A_STARTING_AFTER + starting_after,
+                HttpMethod.GET);
     }
 
     /**
@@ -1759,8 +1771,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Status status, int limit, Sort order, long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER
-                + starting_after);
+        return privateAPI(API + POSITIONS + Q_STATUS + status + A_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER
+                + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -1796,7 +1808,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(int limit, Sort order) {
-        return getPrivateAPI(API + POSITIONS + Q_LIMIT + limit + A_ORDER + order);
+        return privateAPI(API + POSITIONS + Q_LIMIT + limit + A_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -1831,7 +1843,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(int limit, long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_LIMIT + limit + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + POSITIONS + Q_LIMIT + limit + A_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -1869,7 +1881,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(int limit, Sort order, long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + POSITIONS + Q_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER + starting_after,
+                HttpMethod.GET);
     }
 
     /**
@@ -1905,7 +1918,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getPositions(Sort order, long starting_after) {
-        return getPrivateAPI(API + POSITIONS + Q_ORDER + order + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + POSITIONS + Q_ORDER + order + A_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -1928,7 +1941,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getBalance() {
-        return getPrivateAPI(accountsBalanceURL);
+        return privateAPI(accountsBalanceURL, HttpMethod.GET);
     }
 
     /**
@@ -1943,7 +1956,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getLeverageBalance() {
-        return getPrivateAPI(accountsLeverageBalanceURL);
+        return privateAPI(accountsLeverageBalanceURL, HttpMethod.GET);
     }
 
     /**
@@ -1966,7 +1979,7 @@ public class APIcoincheck extends API implements Coincheckable {
         clearParameters();
         addParameter(ADDRESS, address);
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(sendMoneyURL);
+        return privateAPI(sendMoneyURL, HttpMethod.POST);
     }
 
     /**
@@ -2009,7 +2022,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getSendCoin(Currency currency) {
-        return getPrivateAPI(API + SEND_MONEY + Q_CURRENCY + currency);
+        return privateAPI(API + SEND_MONEY + Q_CURRENCY + currency, HttpMethod.GET);
     }
 
     /**
@@ -2054,7 +2067,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getDepositCoin(Currency currency) {
-        return getPrivateAPI(API + DEPOSIT_MONEY + Q_CURRENCY + currency);
+        return privateAPI(API + DEPOSIT_MONEY + Q_CURRENCY + currency, HttpMethod.GET);
     }
 
     /**
@@ -2091,7 +2104,7 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String depositMoneyFast(long id) {
         clearParameters();
-        return postPrivateAPI(API + DEPOSIT_MONEY_ID_FAST.replace("[id]", String.valueOf(id)));
+        return privateAPI(API + DEPOSIT_MONEY_ID_FAST.replace("[id]", String.valueOf(id)), HttpMethod.POST);
     }
 
     /**
@@ -2110,7 +2123,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getAccounts() {
-        return getPrivateAPI(accountsURL);
+        return privateAPI(accountsURL, HttpMethod.GET);
     }
 
     /**
@@ -2130,7 +2143,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getBankAcccounts() {
-        return getPrivateAPI(bankAccountsURL);
+        return privateAPI(bankAccountsURL, HttpMethod.GET);
     }
 
     /**
@@ -2169,7 +2182,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(BANK_ACCOUNT_TYPE, bank_account_type.toString());
         addParameter(NUMBER, number);
         addParameter(NAME, name);
-        return postPrivateAPI(bankAccountsURL);
+        return privateAPI(bankAccountsURL, HttpMethod.POST);
     }
 
     /**
@@ -2207,7 +2220,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String deleteBankAccount(long id) {
-        return deletePrivateAPI(API + BANK_ACCOUNTS + SLASH + id);
+        return privateAPI(API + BANK_ACCOUNTS + SLASH + id, HttpMethod.DELETE);
     }
 
     /**
@@ -2231,7 +2244,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws() {
-        return getPrivateAPI(withdrawsURL);
+        return privateAPI(withdrawsURL, HttpMethod.GET);
     }
 
     /**
@@ -2257,7 +2270,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws(int limit) {
-        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit);
+        return privateAPI(API + WITHDRAWS + Q_LIMIT + limit, HttpMethod.GET);
     }
 
     /**
@@ -2284,7 +2297,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws(Sort order) {
-        return getPrivateAPI(API + WITHDRAWS + Q_ORDER + order);
+        return privateAPI(API + WITHDRAWS + Q_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -2310,7 +2323,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws(long starting_after) {
-        return getPrivateAPI(API + WITHDRAWS + Q_STARTING_AFTER + starting_after);
+        return privateAPI(API + WITHDRAWS + Q_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -2339,7 +2352,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws(int limit, Sort order) {
-        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_ORDER + order);
+        return privateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_ORDER + order, HttpMethod.GET);
     }
 
     /**
@@ -2367,7 +2380,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws(int limit, long starting_after) {
-        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -2398,7 +2411,8 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws(int limit, Sort order, long starting_after) {
-        return getPrivateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + WITHDRAWS + Q_LIMIT + limit + A_ORDER + order + A_STARTING_AFTER + starting_after,
+                HttpMethod.GET);
     }
 
     /**
@@ -2427,7 +2441,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getWithdraws(Sort order, long starting_after) {
-        return getPrivateAPI(API + WITHDRAWS + Q_ORDER + order + A_STARTING_AFTER + starting_after);
+        return privateAPI(API + WITHDRAWS + Q_ORDER + order + A_STARTING_AFTER + starting_after, HttpMethod.GET);
     }
 
     /**
@@ -2459,7 +2473,7 @@ public class APIcoincheck extends API implements Coincheckable {
         addParameter(BANK_ACCOUNT_ID, String.valueOf(bank_account_id));
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(CURRENCY, currency.toString());
-        return postPrivateAPI(withdrawsURL);
+        return privateAPI(withdrawsURL, HttpMethod.POST);
     }
 
     /**
@@ -2473,7 +2487,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String deleteWithdraw(long id) {
-        return deletePrivateAPI(API + WITHDRAWS + SLASH + id);
+        return privateAPI(API + WITHDRAWS + SLASH + id, HttpMethod.DELETE);
     }
 
     /**
@@ -2498,7 +2512,7 @@ public class APIcoincheck extends API implements Coincheckable {
         clearParameters();
         addParameter(AMOUNT, String.valueOf(amount));
         addParameter(CURRENCY, currency.toString());
-        return postPrivateAPI(lendingBorrowsURL);
+        return privateAPI(lendingBorrowsURL, HttpMethod.POST);
     }
 
     /**
@@ -2520,7 +2534,7 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getLendingBorrowsMatches() {
-        return getPrivateAPI(lendingBorrowsMatchesURL);
+        return privateAPI(lendingBorrowsMatchesURL, HttpMethod.GET);
     }
 
     /**
@@ -2536,7 +2550,7 @@ public class APIcoincheck extends API implements Coincheckable {
     @Override
     public String lendingBorrowRepay(long id) {
         clearParameters();
-        return postPrivateAPI(API + LENDING_BORROWS_ID_REPAY.replace("[id]", String.valueOf(id)));
+        return privateAPI(API + LENDING_BORROWS_ID_REPAY.replace("[id]", String.valueOf(id)), HttpMethod.POST);
     }
 
     /**
@@ -2556,7 +2570,7 @@ public class APIcoincheck extends API implements Coincheckable {
         clearParameters();
         addParameter(CURRENCY, currency.toString());
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(toLeverageURL);
+        return privateAPI(toLeverageURL, HttpMethod.POST);
     }
 
     /**
@@ -2576,6 +2590,12 @@ public class APIcoincheck extends API implements Coincheckable {
         clearParameters();
         addParameter(CURRENCY, currency.toString());
         addParameter(AMOUNT, String.valueOf(amount));
-        return postPrivateAPI(fromLeverageURL);
+        return privateAPI(fromLeverageURL, HttpMethod.POST);
+    }
+
+    @Override
+    protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
+        String message = nonce + url + getParameters();
+        return HMAC_SHA256Encode(apiSecret, message);
     }
 }

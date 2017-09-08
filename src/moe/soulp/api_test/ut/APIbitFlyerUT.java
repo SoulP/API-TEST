@@ -336,4 +336,46 @@ public class APIbitFlyerUT extends APIkey {
         }
         assertNotNull(temp);
     }
+
+    /**
+     * <b>API キーの権限を取得</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getPermissions() {
+        JSONArray temp = null;
+        System.out.println("API キーの権限を取得");
+        try {
+            temp = new JSONArray(bitFlyer.getPermissions());
+            for (int i = 0; i < temp.length(); i++)
+                System.out.println(temp.getString(i));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>資産残高を取得</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getBalance() {
+        JSONArray temp = null;
+        try {
+            temp = new JSONArray(bitFlyer.getBalance());
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject balance = temp.getJSONObject(i);
+                System.out.println(balance.getString("currency_code") + ": " + balance.getDouble("amount") + "(利用可能: "
+                        + balance.getDouble("available") + ")");
+            }
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
 }

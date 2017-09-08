@@ -7,23 +7,26 @@ import java.time.ZonedDateTime;
 
 /**
  * <b>bitFlyerのAPI操作</b><br>
- * date: 2017/09/07 last_date: 2017/09/07
+ * date: 2017/09/07 last_date: 2017/09/08
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 APIbitFlyer作成
  */
 public class APIbitFlyer extends API implements BitFlyerable {
-    private final static String Q_PRODUCT_CODE = "?product_code=";
-    private final static String Q_COUNT        = "?count=";
-    private final static String Q_BEFORE       = "?before=";
-    private final static String Q_AFTER        = "?after=";
-    private final static String Q_FROM_DATE    = "?from_date=";
+    private final static String Q_PRODUCT_CODE   = "?product_code=";
+    private final static String Q_COUNT          = "?count=";
+    private final static String Q_BEFORE         = "?before=";
+    private final static String Q_AFTER          = "?after=";
+    private final static String Q_FROM_DATE      = "?from_date=";
 
-    private final static String A_COUNT        = "&count=";
-    private final static String A_BEFORE       = "&before=";
-    private final static String A_AFTER        = "&after=";
+    private final static String A_COUNT          = "&count=";
+    private final static String A_BEFORE         = "&before=";
+    private final static String A_AFTER          = "&after=";
 
-    private final static String Z              = "Z";
+    private final static String Z                = "Z";
+    private final static String ACCESS_KEY       = "ACCESS-KEY";
+    private final static String ACCESS_TIMESTAMP = "ACCESS-TIMESTAMP";
+    private final static String ACCESS_SIGN      = "ACCESS-SIGN";
 
     private static URL          getMarketsURL;
     private static URL          getBoardURL;
@@ -32,6 +35,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          getHealthURL;
     private static URL          getChatsURL;
     private static URL          apiPriceURL;
+    private static URL          getPermissionsURL;
+    private static URL          getBalanceURL;
 
     static {
         try {
@@ -42,6 +47,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
             getHealthURL = new URL(API + GET_HEALTH);
             getChatsURL = new URL(API + GET_CHATS);
             apiPriceURL = new URL(API_PRICE);
+            getPermissionsURL = new URL(API + GET_PERMISSIONS);
+            getBalanceURL = new URL(API + GET_BALANCE);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -51,6 +58,10 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>bitFlyerのAPI</b>
      */
     public APIbitFlyer() {
+        super();
+        setAPIkeyProperty(ACCESS_KEY);
+        setAPInonceProperty(ACCESS_TIMESTAMP);
+        setAPIsignProperty(ACCESS_SIGN);
     };
 
     /**
@@ -62,6 +73,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *            APIシークレット
      */
     public APIbitFlyer(String apiKey, String apiSecret) {
+        this();
         setAPIkey(apiKey);
         setAPIsecret(apiSecret);
     }
@@ -78,7 +90,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getMarkets() {
-        return getPublicAPI(getMarketsURL);
+        return publicAPI(getMarketsURL, HttpMethod.GET);
     }
 
     /**
@@ -98,7 +110,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getBoard() {
-        return getPublicAPI(getBoardURL);
+        return publicAPI(getBoardURL, HttpMethod.GET);
     }
 
     /**
@@ -120,7 +132,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getBoard(Pair product_code) {
-        return getPublicAPI(API + GET_BOARD + Q_PRODUCT_CODE + product_code);
+        return publicAPI(API + GET_BOARD + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
     }
 
     /**
@@ -141,7 +153,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getBoard(String product_code) {
-        return getPublicAPI(API + GET_BOARD + Q_PRODUCT_CODE + product_code);
+        return publicAPI(API + GET_BOARD + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
     }
 
     /**
@@ -164,7 +176,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTicker() {
-        return getPublicAPI(getTickerURL);
+        return publicAPI(getTickerURL, HttpMethod.GET);
     }
 
     /**
@@ -189,7 +201,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTicker(Pair product_code) {
-        return getPublicAPI(API + GET_TICKER + Q_PRODUCT_CODE + product_code);
+        return publicAPI(API + GET_TICKER + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
     }
 
     /**
@@ -213,7 +225,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTicker(String product_code) {
-        return getPublicAPI(API + GET_TICKER + Q_PRODUCT_CODE + product_code);
+        return publicAPI(API + GET_TICKER + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
     }
 
     /**
@@ -233,7 +245,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades() {
-        return getPublicAPI(getExecutionsURL);
+        return publicAPI(getExecutionsURL, HttpMethod.GET);
     }
 
     /**
@@ -255,7 +267,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(Pair product_code) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
     }
 
     /**
@@ -276,7 +288,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(String product_code) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
     }
 
     /**
@@ -298,7 +310,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(int count) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_COUNT + count);
+        return publicAPI(API + GET_EXECUTIONS + Q_COUNT + count, HttpMethod.GET);
     }
 
     /**
@@ -322,7 +334,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(Pair product_code, int count) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count, HttpMethod.GET);
     }
 
     /**
@@ -345,7 +357,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(String product_code, int count) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count, HttpMethod.GET);
     }
 
     /**
@@ -376,8 +388,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(Pair product_code, int count, long before, long after) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before
-                + A_AFTER + after);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before
+                + A_AFTER + after, HttpMethod.GET);
     }
 
     /**
@@ -407,8 +419,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(String product_code, int count, long before, long after) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before
-                + A_AFTER + after);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before
+                + A_AFTER + after, HttpMethod.GET);
     }
 
     /**
@@ -431,7 +443,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesBefore(long before) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_BEFORE + before);
+        return publicAPI(API + GET_EXECUTIONS + Q_BEFORE + before, HttpMethod.GET);
     }
 
     /**
@@ -456,7 +468,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesBefore(Pair product_code, long before) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_BEFORE + before);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_BEFORE + before, HttpMethod.GET);
     }
 
     /**
@@ -480,7 +492,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesBefore(String product_code, long before) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_BEFORE + before);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_BEFORE + before, HttpMethod.GET);
     }
 
     /**
@@ -507,7 +519,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesBefore(Pair product_code, int count, long before) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before,
+                HttpMethod.GET);
     }
 
     /**
@@ -533,7 +546,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesBefore(String product_code, int count, long before) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before,
+                HttpMethod.GET);
     }
 
     /**
@@ -556,7 +570,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesAfter(long after) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_AFTER + after);
+        return publicAPI(API + GET_EXECUTIONS + Q_AFTER + after, HttpMethod.GET);
     }
 
     /**
@@ -581,7 +595,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesAfter(Pair product_code, long after) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_AFTER + after);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_AFTER + after, HttpMethod.GET);
     }
 
     /**
@@ -605,7 +619,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesAfter(String product_code, long after) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_AFTER + after);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_AFTER + after, HttpMethod.GET);
     }
 
     /**
@@ -632,7 +646,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesAfter(Pair product_code, int count, long after) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_AFTER + after);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_AFTER + after,
+                HttpMethod.GET);
     }
 
     /**
@@ -658,7 +673,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTradesAfter(String product_code, int count, long after) {
-        return getPublicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_AFTER + after);
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_AFTER + after,
+                HttpMethod.GET);
     }
 
     /**
@@ -680,7 +696,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getHealth() {
-        return getPublicAPI(getHealthURL);
+        return publicAPI(getHealthURL, HttpMethod.GET);
     }
 
     /**
@@ -697,7 +713,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getChats() {
-        return getPublicAPI(getChatsURL);
+        return publicAPI(getChatsURL, HttpMethod.GET);
     }
 
     /**
@@ -715,8 +731,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getChats(ZonedDateTime from_date) {
-        return getPublicAPI(
-                API + GET_CHATS + Q_FROM_DATE + from_date.withZoneSameInstant(ZoneId.of(Z)).toLocalDateTime());
+        return publicAPI(API + GET_CHATS + Q_FROM_DATE + from_date.withZoneSameInstant(ZoneId.of(Z)).toLocalDateTime(),
+                HttpMethod.GET);
     }
 
     /**
@@ -730,6 +746,39 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getRate() {
-        return getPublicAPI(apiPriceURL);
+        return publicAPI(apiPriceURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>API キーの権限を取得</b><br>
+     * この API キーで呼出可能な HTTP Private API の一覧を取得できます。
+     * 
+     * @return 【JSONArray】<br>
+     *         String
+     */
+    @Override
+    public String getPermissions() {
+        return privateAPI(getPermissionsURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>資産残高を取得</b>
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 量<br>
+     *         <b>available</b> 利用可能な量
+     */
+    @Override
+    public String getBalance() {
+        return privateAPI(getBalanceURL, HttpMethod.GET);
+    }
+
+    @Override
+    protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
+        String message = nonce + method + url.substring(API.length()) + getParameters();
+        return HMAC_SHA256Encode(apiSecret, message);
     }
 }

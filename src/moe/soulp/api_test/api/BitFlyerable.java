@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>bitFlyer</b><br>
- * date: 2017/09/07 last_date: 2017/09/07
+ * date: 2017/09/07 last_date: 2017/09/08
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 BitFlyerable作成
@@ -106,6 +106,10 @@ public interface BitFlyerable {
 
     public String getChats(ZonedDateTime from_date); // チャット
 
+    // Private API
+    // API
+    public String getPermissions(); // API キーの権限を取得
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
@@ -133,4 +137,7 @@ public interface BitFlyerable {
     public String getChats(); // チャット受信
 
     public String getRate(); // レート取得
+
+    // Private API
+    public String getBalance(); // 残高
 }

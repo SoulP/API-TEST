@@ -364,8 +364,8 @@ public class APIcoincheckUT extends APIkey {
     @Test
     public void leverageBuy() {
         JSONObject temp = null;
-        double amount = 0.005d;
-        double rate = 300000d;
+        double amount = 0.007d;
+        double rate = 400000d;
         assertTrue(amount >= 0.005d);
         try {
             temp = new JSONObject(coincheck.leverageBuy(Pair.btc_jpy, amount, rate));
@@ -393,7 +393,7 @@ public class APIcoincheckUT extends APIkey {
     public void leverageSell() {
         JSONObject temp = null;
         double amount = 0.005d;
-        double rate = 450000d;
+        double rate = 520000d;
         assertTrue(amount >= 0.005d);
         try {
             temp = new JSONObject(coincheck.leverageSell(Pair.btc_jpy, amount, rate));
@@ -1414,7 +1414,7 @@ public class APIcoincheckUT extends APIkey {
     }
 
     /**
-     * <b>レバレッジアカウントへ振替</b><br>
+     * <b>レバレッジアカウントから振替</b><br>
      * 成功テスト
      */
     @Test

@@ -33,7 +33,7 @@ public interface Coincheckable extends Exchangeable {
 
     // Private API
     // 注文
-    String            ORDERS                           = "/api/exchange/orders";                                   // 新規注文
+    String            EXCHANGE_ORDERS                  = "/api/exchange/orders";                                   // 新規注文
     String            ORDERS_OPENS                     = "/api/exchange/orders/opens";                             // 未決済の注文一覧
     String            ORDERS_ID                        = "/api/exchange/orders/";                                  // 注文のキャンセル
     String            ORDERS_TRANSACTIONS              = "/api/exchange/orders/transactions";                      // 取引履歴

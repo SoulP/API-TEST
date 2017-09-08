@@ -17,42 +17,57 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * <b>汎用API接続</b><br>
- * date: 2017/08/03 last_date: 2017/09/07
+ * date: 2017/08/03 last_date: 2017/09/08
  * 
  * @author ソウルP
  * @version 1.0 2017/08/03 API作成
  * @version 1.1 2017/08/21 Private API用のdelete操作追加
  * @version 1.2 2017/09/07 APIcoincheckの一部をAPIに移動
+ * @version 1.3 2017/09/08 coincheckとbitFlyer両方対応の為、通信仕組みを大幅に変更
  */
 public abstract class API {
     private final static String ERROR_NULL_API_KEY    = "apiKeyの値がありません。";
     private final static String ERROR_NULL_API_SECRET = "apiSecretの値がありません。";
-    final static String         GET                   = "GET";
-    final static String         POST                  = "POST";
-    final static String         HEAD                  = "HEAD";
-    final static String         OPTIONS               = "OPTIONS";
-    final static String         PUT                   = "PUT";
-    final static String         DELETE                = "DELETE";
-    final static String         TRACE                 = "TRACE";
-    private String              parameters            = "";
-    private String              apiKey                = "";
-    private String              apiSecret             = "";
+    private String              parameters;
+    private String              apiKey;
+    private String              apiSecret;
+    private String              apiKeyProperty;
+    private String              apiNonceProperty;
+    private String              apiSignProperty;
 
-    protected String getPublicAPI(String url) {
+    public API() {
+        parameters = "";
+        apiKey = "";
+        apiSecret = "";
+        apiKeyProperty = "";
+        apiNonceProperty = "";
+        apiSignProperty = "";
+    }
+
+    protected String publicAPI(String url, HttpMethod method) {
         try {
-            return getPublicAPI(new URL(url));
+            return publicAPI(new URL(url), method);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    protected String getPublicAPI(URL url) {
+    protected String publicAPI(URL url, HttpMethod method) {
         HttpURLConnection connection = null;
         String result = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(GET);
+            connection.setRequestMethod(method.toString());
+            if (HttpMethod.GET != method) {
+                connection.setUseCaches(false);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
+                osw.write(parameters);
+                osw.flush();
+                osw.close();
+            }
             int code = connection.getResponseCode();
             if (code == HttpURLConnection.HTTP_OK) {
                 InputStreamReader isr = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
@@ -74,119 +89,35 @@ public abstract class API {
         return result;
     }
 
-    protected String getPrivateAPI(String url) {
+    protected String privateAPI(String url, HttpMethod method) {
         try {
-            return getPrivateAPI(new URL(url));
+            return privateAPI(new URL(url), method);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    protected String getPrivateAPI(URL url) {
-        clearParameters();
+    protected String privateAPI(URL url, HttpMethod method) {
         HttpURLConnection connection = null;
         String result = null;
         String nonce = createNonce();
         try {
             checkAPIkeys();
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(GET);
-            connection.setRequestProperty("ACCESS-KEY", apiKey);
-            connection.setRequestProperty("ACCESS-NONCE", nonce);
-            connection.setRequestProperty("ACCESS-SIGNATURE", createSignature(apiSecret, url.toString(), nonce));
-            int code = connection.getResponseCode();
-            if (code == HttpURLConnection.HTTP_OK) {
-                InputStreamReader isr = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
-                BufferedReader reader = new BufferedReader(isr);
-                String line;
-                StringBuilder temp = new StringBuilder();
-                while ((line = reader.readLine()) != null) {
-                    temp.append(line);
-                }
-                result = temp.toString();
-            } else {
-                throw new IOException("HTTP CODE: " + code);
+            connection.setRequestMethod(method.toString());
+            connection.setRequestProperty(apiKeyProperty, apiKey);
+            connection.setRequestProperty(apiNonceProperty, nonce);
+            connection.setRequestProperty(apiSignProperty, createSignature(apiSecret, url.toString(), nonce, method));
+            if (HttpMethod.GET != method) {
+                connection.setUseCaches(false);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
+                osw.write(parameters);
+                osw.flush();
+                osw.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) connection.disconnect();
-        }
-        return result;
-    }
-
-    protected String postPrivateAPI(String url) {
-        try {
-            return postPrivateAPI(new URL(url));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected String postPrivateAPI(URL url) {
-        HttpURLConnection connection = null;
-        String result = null;
-        String nonce = createNonce();
-        try {
-            checkAPIkeys();
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(POST);
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("ACCESS-KEY", apiKey);
-            connection.setRequestProperty("ACCESS-NONCE", nonce);
-            connection.setRequestProperty("ACCESS-SIGNATURE", createSignature(apiSecret, url.toString(), nonce));
-            OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
-            osw.write(parameters);
-            osw.flush();
-            osw.close();
-            connection.connect();
-            int code = connection.getResponseCode();
-            if (code == HttpURLConnection.HTTP_OK) {
-                InputStreamReader isr = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
-                BufferedReader reader = new BufferedReader(isr);
-                String line;
-                StringBuilder temp = new StringBuilder();
-                while ((line = reader.readLine()) != null) {
-                    temp.append(line);
-                }
-                result = temp.toString();
-            } else {
-                throw new IOException("HTTP CODE: " + code);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) connection.disconnect();
-            clearParameters();
-        }
-        return result;
-    }
-
-    protected String deletePrivateAPI(String url) {
-        try {
-            return deletePrivateAPI(new URL(url));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected String deletePrivateAPI(URL url) {
-        clearParameters();
-        HttpURLConnection connection = null;
-        String result = null;
-        String nonce = createNonce();
-        try {
-            checkAPIkeys();
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(DELETE);
-            connection.setRequestProperty("ACCESS-KEY", apiKey);
-            connection.setRequestProperty("ACCESS-NONCE", nonce);
-            connection.setRequestProperty("ACCESS-SIGNATURE", createSignature(apiSecret, url.toString(), nonce));
             int code = connection.getResponseCode();
             if (code == HttpURLConnection.HTTP_OK) {
                 InputStreamReader isr = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
@@ -214,12 +145,9 @@ public abstract class API {
         return nonce;
     }
 
-    private String createSignature(String apiSecret, String url, String nonce) {
-        String message = nonce + url + parameters;
-        return HMAC_SHA256Encode(apiSecret, message);
-    }
+    protected abstract String createSignature(String apiSecret, String url, String nonce, HttpMethod method);
 
-    private static String HMAC_SHA256Encode(String secretKey, String message) {
+    protected static String HMAC_SHA256Encode(String secretKey, String message) {
 
         SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "hmacSHA256");
 
@@ -288,11 +216,23 @@ public abstract class API {
         return false;
     }
 
+    protected void setAPIkeyProperty(String apiKeyProperty) {
+        this.apiKeyProperty = apiKeyProperty;
+    }
+
+    protected void setAPInonceProperty(String apiNonceProperty) {
+        this.apiNonceProperty = apiNonceProperty;
+    }
+
+    protected void setAPIsignProperty(String apiSignProperty) {
+        this.apiSignProperty = apiSignProperty;
+    }
+
     protected void setParameters(String parameters) {
         this.parameters = parameters;
     }
 
-    protected String getParametrs() {
+    protected String getParameters() {
         return parameters;
     }
 
