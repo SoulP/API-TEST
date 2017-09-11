@@ -19,10 +19,11 @@ import moe.soulp.api_test.bitFlyer.dto.BankAccountDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinInDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinOutDTO;
 import moe.soulp.api_test.bitFlyer.dto.ExecutionGetDTO;
+import moe.soulp.api_test.bitFlyer.dto.MoneyTransactionDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
- * date: 2017/09/07 last_date: 2017/09/08
+ * date: 2017/09/07 last_date: 2017/09/11
  * 
  * @author ソウルP
  */
@@ -557,6 +558,50 @@ public class APIbitFlyerUT extends APIkey {
                 System.out.println("口座名義: " + account.getAccountName());
                 System.out.println("------------------------------");
             });
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getDeposits() {
+        JSONArray temp = null;
+        System.out.println("入金履歴");
+        try {
+            temp = new JSONArray(bitFlyer.getDeposits());
+            List<MoneyTransactionDTO> deposits = new ArrayList<>();
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject tran = temp.getJSONObject(i);
+                MoneyTransactionDTO deposit = new MoneyTransactionDTO();
+
+                deposit.setId(tran.getLong("id"));
+                deposit.setOrderId(tran.getString("order_id"));
+                deposit.setCurrencyCode(tran.getString("currency_code"));
+                deposit.setAmount(tran.getDouble("amount"));
+                deposit.setStatus(tran.getString("status"));
+                deposit.setEventDate(tran.getString("event_date"));
+
+                deposits.add(deposit);
+            }
+
+            System.out.println("------------------------------");
+            deposits.forEach(d -> {
+                System.out.println("入金のID: " + d.getId());
+                System.out.println("注文のID: " + d.getOrderId());
+                System.out.println("通貨: " + d.getCurrencyCode());
+                System.out.println("金額: " + d.getAmount());
+                System.out.println("状態: " + d.getStatus());
+                System.out.println("日時: " + d.getEventDate());
+                System.out.println("------------------------------");
+            });
+
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();

@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 
 /**
  * <b>bitFlyerのAPI操作</b><br>
- * date: 2017/09/07 last_date: 2017/09/08
+ * date: 2017/09/07 last_date: 2017/09/11
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 APIbitFlyer作成
@@ -43,6 +43,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          getCoinInsURL;
     private static URL          getCoinOutsURL;
     private static URL          getBankAccountsURL;
+    private static URL          getDepositsURL;
 
     static {
         try {
@@ -61,6 +62,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
             getCoinInsURL = new URL(API + GET_COIN_INS);
             getCoinOutsURL = new URL(API + GET_COIN_OUTS);
             getBankAccountsURL = new URL(API + GET_BANK_ACCOUNTS);
+            getDepositsURL = new URL(API + GET_DEPOSITS);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -1265,6 +1267,193 @@ public class APIbitFlyer extends API implements BitFlyerable {
     @Override
     public String getBankAccounts() {
         return privateAPI(getBankAccountsURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 入金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDeposits() {
+        return privateAPI(getDepositsURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 入金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDeposits(int count) {
+        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count, HttpMethod.GET);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 入金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDeposits(int count, long before, long after) {
+        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 入金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositsBefore(long before) {
+        return privateAPI(API + GET_DEPOSITS + Q_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 入金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositsBefore(int count, long before) {
+        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 入金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositsAfter(long after) {
+        return privateAPI(API + GET_DEPOSITS + Q_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>入金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 入金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getDepositsAfter(int count, long after) {
+        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
     }
 
     @Override

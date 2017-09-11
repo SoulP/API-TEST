@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>bitFlyer</b><br>
- * date: 2017/09/07 last_date: 2017/09/08
+ * date: 2017/09/07 last_date: 2017/09/11
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 BitFlyerable作成
@@ -143,6 +143,18 @@ public interface BitFlyerable {
 
     public String getBankAccounts(); // 銀行口座一覧取得
 
+    public String getDeposits(int count); // 入金履歴
+
+    public String getDeposits(int count, long before, long after); // 入金履歴
+
+    public String getDepositsBefore(long before); // 入金履歴
+
+    public String getDepositsBefore(int count, long before); // 入金履歴
+
+    public String getDepositsAfter(long after); // 入金履歴
+
+    public String getDepositsAfter(int count, long after); // 入金履歴
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
@@ -179,4 +191,6 @@ public interface BitFlyerable {
     public String getDepositCoins(); // 受け取り履歴
 
     public String getSendCoins(); // 送金履歴
+
+    public String getDeposits(); // 入金履歴
 }
