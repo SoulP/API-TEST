@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>bitFlyer</b><br>
- * date: 2017/09/07 last_date: 2017/09/11
+ * date: 2017/09/07 last_date: 2017/09/12
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 BitFlyerable作成
@@ -155,6 +155,34 @@ public interface BitFlyerable {
 
     public String getDepositsAfter(int count, long after); // 入金履歴
 
+    public String withdraw(long bank_account_id, long amount, Currency currency, String code); // 出金
+
+    public String getWithdraws(int count); // 出金履歴
+
+    public String getWithdraws(String message_id); // 出金履歴
+
+    public String getWithdraws(long before, long after, String message_id); // 出金履歴
+
+    public String getWithdraws(int count, long before, long after); // 出金履歴
+
+    public String getWithdraws(int count, long before, long after, String message_id); // 出金履歴
+
+    public String getWithdrawsBefore(long before); // 出金履歴
+
+    public String getWithdrawsBefore(int count, long before); // 出金履歴
+
+    public String getWithdrawsBefore(long before, String message_id); // 出金履歴
+
+    public String getWithdrawsBefore(int count, long before, String message_id); // 出金履歴
+
+    public String getWithdrawsAfter(long after); // 出金履歴
+
+    public String getWithdrawsAfter(int count, long after); // 出金履歴
+
+    public String getWithdrawsAfter(long after, String message_id); // 出金履歴
+
+    public String getWithdrawsAfter(int count, long after, String message_id); // 出金履歴
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
@@ -193,4 +221,8 @@ public interface BitFlyerable {
     public String getSendCoins(); // 送金履歴
 
     public String getDeposits(); // 入金履歴
+
+    public String withdraw(long bank_account_id, long amount, Currency currency); // 出金
+
+    public String getWithdraws(); // 出金履歴
 }

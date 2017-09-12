@@ -11,7 +11,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/08
+ * date: 2017/08/03 last_date: 2017/09/11
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -2468,7 +2468,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Currency 通貨
      */
     @Override
-    public String withdraw(long bank_account_id, double amount, Currency currency) {
+    public String withdraw(long bank_account_id, long amount, Currency currency) {
         clearParameters();
         addParameter(BANK_ACCOUNT_ID, String.valueOf(bank_account_id));
         addParameter(AMOUNT, String.valueOf(amount));

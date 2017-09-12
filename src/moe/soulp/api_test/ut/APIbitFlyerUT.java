@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import moe.soulp.api_test.api.APIbitFlyer;
 import moe.soulp.api_test.api.BitFlyerable;
+import moe.soulp.api_test.api.Currency;
 import moe.soulp.api_test.api.Pair;
 import moe.soulp.api_test.bitFlyer.dto.BankAccountDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinInDTO;
@@ -23,7 +24,7 @@ import moe.soulp.api_test.bitFlyer.dto.MoneyTransactionDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
- * date: 2017/09/07 last_date: 2017/09/11
+ * date: 2017/09/07 last_date: 2017/09/12
  * 
  * @author ソウルP
  */
@@ -599,6 +600,75 @@ public class APIbitFlyerUT extends APIkey {
                 System.out.println("金額: " + d.getAmount());
                 System.out.println("状態: " + d.getStatus());
                 System.out.println("日時: " + d.getEventDate());
+                System.out.println("------------------------------");
+            });
+
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>出金</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void withdraw() {
+        JSONObject temp = null;
+        long bank_account_id = 0l;
+        long amount = 0l;
+        Currency currency_code = Currency.JPY;
+        System.out.println("出金");
+
+        try {
+            temp = new JSONObject(bitFlyer.withdraw(bank_account_id, amount, currency_code));
+            System.out.println("口座のID: " + bank_account_id);
+            System.out.println("金額(" + currency_code + "): " + amount);
+            System.out.println("出金メッセージの受付 ID: " + temp.getString("message_id"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getWithdraws() {
+        JSONArray temp = null;
+        System.out.println("出金履歴");
+        try {
+            temp = new JSONArray(bitFlyer.getWithdraws());
+            List<MoneyTransactionDTO> withdrawals = new ArrayList<>();
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject tran = temp.getJSONObject(i);
+                MoneyTransactionDTO withdraw = new MoneyTransactionDTO();
+
+                withdraw.setId(tran.getLong("id"));
+                withdraw.setOrderId(tran.getString("order_id"));
+                withdraw.setCurrencyCode(tran.getString("currency_code"));
+                withdraw.setAmount(tran.getDouble("amount"));
+                withdraw.setStatus(tran.getString("status"));
+                withdraw.setEventDate(tran.getString("event_date"));
+
+                withdrawals.add(withdraw);
+            }
+
+            System.out.println("------------------------------");
+            withdrawals.forEach(w -> {
+                System.out.println("出金のID: " + w.getId());
+                System.out.println("注文のID: " + w.getOrderId());
+                System.out.println("通貨: " + w.getCurrencyCode());
+                System.out.println("金額: " + w.getAmount());
+                System.out.println("状態: " + w.getStatus());
+                System.out.println("日時: " + w.getEventDate());
                 System.out.println("------------------------------");
             });
 

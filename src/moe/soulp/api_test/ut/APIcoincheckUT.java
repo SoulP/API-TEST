@@ -37,7 +37,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
  * <b>Coincheck用のUTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/09/08
+ * date: 2017/08/03 last_date: 2017/09/11
  * 
  * @author ソウルP
  */
@@ -1235,11 +1235,11 @@ public class APIcoincheckUT extends APIkey {
      * 成功テスト
      */
     @Test
-    public void withdraws() {
+    public void withdraw() {
         JSONObject temp = null;
         boolean success = false;
         long bank_account_id = 0l;
-        double amount = 0d;
+        long amount = 0l;
         Currency currency = Currency.JPY;
 
         System.out.println("出金申請の作成");

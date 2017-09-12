@@ -5,9 +5,12 @@ import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * <b>bitFlyerのAPI操作</b><br>
- * date: 2017/09/07 last_date: 2017/09/11
+ * date: 2017/09/07 last_date: 2017/09/12
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 APIbitFlyer作成
@@ -18,15 +21,23 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private final static String Q_BEFORE         = "?before=";
     private final static String Q_AFTER          = "?after=";
     private final static String Q_FROM_DATE      = "?from_date=";
+    private final static String Q_MESSAGE_ID     = "?message_id=";
 
     private final static String A_COUNT          = "&count=";
     private final static String A_BEFORE         = "&before=";
     private final static String A_AFTER          = "&after=";
+    private final static String A_MESSAGE_ID     = "&message_id=";
 
     private final static String Z                = "Z";
     private final static String ACCESS_KEY       = "ACCESS-KEY";
     private final static String ACCESS_TIMESTAMP = "ACCESS-TIMESTAMP";
     private final static String ACCESS_SIGN      = "ACCESS-SIGN";
+
+    private final static String CURRENCY_CODE    = "currency_code";
+    private final static String BANK_ACCOUNT_ID  = "bank_account_id";
+    private final static String AMOUNT           = "amount";
+    private final static String CODE             = "code";
+    private final static String BODY             = "Body";
 
     private static URL          getMarketsURL;
     private static URL          getBoardURL;
@@ -44,6 +55,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          getCoinOutsURL;
     private static URL          getBankAccountsURL;
     private static URL          getDepositsURL;
+    private static URL          withdrawURL;
+    private static URL          getWithdrawalsURL;
 
     static {
         try {
@@ -63,6 +76,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
             getCoinOutsURL = new URL(API + GET_COIN_OUTS);
             getBankAccountsURL = new URL(API + GET_BANK_ACCOUNTS);
             getDepositsURL = new URL(API + GET_DEPOSITS);
+            withdrawURL = new URL(API + WITHDRAW);
+            getWithdrawalsURL = new URL(API + GET_WITHDRAWALS);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -1454,6 +1469,461 @@ public class APIbitFlyer extends API implements BitFlyerable {
     @Override
     public String getDepositsAfter(int count, long after) {
         return privateAPI(API + GET_DEPOSITS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金</b>
+     * 
+     * @param bank_account_id
+     *            口座のID
+     * @param amount
+     *            金額
+     * @param currency_code
+     *            通貨
+     * @return 【JSON】<br>
+     *         <b>message_id</b> 出金メッセージの受付 ID
+     */
+    @Override
+    public String withdraw(long bank_account_id, long amount, Currency currency_code) {
+        clearParameters();
+        JSONObject temp = null;
+        try {
+            temp = new JSONObject().put(CURRENCY_CODE, currency_code).put(BANK_ACCOUNT_ID, bank_account_id).put(AMOUNT,
+                    amount);
+            addParameter(BODY, temp.toString());
+            return privateAPI(withdrawURL, HttpMethod.POST);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            clearParameters();
+            return null;
+        }
+    }
+
+    /**
+     * <b>出金</b>
+     * 
+     * @param bank_account_id
+     *            口座のID
+     * @param amount
+     *            金額
+     * @param currency_code
+     *            通貨
+     * @param code
+     *            二段階認証の確認コード
+     * @return 【JSON】<br>
+     *         <b>message_id</b> 出金メッセージの受付 ID
+     */
+    @Override
+    public String withdraw(long bank_account_id, long amount, Currency currency_code, String code) {
+        clearParameters();
+        JSONObject temp = null;
+        try {
+            temp = new JSONObject().put(CURRENCY_CODE, currency_code).put(BANK_ACCOUNT_ID, bank_account_id)
+                    .put(AMOUNT, amount).put(CODE, code);
+            addParameter(BODY, temp.toString());
+            return privateAPI(withdrawURL, HttpMethod.POST);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            clearParameters();
+            return null;
+        }
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdraws() {
+        return privateAPI(getWithdrawalsURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdraws(int count) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param message_id
+     *            出金メッセージの受付のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdraws(String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_MESSAGE_ID + message_id, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param message_id
+     *            出金メッセージの受付のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdraws(long before, long after, String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_BEFORE + before + A_AFTER + after + A_MESSAGE_ID + message_id,
+                HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdraws(int count, long before, long after) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after,
+                HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param message_id
+     *            出金メッセージの受付のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdraws(int count, long before, long after, String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after + A_MESSAGE_ID
+                + message_id, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsBefore(long before) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsBefore(int count, long before) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param message_id
+     *            出金メッセージの受付のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsBefore(long before, String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_BEFORE + before + A_MESSAGE_ID + message_id, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param message_id
+     *            出金メッセージの受付のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsBefore(int count, long before, String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before + A_MESSAGE_ID + message_id,
+                HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsAfter(long after) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsAfter(int count, long after) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param message_id
+     *            出金メッセージの受付のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsAfter(long after, String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_AFTER + after + A_MESSAGE_ID + message_id, HttpMethod.GET);
+    }
+
+    /**
+     * <b>出金履歴</b><br>
+     * <ul>
+     * status
+     * <li><b>PENDING</b>: 手続き中</li>
+     * <li><b>COMPLETED</b>: 完了</li>
+     * </ul>
+     * 
+     * @param count
+     *            最大表示件数
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param message_id
+     *            出金メッセージの受付のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 出金のID<br>
+     *         <b>order_id</b> 注文のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>amount</b> 金額<br>
+     *         <b>status</b> 状態<br>
+     *         <b>event_date</b> 日時
+     */
+    @Override
+    public String getWithdrawsAfter(int count, long after, String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_AFTER + after + A_MESSAGE_ID + message_id,
+                HttpMethod.GET);
     }
 
     @Override

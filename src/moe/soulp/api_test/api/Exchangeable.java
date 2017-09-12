@@ -2,7 +2,7 @@ package moe.soulp.api_test.api;
 
 /**
  * <b>取引所</b><br>
- * date: 2017/09/06 last_date: 2017/09/07
+ * date: 2017/09/06 last_date: 2017/09/11
  * 
  * @author ソウルP
  * @version 1.0 2017/09/06 Exchangeable作成
@@ -16,7 +16,7 @@ public interface Exchangeable {
     public String getTrades(); // 全取引履歴
 
     public String getChats(); // チャット受信
-    
+
     public String getRate(); // レート取得
 
     //Private API
@@ -48,7 +48,7 @@ public interface Exchangeable {
     public String getOrdersOpens(); // 未決済の注文一覧
 
     public String deleteOrder(String id); // 注文のキャンセル
-    
+
     public String deleteOrder(String id, Pair pair); // 注文のキャンセル
 
     public String deleteOrders(); // 全ての注文をキャンセル
@@ -69,7 +69,7 @@ public interface Exchangeable {
     // 入出金
     public String getBankAcccounts(); // 銀行口座一覧
 
-    public String withdraw(long bank_account_id, double amount, Currency currency); // 出金
+    public String withdraw(long bank_account_id, long amount, Currency currency); // 出金
 
     public String getWithdraws(); // 出金履歴
 
