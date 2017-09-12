@@ -183,6 +183,24 @@ public interface BitFlyerable {
 
     public String getWithdrawsAfter(int count, long after, String message_id); // 出金履歴
 
+    public String orderBuy(String product_code, double price, double size); // 指値注文 現物取引 買い
+
+    public String orderBuy(double price, double size, int miniute_to_expire); // 指値注文 現物取引 買い
+
+    public String orderBuy(double price, double size, Type time_in_force); // 指値注文 現物取引 買い
+
+    public String orderBuy(Pair product_code, double price, double size, int minute_to_expire); // 指値注文 現物取引 買い
+
+    public String orderBuy(String product_code, double price, double size, int minute_to_expire); // 指値注文 現物取引 買い
+
+    public String orderBuy(Pair product_code, double price, double size, Type time_in_force); // 指値注文 現物取引 買い
+
+    public String orderBuy(String product_code, double price, double size, Type time_in_force); // 指値注文 現物取引 買い
+
+    public String orderBuy(Pair product_code, double price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 買い
+
+    public String orderBuy(String product_code, double price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 買い
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
@@ -225,4 +243,8 @@ public interface BitFlyerable {
     public String withdraw(long bank_account_id, long amount, Currency currency); // 出金
 
     public String getWithdraws(); // 出金履歴
+
+    public String orderBuy(double rate, double amount); // 指値注文 現物取引 買い
+
+    public String orderBuy(Pair pair, double rate, double amount); // 指値注文 現物取引 買い
 }
