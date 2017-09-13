@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 /**
  * <b>bitFlyerのAPI操作</b><br>
- * date: 2017/09/07 last_date: 2017/09/12
+ * date: 2017/09/07 last_date: 2017/09/13
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 APIbitFlyer作成
@@ -1949,19 +1949,11 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>child_order_acceptance_id</b> 新規注文のID
      */
     @Override
-    public String orderBuy(double price, double size) {
+    public String orderBuy(long price, double size) {
         clearParameters();
-        JSONObject body = null;
-        try {
-            body = new JSONObject().put(PRODUCT_CODE, Pair.BTC_JPY).put(CHILD_ORDER_TYPE, Type.LIMIT)
-                    .put(SIDE, Type.BUY).put(PRICE, price).put(SIZE, size);
-            addParameter(BODY, body.toString());
-            return privateAPI(sendOrderURL, HttpMethod.POST);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            clearParameters();
-            return null;
-        }
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.BUY, price, size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
     /**
@@ -1981,7 +1973,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Pair 取引ペア
      */
     @Override
-    public String orderBuy(Pair product_code, double price, double size) {
+    public String orderBuy(Pair product_code, long price, double size) {
         return orderBuy(product_code.toString(), price, size);
     }
 
@@ -2001,19 +1993,11 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>child_order_acceptance_id</b> 新規注文のID
      */
     @Override
-    public String orderBuy(String product_code, double price, double size) {
+    public String orderBuy(String product_code, long price, double size) {
         clearParameters();
-        JSONObject body = null;
-        try {
-            body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_TYPE, Type.LIMIT)
-                    .put(SIDE, Type.BUY).put(PRICE, price).put(SIZE, size);
-            addParameter(BODY, body.toString());
-            return privateAPI(sendOrderURL, HttpMethod.POST);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            clearParameters();
-            return null;
-        }
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.BUY, price, size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
     /**
@@ -2032,19 +2016,11 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>child_order_acceptance_id</b> 新規注文のID
      */
     @Override
-    public String orderBuy(double price, double size, int minute_to_expire) {
+    public String orderBuy(long price, double size, int minute_to_expire) {
         clearParameters();
-        JSONObject body = null;
-        try {
-            body = new JSONObject().put(PRODUCT_CODE, Pair.BTC_JPY).put(CHILD_ORDER_TYPE, Type.LIMIT)
-                    .put(SIDE, Type.BUY).put(PRICE, price).put(SIZE, size).put(MINUTE_TO_EXPIRE, minute_to_expire);
-            addParameter(BODY, body.toString());
-            return privateAPI(sendOrderURL, HttpMethod.POST);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            clearParameters();
-            return null;
-        }
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.BUY, price, size, minute_to_expire);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
     /**
@@ -2064,19 +2040,37 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Type 種類
      */
     @Override
-    public String orderBuy(double price, double size, Type time_in_force) {
+    public String orderBuy(long price, double size, Type time_in_force) {
         clearParameters();
-        JSONObject body = null;
-        try {
-            body = new JSONObject().put(PRODUCT_CODE, Pair.BTC_JPY).put(CHILD_ORDER_TYPE, Type.LIMIT)
-                    .put(SIDE, Type.BUY).put(PRICE, price).put(SIZE, size).put(TIME_IN_FORCE, time_in_force);
-            addParameter(BODY, body.toString());
-            return privateAPI(sendOrderURL, HttpMethod.POST);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            clearParameters();
-            return null;
-        }
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.BUY, price, size, time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 買い</b><br>
+     * 新規注文を出す<br>
+     * product_code(デフォルト): BTC_JPY
+     * 
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param minute_to_expire
+     *            有効期限（分）
+     * @param time_in_force
+     *            執行数量条件
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     * @see Type 種類
+     */
+    @Override
+    public String orderBuy(long price, double size, int minute_to_expire, Type time_in_force) {
+        clearParameters();
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.BUY, price, size, minute_to_expire,
+                time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
     /**
@@ -2097,7 +2091,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Pair 取引ペア
      */
     @Override
-    public String orderBuy(Pair product_code, double price, double size, int minute_to_expire) {
+    public String orderBuy(Pair product_code, long price, double size, int minute_to_expire) {
         return orderBuy(product_code.toString(), price, size, minute_to_expire);
     }
 
@@ -2118,19 +2112,11 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>child_order_acceptance_id</b> 新規注文のID
      */
     @Override
-    public String orderBuy(String product_code, double price, double size, int minute_to_expire) {
+    public String orderBuy(String product_code, long price, double size, int minute_to_expire) {
         clearParameters();
-        JSONObject body = null;
-        try {
-            body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_TYPE, Type.LIMIT)
-                    .put(SIDE, Type.BUY).put(PRICE, price).put(SIZE, size).put(MINUTE_TO_EXPIRE, minute_to_expire);
-            addParameter(BODY, body.toString());
-            return privateAPI(sendOrderURL, HttpMethod.POST);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            clearParameters();
-            return null;
-        }
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.BUY, price, size, minute_to_expire);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
     /**
@@ -2152,7 +2138,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Type 種類
      */
     @Override
-    public String orderBuy(Pair product_code, double price, double size, Type time_in_force) {
+    public String orderBuy(Pair product_code, long price, double size, Type time_in_force) {
         return orderBuy(product_code.toString(), price, size, time_in_force);
     }
 
@@ -2174,24 +2160,16 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Type 種類
      */
     @Override
-    public String orderBuy(String product_code, double price, double size, Type time_in_force) {
+    public String orderBuy(String product_code, long price, double size, Type time_in_force) {
         clearParameters();
-        JSONObject body = null;
-        try {
-            body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_TYPE, Type.LIMIT)
-                    .put(SIDE, Type.BUY).put(PRICE, price).put(SIZE, size).put(TIME_IN_FORCE, time_in_force);
-            addParameter(BODY, body.toString());
-            return privateAPI(sendOrderURL, HttpMethod.POST);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            clearParameters();
-            return null;
-        }
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.BUY, price, size, time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
     /**
      * <b>指値注文 現物取引 買い</b><br>
-     * 新規注文を出す<br>
+     * 新規注文を出す
      * 
      * @param product_code
      *            マーケットのコード
@@ -2209,13 +2187,13 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Type 種類
      */
     @Override
-    public String orderBuy(Pair product_code, double price, double size, int minute_to_expire, Type time_in_force) {
+    public String orderBuy(Pair product_code, long price, double size, int minute_to_expire, Type time_in_force) {
         return orderBuy(product_code.toString(), price, size, minute_to_expire, time_in_force);
     }
 
     /**
      * <b>指値注文 現物取引 買い</b><br>
-     * 新規注文を出す<br>
+     * 新規注文を出す
      * 
      * @param product_code
      *            マーケットのコード
@@ -2232,25 +2210,345 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Type 種類
      */
     @Override
-    public String orderBuy(String product_code, double price, double size, int minute_to_expire, Type time_in_force) {
+    public String orderBuy(String product_code, long price, double size, int minute_to_expire, Type time_in_force) {
         clearParameters();
-        JSONObject body = null;
-        try {
-            body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_TYPE, Type.LIMIT)
-                    .put(SIDE, Type.BUY).put(PRICE, price).put(SIZE, size).put(MINUTE_TO_EXPIRE, minute_to_expire)
-                    .put(TIME_IN_FORCE, time_in_force);
-            addParameter(BODY, body.toString());
-            return privateAPI(sendOrderURL, HttpMethod.POST);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            clearParameters();
-            return null;
-        }
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.BUY, price, size, minute_to_expire,
+                time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: BTC_JPY<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(long price, double size) {
+        clearParameters();
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.SELL, price, size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String orderSell(Pair product_code, long price, double size) {
+        return orderSell(product_code.toString(), price, size);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(String product_code, long price, double size) {
+        clearParameters();
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.SELL, price, size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: BTC_JPY<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param minute_to_expire
+     *            有効期限（分）
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(long price, double size, int minute_to_expire) {
+        clearParameters();
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.SELL, price, size, minute_to_expire);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: BTC_JPY<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）
+     * 
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param time_in_force
+     *            執行数量条件
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(long price, double size, Type time_in_force) {
+        clearParameters();
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.SELL, price, size, time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param minute_to_expire
+     *            有効期限（分）
+     * @param time_in_force
+     *            執行数量条件
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(long price, double size, int minute_to_expire, Type time_in_force) {
+        clearParameters();
+        JSONObject body = childOrderJSON(Pair.BTC_JPY.toString(), Type.LIMIT, Type.SELL, price, size, minute_to_expire,
+                time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param minute_to_expire
+     *            有効期限（分）
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String orderSell(Pair product_code, long price, double size, int minute_to_expire) {
+        return orderSell(product_code.toString(), price, size, minute_to_expire);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param minute_to_expire
+     *            有効期限（分）
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(String product_code, long price, double size, int minute_to_expire) {
+        clearParameters();
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.SELL, price, size, minute_to_expire);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param time_in_force
+     *            執行数量条件
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String orderSell(Pair product_code, long price, double size, Type time_in_force) {
+        return orderSell(product_code.toString(), price, size, time_in_force);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param time_in_force
+     *            執行数量条件
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(String product_code, long price, double size, Type time_in_force) {
+        clearParameters();
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.SELL, price, size, time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param minute_to_expire
+     *            有効期限（分）
+     * @param time_in_force
+     *            執行数量条件
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String orderSell(Pair product_code, long price, double size, int minute_to_expire, Type time_in_force) {
+        return orderSell(product_code.toString(), price, size, minute_to_expire, time_in_force);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 新規注文を出す
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param price
+     *            価格
+     * @param size
+     *            量
+     * @param minute_to_expire
+     *            有効期限（分）
+     * @param time_in_force
+     *            執行数量条件
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String orderSell(String product_code, long price, double size, int minute_to_expire, Type time_in_force) {
+        clearParameters();
+        JSONObject body = childOrderJSON(product_code, Type.LIMIT, Type.SELL, price, size, minute_to_expire,
+                time_in_force);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
     @Override
     protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
         String message = nonce + method + url.substring(API.length()) + getParameters();
         return HMAC_SHA256Encode(apiSecret, message);
+    }
+
+    private JSONObject childOrderJSON(String product_code, Type child_order_type, Type side, long price, double size) {
+        JSONObject body = null;
+        try {
+            body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_TYPE, child_order_type)
+                    .put(SIDE, side).put(PRICE, price).put(SIZE, size);
+            return body;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private JSONObject childOrderJSON(String product_code, Type child_order_type, Type side, long price, double size,
+            int minute_to_expire) {
+        JSONObject body = null;
+        try {
+            body = childOrderJSON(product_code, child_order_type, side, price, size).put(MINUTE_TO_EXPIRE,
+                    minute_to_expire);
+            return body;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private JSONObject childOrderJSON(String product_code, Type child_order_type, Type side, long price, double size,
+            Type time_in_force) {
+        JSONObject body = null;
+        try {
+            body = childOrderJSON(product_code, child_order_type, side, price, size).put(TIME_IN_FORCE, time_in_force);
+            return body;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private JSONObject childOrderJSON(String product_code, Type child_order_type, Type side, long price, double size,
+            int minute_to_expire, Type time_in_force) {
+        JSONObject body = null;
+        try {
+            body = childOrderJSON(product_code, child_order_type, side, price, size, minute_to_expire)
+                    .put(TIME_IN_FORCE, time_in_force);
+            return body;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

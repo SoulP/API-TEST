@@ -37,7 +37,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
  * <b>Coincheck用のUTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/09/11
+ * date: 2017/08/03 last_date: 2017/09/12
  * 
  * @author ソウルP
  */
@@ -365,7 +365,7 @@ public class APIcoincheckUT extends APIkey {
     public void leverageBuy() {
         JSONObject temp = null;
         double amount = 0.007d;
-        double rate = 400000d;
+        long rate = 400000l;
         assertTrue(amount >= 0.005d);
         try {
             temp = new JSONObject(coincheck.leverageBuy(Pair.btc_jpy, amount, rate));
@@ -393,7 +393,7 @@ public class APIcoincheckUT extends APIkey {
     public void leverageSell() {
         JSONObject temp = null;
         double amount = 0.005d;
-        double rate = 520000d;
+        long rate = 520000l;
         assertTrue(amount >= 0.005d);
         try {
             temp = new JSONObject(coincheck.leverageSell(Pair.btc_jpy, amount, rate));
@@ -422,7 +422,7 @@ public class APIcoincheckUT extends APIkey {
         JSONObject temp = null;
         double amount = 0.05d;
         long position_id = 193728148l;
-        double rate = 450000d;
+        long rate = 450000l;
         try {
             temp = new JSONObject(coincheck.closeLong(Pair.btc_jpy, amount, position_id, rate));
             System.out.println(temp);
@@ -450,7 +450,7 @@ public class APIcoincheckUT extends APIkey {
         JSONObject temp = null;
         double amount = 0.05d;
         long position_id = 193728148l;
-        double rate = 500000d;
+        long rate = 500000l;
         try {
             temp = new JSONObject(coincheck.closeShort(Pair.btc_jpy, amount, position_id, rate));
             System.out.println(temp);

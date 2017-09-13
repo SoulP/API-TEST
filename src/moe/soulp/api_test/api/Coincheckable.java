@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>coincheck</b><br>
- * date: 2017/08/03 last_date: 2017/09/08
+ * date: 2017/08/03 last_date: 2017/09/12
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 Coincheckable作成
@@ -74,27 +74,27 @@ public interface Coincheckable extends Exchangeable {
     // 注文
     public String leverageBuy(Pair pair, double amount); // 成行注文 レバレッジ取引新規 買い
 
-    public String leverageBuy(Pair pair, double amount, double rate); // 指値注文 レバレッジ取引新規 買い
+    public String leverageBuy(Pair pair, double amount, long rate); // 指値注文 レバレッジ取引新規 買い
 
     public String leverageSell(Pair pair, double amount); // 成行注文 レバレッジ取引新規 売り
 
-    public String leverageSell(Pair pair, double amount, double rate); // 指値注文 レバレッジ取引新規 売り
+    public String leverageSell(Pair pair, double amount, long rate); // 指値注文 レバレッジ取引新規 売り
 
     public String closeLong(double amount, long position_id); // 成行注文 レバレッジ取引決済 売り
 
     public String closeLong(Pair pair, double amount, long position_id); // 成行注文 レバレッジ取引決済 売り
 
-    public String closeLong(double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 売り
+    public String closeLong(double amount, long position_id, long rate); // 指値注文 レバレッジ取引決済 売り
 
-    public String closeLong(Pair pair, double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 売り
+    public String closeLong(Pair pair, double amount, long position_id, long rate); // 指値注文 レバレッジ取引決済 売り
 
     public String closeShort(double amount, long position_id); // 成行注文 レバレッジ取引決済 買い
 
     public String closeShort(Pair pair, double amount, long position_id); // 成行注文 レバレッジ取引決済 買い
 
-    public String closeShort(double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 買い
+    public String closeShort(double amount, long position_id, long rate); // 指値注文 レバレッジ取引決済 買い
 
-    public String closeShort(Pair pair, double amount, long position_id, double rate); // 指値注文 レバレッジ取引決済 買い
+    public String closeShort(Pair pair, double amount, long position_id, long rate); // 指値注文 レバレッジ取引決済 買い
 
     public String getOrdersTransactionsPagination(); // 取引履歴（ページネーション）
 

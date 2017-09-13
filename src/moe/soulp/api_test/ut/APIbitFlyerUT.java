@@ -24,7 +24,7 @@ import moe.soulp.api_test.bitFlyer.dto.MoneyTransactionDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
- * date: 2017/09/07 last_date: 2017/09/12
+ * date: 2017/09/07 last_date: 2017/09/13
  * 
  * @author ソウルP
  */
@@ -687,7 +687,7 @@ public class APIbitFlyerUT extends APIkey {
     @Test
     public void orderBuy() {
         JSONObject buy = null;
-        double price = 0d;
+        long price = 0l;
         double size = 0d;
 
         System.out.println("指値注文 現物取引 買い");
@@ -702,5 +702,29 @@ public class APIbitFlyerUT extends APIkey {
             fail(e.getMessage());
         }
         assertNotNull(buy);
+    }
+
+    /**
+     * <b>指値注文 現物取引 売り</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void orderSell() {
+        JSONObject sell = null;
+        long price = 0l;
+        double size = 0d;
+
+        System.out.println("指値注文 現物取引 売り");
+        System.out.println("価格: " + price);
+        System.out.println("量: " + size);
+        try {
+            sell = new JSONObject(bitFlyer.orderSell(price, size));
+            System.out.println("新規注文のID: " + sell.getString("child_order_acceptance_id"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(sell);
     }
 }

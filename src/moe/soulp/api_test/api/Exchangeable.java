@@ -21,13 +21,13 @@ public interface Exchangeable {
 
     //Private API
     // 注文
-    public String orderBuy(double rate, double amount); // 指値注文 現物取引 買い
+    public String orderBuy(long rate, double amount); // 指値注文 現物取引 買い
 
-    public String orderBuy(Pair pair, double rate, double amount); // 指値注文 現物取引 買い
+    public String orderBuy(Pair pair, long rate, double amount); // 指値注文 現物取引 買い
 
-    public String orderSell(double rate, double amount); // 指値注文 現物取引 売り
+    public String orderSell(long rate, double amount); // 指値注文 現物取引 売り
 
-    public String orderSell(Pair pair, double rate, double amount); // 指値注文 現物取引 売り
+    public String orderSell(Pair pair, long rate, double amount); // 指値注文 現物取引 売り
 
     public String orderMarketBuy(double amount); // 成行注文 現物取引 買い
 
@@ -39,11 +39,11 @@ public interface Exchangeable {
 
     public String leverageBuy(double amount); // 成行注文 レバレッジ取引新規 買い
 
-    public String leverageBuy(double amount, double rate); // 指値注文 レバレッジ取引新規 買い
+    public String leverageBuy(double amount, long rate); // 指値注文 レバレッジ取引新規 買い
 
     public String leverageSell(double amount); // 成行注文 レバレッジ取引新規 売り
 
-    public String leverageSell(double amount, double rate); // 指値注文 レバレッジ取引新規 売り
+    public String leverageSell(double amount, long rate); // 指値注文 レバレッジ取引新規 売り
 
     public String getOrdersOpens(); // 未決済の注文一覧
 

@@ -11,7 +11,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/11
+ * date: 2017/08/03 last_date: 2017/09/12
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -341,7 +341,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String orderBuy(double rate, double amount) {
+    public String orderBuy(long rate, double amount) {
         return orderBuy(Pair.btc_jpy, rate, amount);
     }
 
@@ -368,7 +368,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String orderBuy(Pair pair, double rate, double amount) {
+    public String orderBuy(Pair pair, long rate, double amount) {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.buy.toString());
@@ -399,7 +399,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String orderSell(double rate, double amount) {
+    public String orderSell(long rate, double amount) {
         return orderSell(Pair.btc_jpy, rate, amount);
     }
 
@@ -426,7 +426,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String orderSell(Pair pair, double rate, double amount) {
+    public String orderSell(Pair pair, long rate, double amount) {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.sell.toString());
@@ -616,7 +616,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String leverageBuy(double amount, double rate) {
+    public String leverageBuy(double amount, long rate) {
         return leverageBuy(Pair.btc_jpy, amount, rate);
     }
 
@@ -643,7 +643,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String leverageBuy(Pair pair, double amount, double rate) {
+    public String leverageBuy(Pair pair, double amount, long rate) {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.leverage_buy.toString());
@@ -727,7 +727,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String leverageSell(double amount, double rate) {
+    public String leverageSell(double amount, long rate) {
         return leverageSell(Pair.btc_jpy, amount, rate);
     }
 
@@ -754,7 +754,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String leverageSell(Pair pair, double amount, double rate) {
+    public String leverageSell(Pair pair, double amount, long rate) {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.leverage_sell.toString());
@@ -845,7 +845,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String closeLong(double amount, long position_id, double rate) {
+    public String closeLong(double amount, long position_id, long rate) {
         return closeLong(Pair.btc_jpy, amount, position_id, rate);
     }
 
@@ -874,7 +874,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String closeLong(Pair pair, double amount, long position_id, double rate) {
+    public String closeLong(Pair pair, double amount, long position_id, long rate) {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.close_long.toString());
@@ -966,7 +966,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String closeShort(double amount, long position_id, double rate) {
+    public String closeShort(double amount, long position_id, long rate) {
         return closeShort(Pair.btc_jpy, amount, position_id, rate);
     }
 
@@ -995,7 +995,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String closeShort(Pair pair, double amount, long position_id, double rate) {
+    public String closeShort(Pair pair, double amount, long position_id, long rate) {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.close_short.toString());
