@@ -249,4 +249,12 @@ public interface BitFlyerable {
     public String orderMarketSell(double amount); // 成行注文 現物取引 売り
 
     public String orderMarketSell(Pair pair, double amount); // 成行注文 現物取引 売り
+
+    public String leverageBuy(double amount); // 成行注文 レバレッジ取引 買い
+
+    public String leverageBuy(long rate, double amount); // 指値注文 レバレッジ取引買い
+
+    public String leverageSell(double amount); // 成行注文 レバレッジ取引 売り
+
+    public String leverageSell(long rate, double amount); // 指値注文 レバレッジ取引 売り
 }

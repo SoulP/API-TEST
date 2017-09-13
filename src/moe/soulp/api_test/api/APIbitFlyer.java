@@ -2231,6 +2231,108 @@ public class APIbitFlyer extends API implements BitFlyerable {
         return privateAPI(sendOrderURL, HttpMethod.POST);
     }
 
+    /**
+     * <b>成行注文 建玉取引 買い</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: FX_BTC_JPY<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param size
+     *            量
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String leverageBuy(double size) {
+        clearParameters();
+        NewOrderDTO body = new NewOrderDTO();
+        body.setProductCode(Pair.FX_BTC_JPY.toString());
+        body.setChildOrderType(Type.MARKET);
+        body.setSide(Type.BUY);
+        body.setSize(size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 建玉取引 買い</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: FX_BTC_JPY<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param size
+     *            量
+     * @param price
+     *            価格
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String leverageBuy(long price, double size) {
+        clearParameters();
+        NewOrderDTO body = new NewOrderDTO();
+        body.setProductCode(Pair.FX_BTC_JPY.toString());
+        body.setChildOrderType(Type.LIMIT);
+        body.setSide(Type.BUY);
+        body.setPrice(price);
+        body.setSize(size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>成行注文 建玉取引 売り</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: FX_BTC_JPY<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param size
+     *            量
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String leverageSell(double size) {
+        clearParameters();
+        NewOrderDTO body = new NewOrderDTO();
+        body.setProductCode(Pair.FX_BTC_JPY.toString());
+        body.setChildOrderType(Type.MARKET);
+        body.setSide(Type.SELL);
+        body.setSize(size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>指値注文 建玉取引 売り</b><br>
+     * 新規注文を出す<br>
+     * product_code（デフォルト）: FX_BTC_JPY<br>
+     * minute_to_expire（デフォルト）: 43200（30日間）<br>
+     * time_in_force（デフォルト）: GTC
+     * 
+     * @param size
+     *            量
+     * @param price
+     *            価格
+     * @return 【JSON】<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String leverageSell(long price, double size) {
+        clearParameters();
+        NewOrderDTO body = new NewOrderDTO();
+        body.setProductCode(Pair.FX_BTC_JPY.toString());
+        body.setChildOrderType(Type.LIMIT);
+        body.setSide(Type.BUY);
+        body.setPrice(price);
+        body.setSize(size);
+        addParameter(BODY, body.toString());
+        return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
     @Override
     protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
         String message = nonce + method + url.substring(API.length()) + getParameters();

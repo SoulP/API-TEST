@@ -11,7 +11,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/12
+ * date: 2017/08/03 last_date: 2017/09/13
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -616,7 +616,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String leverageBuy(double amount, long rate) {
+    public String leverageBuy(long rate, double amount) {
         return leverageBuy(Pair.btc_jpy, amount, rate);
     }
 
@@ -727,7 +727,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * @see Type 種類
      */
     @Override
-    public String leverageSell(double amount, long rate) {
+    public String leverageSell(long rate, double amount) {
         return leverageSell(Pair.btc_jpy, amount, rate);
     }
 

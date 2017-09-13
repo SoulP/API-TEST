@@ -771,4 +771,50 @@ public class APIbitFlyerUT extends APIkey {
         }
         assertNotNull(sell);
     }
+
+    /**
+     * <b>成行注文 建玉取引 買い</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void leverageBuy() {
+        JSONObject buy = null;
+        double size = 0d;
+
+        System.out.println("成行注文 建玉取引 買い");
+        System.out.println("量: " + size);
+        try {
+            buy = new JSONObject(bitFlyer.leverageBuy(size));
+            System.out.println("新規注文のID: " + buy.getString("child_order_acceptance_id"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(buy);
+    }
+
+    /**
+     * <b>指値注文 建玉取引 売り</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void leverageSell() {
+        JSONObject sell = null;
+        long price = 0l;
+        double size = 0d;
+
+        System.out.println("指値注文 建玉取引 売り");
+        System.out.println("価格: " + price);
+        System.out.println("量: " + size);
+        try {
+            sell = new JSONObject(bitFlyer.leverageSell(price, size));
+            System.out.println("新規注文のID: " + sell.getString("child_order_acceptance_id"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(sell);
+    }
 }
