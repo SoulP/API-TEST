@@ -185,43 +185,11 @@ public interface BitFlyerable {
 
     public String orderBuy(String product_code, long price, double size); // 指値注文 現物取引 買い
 
-    public String orderBuy(long price, double size, int miniute_to_expire); // 指値注文 現物取引 買い
-
-    public String orderBuy(long price, double size, Type time_in_force); // 指値注文 現物取引 買い
-
-    public String orderBuy(long price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 買い
-
-    public String orderBuy(Pair product_code, long price, double size, int minute_to_expire); // 指値注文 現物取引 買い
-
-    public String orderBuy(String product_code, long price, double size, int minute_to_expire); // 指値注文 現物取引 買い
-
-    public String orderBuy(Pair product_code, long price, double size, Type time_in_force); // 指値注文 現物取引 買い
-
-    public String orderBuy(String product_code, long price, double size, Type time_in_force); // 指値注文 現物取引 買い
-
-    public String orderBuy(Pair product_code, long price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 買い
-
-    public String orderBuy(String product_code, long price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 買い
-
     public String orderSell(String product_code, long price, double size); // 指値注文 現物取引 売り
 
-    public String orderSell(long price, double size, int minute_to_expire); // 指値注文 現物取引 売り
+    public String orderMarketBuy(String product_code, double size); // 成行注文 現物取引 買い
 
-    public String orderSell(long price, double size, Type time_in_force); // 指値注文 現物取引 売り
-
-    public String orderSell(long price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 売り
-
-    public String orderSell(Pair product_code, long price, double size, int minute_to_expire); // 指値注文 現物取引 売り
-
-    public String orderSell(String product_code, long price, double size, int minute_to_expire); // 指値注文 現物取引 売り
-
-    public String orderSell(Pair product_code, long price, double size, Type time_in_force); // 指値注文 現物取引 売り
-
-    public String orderSell(String product_code, long price, double size, Type time_in_force); // 指値注文 現物取引 売り
-
-    public String orderSell(Pair product_code, long price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 売り
-
-    public String orderSell(String product_code, long price, double size, int minute_to_expire, Type time_in_force); // 指値注文 現物取引 売り
+    public String orderMarketSell(String product_code, double size); // 成行注文 現物取引 売り
 
     /**
      * <b>日時 データ・タイプ変換</b><br>
@@ -273,4 +241,12 @@ public interface BitFlyerable {
     public String orderSell(long rate, double amount); // 指値注文 現物取引 売り
 
     public String orderSell(Pair pair, long rate, double amount); // 指値注文 現物取引 売り
+
+    public String orderMarketBuy(double amount); // 成行注文 現物取引 買い
+
+    public String orderMarketBuy(Pair pair, double amount); // 成行注文 現物取引 買い
+
+    public String orderMarketSell(double amount); // 成行注文 現物取引 売り
+
+    public String orderMarketSell(Pair pair, double amount); // 成行注文 現物取引 売り
 }

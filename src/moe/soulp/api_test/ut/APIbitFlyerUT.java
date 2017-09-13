@@ -727,4 +727,48 @@ public class APIbitFlyerUT extends APIkey {
         }
         assertNotNull(sell);
     }
+
+    /**
+     * <b>成行注文 現物取引 買い</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void orderMarketBuy() {
+        JSONObject buy = null;
+        double size = 0d;
+
+        System.out.println("指値注文 現物取引 買い");
+        System.out.println("量: " + size);
+        try {
+            buy = new JSONObject(bitFlyer.orderMarketBuy(size));
+            System.out.println("新規注文のID: " + buy.getString("child_order_acceptance_id"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(buy);
+    }
+
+    /**
+     * <b>成行注文 現物取引 売り</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void orderMarketSell() {
+        JSONObject sell = null;
+        double size = 0d;
+
+        System.out.println("指値注文 現物取引 売り");
+        System.out.println("量: " + size);
+        try {
+            sell = new JSONObject(bitFlyer.orderMarketSell(size));
+            System.out.println("新規注文のID: " + sell.getString("child_order_acceptance_id"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(sell);
+    }
 }
