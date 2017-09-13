@@ -817,4 +817,15 @@ public class APIbitFlyerUT extends APIkey {
         }
         assertNotNull(sell);
     }
+
+    /**
+     * <b>注文キャンセル</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void deleteOrder() {
+        String child_order_id = "";
+        System.out.println("注文キャンセル");
+        assertNotNull(bitFlyer.deleteOrder(child_order_id));
+    }
 }

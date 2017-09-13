@@ -40,6 +40,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private final static String AMOUNT           = "amount";
     private final static String CODE             = "code";
     private final static String BODY             = "Body";
+    private final static String PRODUCT_CODE     = "product_code";
+    private final static String CHILD_ORDER_ID   = "child_order_id";
 
     private static URL          getMarketsURL;
     private static URL          getBoardURL;
@@ -60,6 +62,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          withdrawURL;
     private static URL          getWithdrawalsURL;
     private static URL          sendOrderURL;
+    private static URL          cancelOrderURL;
 
     static {
         try {
@@ -82,6 +85,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
             withdrawURL = new URL(API + WITHDRAW);
             getWithdrawalsURL = new URL(API + GET_WITHDRAWALS);
             sendOrderURL = new URL(API + SEND_ORDER);
+            cancelOrderURL = new URL(API + CANCEL_ORDER);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -2331,6 +2335,60 @@ public class APIbitFlyer extends API implements BitFlyerable {
         body.setSize(size);
         addParameter(BODY, body.toString());
         return privateAPI(sendOrderURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>注文キャンセル</b><br>
+     * 注文をキャンセルする<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @param child_order_id
+     *            新規注文のID
+     * @return 空のJSON
+     */
+    @Override
+    public String deleteOrder(String child_order_id) {
+        return deleteOrder(Pair.BTC_JPY, child_order_id);
+    }
+
+    /**
+     * <b>注文キャンセル</b><br>
+     * 注文をキャンセルする
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param child_order_id
+     *            新規注文のID
+     * @return 空のJSON
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String deleteOrder(Pair product_code, String child_order_id) {
+        return deleteOrder(product_code.toString(), child_order_id);
+    }
+
+    /**
+     * <b>注文キャンセル</b><br>
+     * 注文をキャンセルする
+     * 
+     * @param product_code
+     *            マーケットのコード
+     * @param child_order_id
+     *            新規注文のID
+     * @return 空のJSON
+     */
+    @Override
+    public String deleteOrder(String product_code, String child_order_id) {
+        clearParameters();
+        try {
+            JSONObject body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_ID, child_order_id);
+            addParameter(BODY, body.toString());
+            privateAPI(cancelOrderURL, HttpMethod.POST);
+            return new JSONObject().toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

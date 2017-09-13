@@ -191,6 +191,10 @@ public interface BitFlyerable {
 
     public String orderMarketSell(String product_code, double size); // 成行注文 現物取引 売り
 
+    public String deleteOrder(Pair product_code, String child_order_id); // 注文のキャンセル
+
+    public String deleteOrder(String product_code, String child_order_id); // 注文のキャンセル
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
@@ -257,4 +261,6 @@ public interface BitFlyerable {
     public String leverageSell(double amount); // 成行注文 レバレッジ取引 売り
 
     public String leverageSell(long rate, double amount); // 指値注文 レバレッジ取引 売り
+
+    public String deleteOrder(String id); // 注文のキャンセル
 }
