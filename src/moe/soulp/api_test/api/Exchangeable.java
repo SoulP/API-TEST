@@ -2,7 +2,7 @@ package moe.soulp.api_test.api;
 
 /**
  * <b>取引所</b><br>
- * date: 2017/09/06 last_date: 2017/09/11
+ * date: 2017/09/06 last_date: 2017/09/14
  * 
  * @author ソウルP
  * @version 1.0 2017/09/06 Exchangeable作成
@@ -51,7 +51,7 @@ public interface Exchangeable {
 
     public String deleteOrder(String id, Pair pair); // 注文のキャンセル
 
-    public String deleteOrders(); // 全ての注文をキャンセル
+    public String deleteAllOrders(); // 全ての注文をキャンセル
 
     public String getOrdersTransactions(); // 取引履歴
 

@@ -13,7 +13,7 @@ import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 
 /**
  * <b>bitFlyerのAPI操作</b><br>
- * date: 2017/09/07 last_date: 2017/09/13
+ * date: 2017/09/07 last_date: 2017/09/14
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 APIbitFlyer作成
@@ -67,6 +67,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          cancelOrderURL;
     private static URL          sendOrderSuperURL;
     private static URL          cancelOrderSuperURL;
+    private static URL          cancelAllOrderURL;
 
     static {
         try {
@@ -92,6 +93,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
             cancelOrderURL = new URL(API + CANCEL_ORDER);
             sendOrderSuperURL = new URL(API + SEND_ORDER_SUPER);
             cancelOrderSuperURL = new URL(API + CANCEL_ORDER_SUPER);
+            cancelAllOrderURL = new URL(API + CANCEL_ALL_ORDER);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -2457,6 +2459,53 @@ public class APIbitFlyer extends API implements BitFlyerable {
             JSONObject body = new JSONObject().put(PRODUCT_CODE, product_code).put(PARENT_ORDER_ID, parent_order_id);
             addParameter(BODY, body.toString());
             privateAPI(cancelOrderSuperURL, HttpMethod.POST);
+            return new JSONObject().toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * <b>全ての注文キャンセル</b><br>
+     * 全ての注文をキャンセルする<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @return 空のJSON
+     */
+    @Override
+    public String deleteAllOrders() {
+        return deleteAllOrders(Pair.BTC_JPY);
+    }
+
+    /**
+     * <b>全ての注文キャンセル</b><br>
+     * 全ての注文をキャンセルする
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 空のJSON
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String deleteAllOrders(Pair product_code) {
+        return deleteAllOrders(product_code.toString());
+    }
+
+    /**
+     * <b>全ての注文キャンセル</b><br>
+     * 全ての注文をキャンセルする
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 空のJSON
+     */
+    @Override
+    public String deleteAllOrders(String product_code) {
+        clearParameters();
+        try {
+            addParameter(BODY, new JSONObject().put(PRODUCT_CODE, product_code).toString());
+            privateAPI(cancelAllOrderURL, HttpMethod.POST);
             return new JSONObject().toString();
         } catch (JSONException e) {
             e.printStackTrace();

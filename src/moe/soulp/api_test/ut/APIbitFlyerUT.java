@@ -26,7 +26,7 @@ import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
- * date: 2017/09/07 last_date: 2017/09/13
+ * date: 2017/09/07 last_date: 2017/09/14
  * 
  * @author ソウルP
  */
@@ -879,5 +879,26 @@ public class APIbitFlyerUT extends APIkey {
         String parent_order_id = "";
         System.out.println("親注文キャンセル");
         assertNotNull(bitFlyer.deleteParentOrder(parent_order_id));
+    }
+
+    /**
+     * <b>全ての注文キャンセル</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void deleteAllOrders() {
+        System.out.println("全ての注文キャンセル");
+        assertNotNull(bitFlyer.deleteAllOrders());
+    }
+
+    /**
+     * <b>全ての注文キャンセル</b><br>
+     * プロダクトコード指定あり<br>
+     * 成功テスト
+     */
+    @Test
+    public void deleteAllOrders_FX() {
+        System.out.println("全ての注文キャンセル");
+        assertNotNull(bitFlyer.deleteAllOrders(Pair.FX_BTC_JPY));
     }
 }

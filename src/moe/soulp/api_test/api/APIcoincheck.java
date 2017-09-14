@@ -1064,7 +1064,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * 全ての注文をキャンセルすることができます。
      */
     @Override
-    public String deleteOrders() {
+    public String deleteAllOrders() {
         try {
             JSONArray orders = new JSONObject(getOrdersOpens()).getJSONArray(ORDERS);
             for (int i = 0; i < orders.length(); i++) {

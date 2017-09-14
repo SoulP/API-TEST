@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>bitFlyer</b><br>
- * date: 2017/09/07 last_date: 2017/09/12
+ * date: 2017/09/07 last_date: 2017/09/14
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 BitFlyerable作成
@@ -195,6 +195,10 @@ public interface BitFlyerable {
 
     public String deleteOrder(String product_code, String child_order_id); // 注文のキャンセル
 
+    public String deleteAllOrders(Pair product_code); // 全ての注文をキャンセル
+
+    public String deleteAllOrders(String product_code); // 全ての注文をキャンセル
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)
@@ -263,4 +267,6 @@ public interface BitFlyerable {
     public String leverageSell(long rate, double amount); // 指値注文 レバレッジ取引 売り
 
     public String deleteOrder(String id); // 注文のキャンセル
+
+    public String deleteAllOrders(); // 全ての注文をキャンセル
 }
