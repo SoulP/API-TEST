@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import moe.soulp.api_test.bitFlyer.dto.NewOrderDTO;
+import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 
 /**
  * <b>bitFlyerのAPI操作</b><br>
@@ -42,6 +43,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private final static String BODY             = "Body";
     private final static String PRODUCT_CODE     = "product_code";
     private final static String CHILD_ORDER_ID   = "child_order_id";
+    private final static String PARENT_ORDER_ID  = "parent_order_id";
 
     private static URL          getMarketsURL;
     private static URL          getBoardURL;
@@ -63,6 +65,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          getWithdrawalsURL;
     private static URL          sendOrderURL;
     private static URL          cancelOrderURL;
+    private static URL          sendOrderSuperURL;
+    private static URL          cancelOrderSuperURL;
 
     static {
         try {
@@ -86,6 +90,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
             getWithdrawalsURL = new URL(API + GET_WITHDRAWALS);
             sendOrderURL = new URL(API + SEND_ORDER);
             cancelOrderURL = new URL(API + CANCEL_ORDER);
+            sendOrderSuperURL = new URL(API + SEND_ORDER_SUPER);
+            cancelOrderSuperURL = new URL(API + CANCEL_ORDER_SUPER);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -122,7 +128,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @return 【JSONArray】<br>
      *         <hr>
      *         【JSON】<br>
-     *         <b>product_code</b> マーケットのコード<br>
+     *         <b>product_code</b> プロダクトコード<br>
      *         <b>alias</b> 別名
      */
     @Override
@@ -154,7 +160,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>板情報</b>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @return 【JSON】<br>
      *         <b>mid_price</b> 仲値<br>
      *         <hr>
@@ -176,7 +182,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>板情報</b>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @return 【JSON】<br>
      *         <b>mid_price</b> 仲値<br>
      *         <hr>
@@ -198,7 +204,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * product_code(デフォルト): BTC_JPY
      * 
      * @return 【JSON】<br>
-     *         <b>product_code</b> マーケットのコード<br>
+     *         <b>product_code</b> プロダクトコード<br>
      *         <b>timestamp</b> 日時<br>
      *         <b>tick_id</b> TickerのID<br>
      *         <b>best_bid</b> ベストな買取価格<br>
@@ -220,9 +226,9 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>Ticker</b>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @return 【JSON】<br>
-     *         <b>product_code</b> マーケットのコード<br>
+     *         <b>product_code</b> プロダクトコード<br>
      *         <b>timestamp</b> 日時<br>
      *         <b>tick_id</b> TickerのID<br>
      *         <b>best_bid</b> ベストな買取価格<br>
@@ -245,9 +251,9 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>Ticker</b>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @return 【JSON】<br>
-     *         <b>product_code</b> マーケットのコード<br>
+     *         <b>product_code</b> プロダクトコード<br>
      *         <b>timestamp</b> 日時<br>
      *         <b>tick_id</b> TickerのID<br>
      *         <b>best_bid</b> ベストな買取価格<br>
@@ -289,7 +295,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @return 【JSONArray】<br>
      *         <hr>
      *         【JSON】<br>
@@ -311,7 +317,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @return 【JSONArray】<br>
      *         <hr>
      *         【JSON】<br>
@@ -354,7 +360,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * @return 【JSONArray】<br>
@@ -378,7 +384,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * @return 【JSONArray】<br>
@@ -401,7 +407,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * 
@@ -433,7 +439,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * 
@@ -487,7 +493,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param before
      *            ID, 指定する値より前のIDを持つデータ取得<br>
      *            ID < before
@@ -512,7 +518,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param before
      *            ID 指定する値より前のIDを持つデータ取得<br>
      *            ID < before
@@ -536,7 +542,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * @param before
@@ -564,7 +570,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * @param before
@@ -614,7 +620,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param after
      *            ID, 指定する値より後のIDを持つデータ取得<br>
      *            after < ID
@@ -639,7 +645,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param after
      *            ID, 指定する値より後のIDを持つデータ取得<br>
      *            after < ID
@@ -663,7 +669,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * @param after
@@ -691,7 +697,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * <b>約定履歴</b><br>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param count
      *            最大表示件数
      * @param after
@@ -1983,7 +1989,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param price
      *            価格
      * @param size
@@ -2004,7 +2010,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param price
      *            価格
      * @param size
@@ -2058,7 +2064,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param price
      *            価格
      * @param size
@@ -2079,7 +2085,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param price
      *            価格
      * @param size
@@ -2130,7 +2136,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param size
      *            量
      * @return 【JSON】<br>
@@ -2150,7 +2156,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param size
      *            量
      * @return 【JSON】<br>
@@ -2198,7 +2204,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param size
      *            量
      * @return 【JSON】<br>
@@ -2217,7 +2223,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * time_in_force（デフォルト）: GTC
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param size
      *            量
      * @return 【JSON】<br>
@@ -2343,7 +2349,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * product_code（デフォルト）: BTC_JPY
      * 
      * @param child_order_id
-     *            新規注文のID
+     *            注文のID
      * @return 空のJSON
      */
     @Override
@@ -2356,7 +2362,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * 注文をキャンセルする
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param child_order_id
      *            新規注文のID
      * @return 空のJSON
@@ -2372,7 +2378,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * 注文をキャンセルする
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * @param child_order_id
      *            新規注文のID
      * @return 空のJSON
@@ -2384,6 +2390,73 @@ public class APIbitFlyer extends API implements BitFlyerable {
             JSONObject body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_ID, child_order_id);
             addParameter(BODY, body.toString());
             privateAPI(cancelOrderURL, HttpMethod.POST);
+            return new JSONObject().toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * <b>新規の親注文（特殊注文）</b><br>
+     * 新規の親注文を出す。
+     * 
+     * @param parent_order
+     *            新規の親注文の情報
+     * @return 【JSON】<br>
+     *         <b>parent_order_acceptance_id</b> 新規の親注文のID
+     * @see NewParentOrderDTO 新規の親注文の情報
+     */
+    public String newParentOrder(NewParentOrderDTO parent_order) {
+        clearParameters();
+        addParameter(BODY, parent_order.toString());
+        return privateAPI(sendOrderSuperURL, HttpMethod.POST);
+    }
+
+    /**
+     * <b>親注文キャンセル</b><br>
+     * 親注文をキャンセルする<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @param parent_order_id
+     *            親注文のID
+     * @return 空のJSON
+     */
+    public String deleteParentOrder(String parent_order_id) {
+        return deleteParentOrder(Pair.BTC_JPY, parent_order_id);
+    }
+
+    /**
+     * <b>親注文キャンセル</b><br>
+     * 親注文をキャンセルする
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param parent_order_id
+     *            親注文のID
+     * @return 空のJSON
+     * @see Pair 取引ペア
+     */
+    public String deleteParentOrder(Pair product_code, String parent_order_id) {
+        return deleteParentOrder(product_code.toString(), parent_order_id);
+    }
+
+    /**
+     * <b>親注文キャンセル</b><br>
+     * 親注文をキャンセルする
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param parent_order_id
+     *            親注文のID
+     * @return 空のJSON
+     */
+    public String deleteParentOrder(String product_code, String parent_order_id) {
+        clearParameters();
+        try {
+            JSONObject body = new JSONObject().put(PRODUCT_CODE, product_code).put(PARENT_ORDER_ID, parent_order_id);
+            addParameter(BODY, body.toString());
+            privateAPI(cancelOrderSuperURL, HttpMethod.POST);
             return new JSONObject().toString();
         } catch (JSONException e) {
             e.printStackTrace();

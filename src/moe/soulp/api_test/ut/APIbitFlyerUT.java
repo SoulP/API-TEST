@@ -16,11 +16,13 @@ import moe.soulp.api_test.api.APIbitFlyer;
 import moe.soulp.api_test.api.BitFlyerable;
 import moe.soulp.api_test.api.Currency;
 import moe.soulp.api_test.api.Pair;
+import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.bitFlyer.dto.BankAccountDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinInDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinOutDTO;
 import moe.soulp.api_test.bitFlyer.dto.ExecutionGetDTO;
 import moe.soulp.api_test.bitFlyer.dto.MoneyTransactionDTO;
+import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
@@ -827,5 +829,55 @@ public class APIbitFlyerUT extends APIkey {
         String child_order_id = "";
         System.out.println("注文キャンセル");
         assertNotNull(bitFlyer.deleteOrder(child_order_id));
+    }
+
+    /**
+     * <b>新規の親注文（特殊注文）</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void newParentOrder() {
+        JSONObject temp = null;
+        NewParentOrderDTO order = new NewParentOrderDTO();
+        order.setOrderMethod(Type.IFDOCO);
+        order.setMinuteToExpire(10000);
+        order.setConditionType(Type.LIMIT);
+        order.setSide(Type.BUY);
+        order.setPrice(300000l);
+        order.setSize(0.1d);
+        order.commit();
+        order.setConditionType(Type.LIMIT);
+        order.setSide(Type.SELL);
+        order.setPrice(320000l);
+        order.setSize(0.1d);
+        order.commit();
+        order.setConditionType(Type.STOP_LIMIT);
+        order.setSide(Type.SELL);
+        order.setPrice(288000l);
+        order.setTriggerPrice(290000l);
+        order.setSize(0.1d);
+        order.commit();
+
+        System.out.println("新規の親注文（特殊注文）");
+        try {
+            temp = new JSONObject(bitFlyer.newParentOrder(order));
+            System.out.println("新規の親注文のID: " + temp.getString("parent_order_acceptance_id"));
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>親注文キャンセル</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void deleteParentOrder() {
+        String parent_order_id = "";
+        System.out.println("親注文キャンセル");
+        assertNotNull(bitFlyer.deleteParentOrder(parent_order_id));
     }
 }

@@ -8,7 +8,7 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>注文の情報</b><br>
- * date: 2017/09/08 last_date: 2017/09/08
+ * date: 2017/09/08 last_date: 2017/09/14
  * 
  * @author ソウルP
  * @version 1.0 2017/09/08 OrderDTO作成
@@ -17,7 +17,7 @@ import moe.soulp.api_test.api.Type;
  */
 public class OrderDTO extends OrderExecTransaction {
     private String        order_id;            // 注文のID
-    private String        product_code;        // マーケットのコード
+    private String        product_code;        // プロダクトコード
     private Type          order_type;          // 注文の種類
     private double        average_price;       // 平均価格
     private Status        order_state;         // 注文の状態
@@ -49,7 +49,7 @@ public class OrderDTO extends OrderExecTransaction {
     }
 
     /**
-     * <b>マーケットのコード 出力</b>
+     * <b>プロダクトコード 出力</b>
      * 
      * @return product_code
      */
@@ -58,10 +58,10 @@ public class OrderDTO extends OrderExecTransaction {
     }
 
     /**
-     * <b>マーケットのコード 入力</b>
+     * <b>プロダクトコード 入力</b>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      * 
      */
     public void setProductCode(String product_code) {

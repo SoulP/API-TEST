@@ -8,13 +8,13 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>新規注文の情報</b><br>
- * date: 2017/09/13 last_date: 2017/09/13
+ * date: 2017/09/13 last_date: 2017/09/14
  * 
  * @author ソウルP
  * @version 1.0 2017/09/13 NewOrderDTO作成
  */
 public class NewOrderDTO {
-    private String       product_code;                         //マーケットのコード
+    private String       product_code;                         // プロダクトコード
     private Type         child_order_type;                     // 注文方法
     private Type         side;                                 // 注文の種類
     private Long         price;                                // 価格
@@ -37,7 +37,7 @@ public class NewOrderDTO {
     }
 
     /**
-     * <b>マーケットのコード 出力</b>
+     * <b>プロダクトコード 出力</b>
      * 
      * @return product_code
      */
@@ -46,10 +46,10 @@ public class NewOrderDTO {
     }
 
     /**
-     * <b>マーケットのコード 入力</b>
+     * <b>プロダクトコード 入力</b>
      * 
      * @param product_code
-     *            マーケットのコード
+     *            プロダクトコード
      */
     public void setProductCode(String product_code) {
         this.product_code = product_code;
