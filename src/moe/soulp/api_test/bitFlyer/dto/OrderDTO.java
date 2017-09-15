@@ -8,7 +8,7 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>注文の情報</b><br>
- * date: 2017/09/08 last_date: 2017/09/14
+ * date: 2017/09/08 last_date: 2017/09/15
  * 
  * @author ソウルP
  * @version 1.0 2017/09/08 OrderDTO作成
@@ -24,10 +24,10 @@ public class OrderDTO extends OrderExecTransaction {
     private ZonedDateTime expire_date;         // 有効期限
     private ZonedDateTime order_date;          // 注文日時
     private String        order_acceptance_id; // 新規注文のID
-    private double        outstanding_size;    // 未払いの量
-    private double        cancel_size;         // キャンセルした量
-    private double        executed_size;       // 約定した量
-    private double        total_commission;    // 合計手数料
+    private Double        outstanding_size;    // 未決済の量
+    private Double        cancel_size;         // キャンセルした量
+    private Double        executed_size;       // 約定した量
+    private Long          total_commission;    // 合計手数料
 
     /**
      * <b>注文のID 出力</b>
@@ -229,7 +229,7 @@ public class OrderDTO extends OrderExecTransaction {
     }
 
     /**
-     * <b>未払いの量 出力</b>
+     * <b>未決済の量 出力</b>
      * 
      * @return outstanding_size
      */
@@ -238,12 +238,12 @@ public class OrderDTO extends OrderExecTransaction {
     }
 
     /**
-     * <b>未払いの量 入力</b>
+     * <b>未決済の量 入力</b>
      * 
      * @param outstanding_size
-     *            未払いの量
+     *            未決済の量
      */
-    public void setOutstandingSize(double outstanding_size) {
+    public void setOutstandingSize(Double outstanding_size) {
         this.outstanding_size = outstanding_size;
     }
 
@@ -262,7 +262,7 @@ public class OrderDTO extends OrderExecTransaction {
      * @param cancel_size
      *            キャンセルした量
      */
-    public void setCancelSize(double cancel_size) {
+    public void setCancelSize(Double cancel_size) {
         this.cancel_size = cancel_size;
     }
 
@@ -280,7 +280,7 @@ public class OrderDTO extends OrderExecTransaction {
      * 
      * @param executed_size
      */
-    public void setExecutedSize(double executed_size) {
+    public void setExecutedSize(Double executed_size) {
         this.executed_size = executed_size;
     }
 
@@ -299,7 +299,7 @@ public class OrderDTO extends OrderExecTransaction {
      * @param total_commission
      *            合計手数料
      */
-    public void setTotalCommission(double total_commission) {
+    public void setTotalCommission(Long total_commission) {
         this.total_commission = total_commission;
     }
 }

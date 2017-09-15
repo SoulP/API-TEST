@@ -50,8 +50,8 @@ public interface BitFlyerable {
     String            SEND_ORDER_SUPER          = "/v1/me/sendparentorder";                                 // 新規の親注文を出す（特殊注文）
     String            CANCEL_ORDER_SUPER        = "/v1/me/cancelparentorder";                               // 親注文をキャンセルする
     String            CANCEL_ALL_ORDER          = "/v1/me/cancelallchildorders";                            // すべての注文をキャンセルする
-    String            GET_ORDER                 = "/v1/me/getchildorders";                                  // 注文の一覧を取得
-    String            GET_ORDER_SUPER           = "/v1/me/getparentorders";                                 // 親注文の一覧を取得
+    String            GET_ORDERS                = "/v1/me/getchildorders";                                  // 注文の一覧を取得
+    String            GET_ORDERS_SUPER          = "/v1/me/getparentorders";                                 // 親注文の一覧を取得
     String            GET_ORDER_SUPER_INFO      = "/v1/me/getparentorder";                                  // 親注文の詳細を取得
     String            GET_EXECUTIONS_ME         = "/v1/me/getexecutions";                                   // 約定の一覧を取得
     String            GET_POSITIONS             = "/v1/me/getpositions";                                    // 建玉の一覧を取得
@@ -73,35 +73,11 @@ public interface BitFlyerable {
 
     public String getTrades(String product_code); // 約定履歴
 
-    public String getTrades(int count); // 約定履歴
+    public String getTrades(Pair product_code, Integer count, Long before, Long after); // 約定履歴
 
-    public String getTrades(Pair product_code, int count); // 約定履歴
+    public String getTrades(String product_code, Integer count, Long before, Long after); // 約定履歴
 
-    public String getTrades(String product_code, int count); // 約定履歴
-
-    public String getTrades(Pair product_code, int count, long before, long after); // 約定履歴
-
-    public String getTrades(String product_code, int count, long before, long after); // 約定履歴
-
-    public String getTradesBefore(long before); // 約定履歴
-
-    public String getTradesBefore(Pair product_code, long before); // 約定履歴
-
-    public String getTradesBefore(String product_code, long before); // 約定履歴
-
-    public String getTradesBefore(Pair product_code, int count, long before); // 約定履歴
-
-    public String getTradesBefore(String product_code, int count, long before); // 約定履歴
-
-    public String getTradesAfter(long after); // 約定履歴
-
-    public String getTradesAfter(Pair product_code, long after); // 約定履歴
-
-    public String getTradesAfter(String product_code, long after); // 約定履歴
-
-    public String getTradesAfter(Pair product_code, int count, long after); // 約定履歴
-
-    public String getTradesAfter(String product_code, int count, long after); // 約定履歴
+    public String getTrades(Integer count, Long before, Long after); // 約定履歴
 
     public String getHealth(); // 取引所の状態
 
@@ -117,71 +93,21 @@ public interface BitFlyerable {
     // 入出金
     public String getAddresses(); // 預入用ビットコイン・イーサリアムアドレス取得
 
-    public String getDepositCoins(int count); // ビットコイン・イーサ預入履歴
+    public String getDepositCoins(Integer count, Long before, Long after); // ビットコイン・イーサ預入履歴
 
-    public String getDepositCoins(int count, long before, long after); // ビットコイン・イーサ預入履歴
-
-    public String getDepositCoinsBefore(long before); // ビットコイン・イーサ預入履歴
-
-    public String getDepositCoinsBefore(int count, long before); // ビットコイン・イーサ預入履歴
-
-    public String getDepositCoinsAfter(long after); // ビットコイン・イーサ預入履歴
-
-    public String getDepositCoinsAfter(int count, long after); // ビットコイン・イーサ預入履歴
-
-    public String getSendCoins(int count); // ビットコイン・イーサ預入履歴
-
-    public String getSendCoins(int count, long before, long after); // ビットコイン・イーサ預入履歴
-
-    public String getSendCoinsBefore(long before); // ビットコイン・イーサ預入履歴
-
-    public String getSendCoinsBefore(int count, long before); // ビットコイン・イーサ預入履歴
-
-    public String getSendCoinsAfter(long after); // ビットコイン・イーサ預入履歴
-
-    public String getSendCoinsAfter(int count, long after); // ビットコイン・イーサ預入履歴
+    public String getSendCoins(Integer count, Long before, Long after); // ビットコイン・イーサ預入履歴
 
     public String getBankAccounts(); // 銀行口座一覧取得
 
-    public String getDeposits(int count); // 入金履歴
-
-    public String getDeposits(int count, long before, long after); // 入金履歴
-
-    public String getDepositsBefore(long before); // 入金履歴
-
-    public String getDepositsBefore(int count, long before); // 入金履歴
-
-    public String getDepositsAfter(long after); // 入金履歴
-
-    public String getDepositsAfter(int count, long after); // 入金履歴
+    public String getDeposits(Integer count, Long before, Long after); // 入金履歴
 
     public String withdraw(long bank_account_id, long amount, Currency currency, String code); // 出金
 
-    public String getWithdraws(int count); // 出金履歴
-
     public String getWithdraws(String message_id); // 出金履歴
 
-    public String getWithdraws(long before, long after, String message_id); // 出金履歴
+    public String getWithdraws(Integer count, Long before, Long after); // 出金履歴
 
-    public String getWithdraws(int count, long before, long after); // 出金履歴
-
-    public String getWithdraws(int count, long before, long after, String message_id); // 出金履歴
-
-    public String getWithdrawsBefore(long before); // 出金履歴
-
-    public String getWithdrawsBefore(int count, long before); // 出金履歴
-
-    public String getWithdrawsBefore(long before, String message_id); // 出金履歴
-
-    public String getWithdrawsBefore(int count, long before, String message_id); // 出金履歴
-
-    public String getWithdrawsAfter(long after); // 出金履歴
-
-    public String getWithdrawsAfter(int count, long after); // 出金履歴
-
-    public String getWithdrawsAfter(long after, String message_id); // 出金履歴
-
-    public String getWithdrawsAfter(int count, long after, String message_id); // 出金履歴
+    public String getWithdraws(Integer count, Long before, Long after, String message_id); // 出金履歴
 
     public String orderBuy(String product_code, long price, double size); // 指値注文 現物取引 買い
 
@@ -198,6 +124,16 @@ public interface BitFlyerable {
     public String deleteAllOrders(Pair product_code); // 全ての注文をキャンセル
 
     public String deleteAllOrders(String product_code); // 全ての注文をキャンセル
+
+    public String getOrdersOpens(Pair product_code); // 未決済の注文一覧
+
+    public String getOrdersOpens(String product_code); // 未決済の注文一覧
+
+    public String getOrdersOpens(Pair product_code, Integer count, Long before, Long after); // 未決済の注文一覧
+
+    public String getOrdersOpens(String product_code, Integer count, Long before, Long after); // 未決済の注文一覧
+
+    public String getOrdersOpens(Integer count, Long before, Long after); // 未決済の注文一覧
 
     /**
      * <b>日時 データ・タイプ変換</b><br>
@@ -269,4 +205,6 @@ public interface BitFlyerable {
     public String deleteOrder(String id); // 注文のキャンセル
 
     public String deleteAllOrders(); // 全ての注文をキャンセル
+
+    public String getOrdersOpens(); // 未決済の注文一覧
 }

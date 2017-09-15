@@ -11,7 +11,7 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>新規の親注文の情報</b><br>
- * date: 2017/09/13 last_date: 2017/09/14
+ * date: 2017/09/13 last_date: 2017/09/15
  * 
  * @author ソウルP
  * @version 1.0 2017/09/13 NewParentOrderDTP作成
@@ -172,11 +172,11 @@ public class NewParentOrderDTO {
     }
 
     /**
-     * <b>注文方法 入力</b><br>
+     * <b>注文の種類 入力</b><br>
      * 注文内容
      * 
      * @param side
-     *            注文方法
+     *            注文の種類
      * @see Type 種類
      */
     public void setSide(Type side) {
@@ -185,11 +185,11 @@ public class NewParentOrderDTO {
     }
 
     /**
-     * <b>注文方法 入力</b><br>
+     * <b>注文の種類 入力</b><br>
      * 注文内容
      * 
      * @param side
-     *            注文方法
+     *            注文の種類
      * @see Type 種類
      */
     public void setSide(String side) {
@@ -311,7 +311,7 @@ public class NewParentOrderDTO {
     public class Parameter {
         private String product_code;   // プロダクトコード
         private Type   condition_type; // 注文の種類
-        private Type   side;           // 注文方法
+        private Type   side;           // 注文の種類
         private double size;           // 量
         private Long   price;          // 価格
         private Long   trigger_price;  // トリガー価格

@@ -13,37 +13,37 @@ import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 
 /**
  * <b>bitFlyerのAPI操作</b><br>
- * date: 2017/09/07 last_date: 2017/09/14
+ * date: 2017/09/07 last_date: 2017/09/15
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 APIbitFlyer作成
  */
 public class APIbitFlyer extends API implements BitFlyerable {
-    private final static String Q_PRODUCT_CODE   = "?product_code=";
-    private final static String Q_COUNT          = "?count=";
-    private final static String Q_BEFORE         = "?before=";
-    private final static String Q_AFTER          = "?after=";
-    private final static String Q_FROM_DATE      = "?from_date=";
-    private final static String Q_MESSAGE_ID     = "?message_id=";
+    private final static String Q_PRODUCT_CODE      = "?product_code=";
+    private final static String Q_COUNT             = "?count=";
+    private final static String Q_BEFORE            = "?before=";
+    private final static String Q_AFTER             = "?after=";
+    private final static String Q_FROM_DATE         = "?from_date=";
 
-    private final static String A_COUNT          = "&count=";
-    private final static String A_BEFORE         = "&before=";
-    private final static String A_AFTER          = "&after=";
-    private final static String A_MESSAGE_ID     = "&message_id=";
+    private final static String A_COUNT             = "&count=";
+    private final static String A_BEFORE            = "&before=";
+    private final static String A_AFTER             = "&after=";
+    private final static String A_MESSAGE_ID        = "&message_id=";
+    private final static String A_CHILD_ORDER_STATE = "&child_order_state=";
 
-    private final static String Z                = "Z";
-    private final static String ACCESS_KEY       = "ACCESS-KEY";
-    private final static String ACCESS_TIMESTAMP = "ACCESS-TIMESTAMP";
-    private final static String ACCESS_SIGN      = "ACCESS-SIGN";
+    private final static String Z                   = "Z";
+    private final static String ACCESS_KEY          = "ACCESS-KEY";
+    private final static String ACCESS_TIMESTAMP    = "ACCESS-TIMESTAMP";
+    private final static String ACCESS_SIGN         = "ACCESS-SIGN";
 
-    private final static String CURRENCY_CODE    = "currency_code";
-    private final static String BANK_ACCOUNT_ID  = "bank_account_id";
-    private final static String AMOUNT           = "amount";
-    private final static String CODE             = "code";
-    private final static String BODY             = "Body";
-    private final static String PRODUCT_CODE     = "product_code";
-    private final static String CHILD_ORDER_ID   = "child_order_id";
-    private final static String PARENT_ORDER_ID  = "parent_order_id";
+    private final static String CURRENCY_CODE       = "currency_code";
+    private final static String BANK_ACCOUNT_ID     = "bank_account_id";
+    private final static String AMOUNT              = "amount";
+    private final static String CODE                = "code";
+    private final static String BODY                = "Body";
+    private final static String PRODUCT_CODE        = "product_code";
+    private final static String CHILD_ORDER_ID      = "child_order_id";
+    private final static String PARENT_ORDER_ID     = "parent_order_id";
 
     private static URL          getMarketsURL;
     private static URL          getBoardURL;
@@ -58,11 +58,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          getCollateralAccountsURL;
     private static URL          getAddressesURL;
     private static URL          getCoinInsURL;
-    private static URL          getCoinOutsURL;
     private static URL          getBankAccountsURL;
-    private static URL          getDepositsURL;
     private static URL          withdrawURL;
-    private static URL          getWithdrawalsURL;
     private static URL          sendOrderURL;
     private static URL          cancelOrderURL;
     private static URL          sendOrderSuperURL;
@@ -84,11 +81,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
             getCollateralAccountsURL = new URL(API + GET_COLLATERAL_ACCOUNTS);
             getAddressesURL = new URL(API + GET_ADDRESSES);
             getCoinInsURL = new URL(API + GET_COIN_INS);
-            getCoinOutsURL = new URL(API + GET_COIN_OUTS);
             getBankAccountsURL = new URL(API + GET_BANK_ACCOUNTS);
-            getDepositsURL = new URL(API + GET_DEPOSITS);
             withdrawURL = new URL(API + WITHDRAW);
-            getWithdrawalsURL = new URL(API + GET_WITHDRAWALS);
             sendOrderURL = new URL(API + SEND_ORDER);
             cancelOrderURL = new URL(API + CANCEL_ORDER);
             sendOrderSuperURL = new URL(API + SEND_ORDER_SUPER);
@@ -177,7 +171,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getBoard(Pair product_code) {
-        return publicAPI(API + GET_BOARD + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
+        return getBoard(product_code.toString());
     }
 
     /**
@@ -246,7 +240,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTicker(Pair product_code) {
-        return publicAPI(API + GET_TICKER + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
+        return getTicker(product_code.toString());
     }
 
     /**
@@ -312,7 +306,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(Pair product_code) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
+        return getTrades(product_code, null, null, null);
     }
 
     /**
@@ -333,76 +327,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getTrades(String product_code) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * product_code(デフォルト): BTC_JPY
-     * 
-     * @param count
-     *            最大表示件数
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     */
-    @Override
-    public String getTrades(int count) {
-        return publicAPI(API + GET_EXECUTIONS + Q_COUNT + count, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param count
-     *            最大表示件数
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     * @see Pair 取引ペア
-     */
-    @Override
-    public String getTrades(Pair product_code, int count) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param count
-     *            最大表示件数
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     */
-    @Override
-    public String getTrades(String product_code, int count) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count, HttpMethod.GET);
+        return getTrades(product_code, null, null, null);
     }
 
     /**
@@ -432,9 +357,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @see Pair 取引ペア
      */
     @Override
-    public String getTrades(Pair product_code, int count, long before, long after) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before
-                + A_AFTER + after, HttpMethod.GET);
+    public String getTrades(Pair product_code, Integer count, Long before, Long after) {
+        return getTrades(product_code.toString(), count, before, after);
     }
 
     /**
@@ -463,144 +387,23 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
      */
     @Override
-    public String getTrades(String product_code, int count, long before, long after) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before
-                + A_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * product_code(デフォルト): BTC_JPY
-     * 
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     */
-    @Override
-    public String getTradesBefore(long before) {
-        return publicAPI(API + GET_EXECUTIONS + Q_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     * @see Pair 取引ペア
-     */
-    @Override
-    public String getTradesBefore(Pair product_code, long before) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param before
-     *            ID 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     */
-    @Override
-    public String getTradesBefore(String product_code, long before) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param count
-     *            最大表示件数
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     * @see Pair 取引ペア
-     */
-    @Override
-    public String getTradesBefore(Pair product_code, int count, long before) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before,
+    public String getTrades(String product_code, Integer count, Long before, Long after) {
+        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + setGetParametersA(count, before, after),
                 HttpMethod.GET);
     }
 
     /**
      * <b>約定履歴</b><br>
+     * product_code（デフォルト）: BTC_JPY
      * 
-     * @param product_code
-     *            プロダクトコード
      * @param count
      *            最大表示件数
+     * 
      * @param before
      *            ID, 指定する値より前のIDを持つデータ取得<br>
      *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     */
-    @Override
-    public String getTradesBefore(String product_code, int count, long before) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_BEFORE + before,
-                HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * product_code(デフォルト): BTC_JPY
-     * 
      * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            ID 指定する値より後のIDを持つデータ取得<br>
      *            after < ID
      * @return 【JSONArray】<br>
      *         <hr>
@@ -614,112 +417,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
      */
     @Override
-    public String getTradesAfter(long after) {
-        return publicAPI(API + GET_EXECUTIONS + Q_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     * @see Pair 取引ペア
-     */
-    @Override
-    public String getTradesAfter(Pair product_code, long after) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     */
-    @Override
-    public String getTradesAfter(String product_code, long after) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param count
-     *            最大表示件数
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     * @see Pair 取引ペア
-     */
-    @Override
-    public String getTradesAfter(Pair product_code, int count, long after) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_AFTER + after,
-                HttpMethod.GET);
-    }
-
-    /**
-     * <b>約定履歴</b><br>
-     * 
-     * @param product_code
-     *            プロダクトコード
-     * @param count
-     *            最大表示件数
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>side</b> 注文の種類<br>
-     *         <b>price</b> 価格<br>
-     *         <b>size</b> 量<br>
-     *         <b>exec_date</b> 約定日時<br>
-     *         <b>buy_child_order_acceptance_id</b> 新規注文の買いのID<br>
-     *         <b>sell_child_order_acceptance_id</b> 新規注文の売りのID
-     */
-    @Override
-    public String getTradesAfter(String product_code, int count, long after) {
-        return publicAPI(API + GET_EXECUTIONS + Q_PRODUCT_CODE + product_code + A_COUNT + count + A_AFTER + after,
-                HttpMethod.GET);
+    public String getTrades(Integer count, Long before, Long after) {
+        return getTrades(Pair.BTC_JPY, count, before, after);
     }
 
     /**
@@ -899,33 +598,6 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * 
      * @param count
      *            最大表示件数
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositCoins(int count) {
-        return privateAPI(API + GET_COIN_INS + Q_COUNT + count, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ預入履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
      * @param before
      *            ID, 指定する値より前のIDを持つデータ取得<br>
      *            ID < before
@@ -945,124 +617,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>event_date</b> 日時
      */
     @Override
-    public String getDepositCoins(int count, long before, long after) {
-        return privateAPI(API + GET_COIN_INS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ預入履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositCoinsBefore(long before) {
-        return privateAPI(API + GET_COIN_INS + Q_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ預入履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositCoinsBefore(int count, long before) {
-        return privateAPI(API + GET_COIN_INS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ預入履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositCoinsAfter(long after) {
-        return privateAPI(API + GET_COIN_INS + Q_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ預入履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositCoinsAfter(int count, long after) {
-        return privateAPI(API + GET_COIN_INS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
+    public String getDepositCoins(Integer count, Long before, Long after) {
+        return privateAPI(API + GET_COIN_INS + setGetParametersQ(count, before, after), HttpMethod.GET);
     }
 
     /**
@@ -1089,36 +645,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getSendCoins() {
-        return privateAPI(getCoinOutsURL, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ送付履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>fee</b> 手数料<br>
-     *         <b>additional_fee</b> 追加手数料<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getSendCoins(int count) {
-        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count, HttpMethod.GET);
+        return getSendCoins(null, null, null);
     }
 
     /**
@@ -1152,132 +679,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>event_date</b> 日時
      */
     @Override
-    public String getSendCoins(int count, long before, long after) {
-        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ送付履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>fee</b> 手数料<br>
-     *         <b>additional_fee</b> 追加手数料<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getSendCoinsBefore(long before) {
-        return privateAPI(API + GET_COIN_OUTS + Q_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ送付履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>fee</b> 手数料<br>
-     *         <b>additional_fee</b> 追加手数料<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getSendCoinsBefore(int count, long before) {
-        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ送付履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>fee</b> 手数料<br>
-     *         <b>additional_fee</b> 追加手数料<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getSendCoinsAfter(long after) {
-        return privateAPI(API + GET_COIN_OUTS + Q_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>ビットコイン・イーサ送付履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> ID<br>
-     *         <b>order_id</b> 注文ID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 量<br>
-     *         <b>address</b> アドレス<br>
-     *         <b>tx_hash</b> ハッシュ<br>
-     *         <b>fee</b> 手数料<br>
-     *         <b>additional_fee</b> 追加手数料<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getSendCoinsAfter(int count, long after) {
-        return privateAPI(API + GET_COIN_OUTS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
+    public String getSendCoins(Integer count, Long before, Long after) {
+        return privateAPI(API + GET_COIN_OUTS + setGetParametersQ(count, before, after), HttpMethod.GET);
     }
 
     /**
@@ -1320,32 +723,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getDeposits() {
-        return privateAPI(getDepositsURL, HttpMethod.GET);
-    }
-
-    /**
-     * <b>入金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 入金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDeposits(int count) {
-        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count, HttpMethod.GET);
+        return getDeposits(null, null, null);
     }
 
     /**
@@ -1375,116 +753,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>event_date</b> 日時
      */
     @Override
-    public String getDeposits(int count, long before, long after) {
-        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>入金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 入金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositsBefore(long before) {
-        return privateAPI(API + GET_DEPOSITS + Q_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>入金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 入金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositsBefore(int count, long before) {
-        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>入金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 入金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositsAfter(long after) {
-        return privateAPI(API + GET_DEPOSITS + Q_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>入金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 入金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getDepositsAfter(int count, long after) {
-        return privateAPI(API + GET_DEPOSITS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
+    public String getDeposits(Integer count, Long before, Long after) {
+        return privateAPI(API + GET_DEPOSITS + setGetParametersQ(count, before, after), HttpMethod.GET);
     }
 
     /**
@@ -1565,32 +835,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getWithdraws() {
-        return privateAPI(getWithdrawalsURL, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdraws(int count) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count, HttpMethod.GET);
+        return getWithdraws(null, null, null);
     }
 
     /**
@@ -1615,39 +860,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String getWithdraws(String message_id) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_MESSAGE_ID + message_id, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @param message_id
-     *            出金メッセージの受付のID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdraws(long before, long after, String message_id) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_BEFORE + before + A_AFTER + after + A_MESSAGE_ID + message_id,
-                HttpMethod.GET);
+        return getWithdraws(null, null, null, message_id);
     }
 
     /**
@@ -1677,9 +890,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>event_date</b> 日時
      */
     @Override
-    public String getWithdraws(int count, long before, long after) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after,
-                HttpMethod.GET);
+    public String getWithdraws(Integer count, Long before, Long after) {
+        return privateAPI(API + GET_WITHDRAWALS + setGetParametersQ(count, before, after), HttpMethod.GET);
     }
 
     /**
@@ -1711,234 +923,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>event_date</b> 日時
      */
     @Override
-    public String getWithdraws(int count, long before, long after, String message_id) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before + A_AFTER + after + A_MESSAGE_ID
-                + message_id, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsBefore(long before) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsBefore(int count, long before) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @param message_id
-     *            出金メッセージの受付のID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsBefore(long before, String message_id) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_BEFORE + before + A_MESSAGE_ID + message_id, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param before
-     *            ID, 指定する値より前のIDを持つデータ取得<br>
-     *            ID < before
-     * @param message_id
-     *            出金メッセージの受付のID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsBefore(int count, long before, String message_id) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_BEFORE + before + A_MESSAGE_ID + message_id,
-                HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsAfter(long after) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsAfter(int count, long after) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_AFTER + after, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @param message_id
-     *            出金メッセージの受付のID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsAfter(long after, String message_id) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_AFTER + after + A_MESSAGE_ID + message_id, HttpMethod.GET);
-    }
-
-    /**
-     * <b>出金履歴</b><br>
-     * <ul>
-     * status
-     * <li><b>PENDING</b>: 手続き中</li>
-     * <li><b>COMPLETED</b>: 完了</li>
-     * </ul>
-     * 
-     * @param count
-     *            最大表示件数
-     * @param after
-     *            ID, 指定する値より後のIDを持つデータ取得<br>
-     *            after < ID
-     * @param message_id
-     *            出金メッセージの受付のID
-     * @return 【JSONArray】<br>
-     *         <hr>
-     *         【JSON】<br>
-     *         <b>id</b> 出金のID<br>
-     *         <b>order_id</b> 注文のID<br>
-     *         <b>currency_code</b> 通貨<br>
-     *         <b>amount</b> 金額<br>
-     *         <b>status</b> 状態<br>
-     *         <b>event_date</b> 日時
-     */
-    @Override
-    public String getWithdrawsAfter(int count, long after, String message_id) {
-        return privateAPI(API + GET_WITHDRAWALS + Q_COUNT + count + A_AFTER + after + A_MESSAGE_ID + message_id,
+    public String getWithdraws(Integer count, Long before, Long after, String message_id) {
+        return privateAPI(API + GET_WITHDRAWALS + setGetParametersQ(count, before, after) + A_MESSAGE_ID + message_id,
                 HttpMethod.GET);
     }
 
@@ -1974,14 +960,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String orderBuy(long price, double size) {
-        clearParameters();
-        NewOrderDTO body = new NewOrderDTO();
-        body.setChildOrderType(Type.LIMIT);
-        body.setSide(Type.BUY);
-        body.setPrice(price);
-        body.setSize(size);
-        addParameter(BODY, body.toString());
-        return privateAPI(sendOrderURL, HttpMethod.POST);
+        return orderBuy(Pair.BTC_JPY, price, size);
     }
 
     /**
@@ -2049,14 +1028,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String orderSell(long price, double size) {
-        clearParameters();
-        NewOrderDTO body = new NewOrderDTO();
-        body.setChildOrderType(Type.LIMIT);
-        body.setSide(Type.SELL);
-        body.setPrice(price);
-        body.setSize(size);
-        addParameter(BODY, body.toString());
-        return privateAPI(sendOrderURL, HttpMethod.POST);
+        return orderSell(Pair.BTC_JPY, price, size);
     }
 
     /**
@@ -2122,13 +1094,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String orderMarketBuy(double size) {
-        clearParameters();
-        NewOrderDTO body = new NewOrderDTO();
-        body.setChildOrderType(Type.MARKET);
-        body.setSide(Type.BUY);
-        body.setSize(size);
-        addParameter(BODY, body.toString());
-        return privateAPI(sendOrderURL, HttpMethod.POST);
+        return orderMarketBuy(Pair.BTC_JPY, size);
     }
 
     /**
@@ -2190,13 +1156,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String orderMarketSell(double size) {
-        clearParameters();
-        NewOrderDTO body = new NewOrderDTO();
-        body.setChildOrderType(Type.MARKET);
-        body.setSide(Type.SELL);
-        body.setSize(size);
-        addParameter(BODY, body.toString());
-        return privateAPI(sendOrderURL, HttpMethod.POST);
+        return orderMarketSell(Pair.BTC_JPY, size);
     }
 
     /**
@@ -2513,9 +1473,235 @@ public class APIbitFlyer extends API implements BitFlyerable {
         }
     }
 
+    /**
+     * <b>未決済の注文一覧</b><br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 注文一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>child_order_type</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>child_order_stat</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>child_order_date</b> 注文日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     */
+    @Override
+    public String getOrdersOpens() {
+        return getOrdersOpens(Pair.BTC_JPY);
+    }
+
+    /**
+     * <b>未決済の注文一覧</b>
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 注文一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>child_order_type</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>child_order_stat</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>child_order_date</b> 注文日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String getOrdersOpens(Pair product_code) {
+        return getOrdersOpens(product_code.toString());
+    }
+
+    /**
+     * <b>未決済の注文一覧</b>
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 注文一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>child_order_type</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>child_order_stat</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>child_order_date</b> 注文日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     */
+    @Override
+    public String getOrdersOpens(String product_code) {
+        return getOrdersOpens(product_code, null, null, null);
+    }
+
+    /**
+     * <b>未決済の注文一覧</b>
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 注文一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>child_order_type</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>child_order_stat</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>child_order_date</b> 注文日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String getOrdersOpens(Pair product_code, Integer count, Long before, Long after) {
+        return getOrdersOpens(product_code.toString(), count, before, after);
+    }
+
+    /**
+     * <b>未決済の注文一覧</b>
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 注文一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>child_order_type</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>child_order_stat</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>child_order_date</b> 注文日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     */
+    @Override
+    public String getOrdersOpens(String product_code, Integer count, Long before, Long after) {
+        return privateAPI(API + GET_ORDERS + Q_PRODUCT_CODE + A_CHILD_ORDER_STATE + Status.ACTIVE + product_code
+                + setGetParametersA(count, before, after), HttpMethod.GET);
+    }
+
+    /**
+     * <b>未決済の注文一覧</b><br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 注文一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>child_order_type</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>child_order_stat</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>child_order_date</b> 注文日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     */
+    @Override
+    public String getOrdersOpens(Integer count, Long before, Long after) {
+        return getOrdersOpens(Pair.BTC_JPY, count, before, after);
+    }
+
     @Override
     protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
         String message = nonce + method + url.substring(API.length()) + getParameters();
         return HMAC_SHA256Encode(apiSecret, message);
+    }
+
+    private String setGetParametersQ(Integer count, Long before, Long after) {
+        String parameters = "";
+        if (count != null) {
+            parameters += Q_COUNT + count;
+            if (before != null) parameters += A_BEFORE + before;
+            if (after != null) parameters += A_AFTER + after;
+        } else if (before != null) {
+            parameters += Q_BEFORE + before;
+            if (after != null) parameters += A_AFTER + after;
+        } else if (after != null) parameters += Q_AFTER + after;
+        return parameters;
+    }
+
+    private String setGetParametersA(Integer count, Long before, Long after) {
+        String parameters = "";
+        if (count != null) parameters += A_COUNT + count;
+        if (before != null) parameters += A_BEFORE + before;
+        if (after != null) parameters += A_AFTER + after;
+        return parameters;
     }
 }
