@@ -11,7 +11,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/13
+ * date: 2017/08/03 last_date: 2017/09/16
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -65,6 +65,13 @@ public class APIcoincheck extends API implements Coincheckable {
     private final static String ACCESS_SIGNATURE    = "ACCESS-SIGNATURE";
 
     private final static String ERROR_ORDERS_CANCEL = "注文キャンセル失敗 ID: ";
+
+    private long                maxAsk              = -1l;
+    private long                minAsk              = -1l;
+    private long                maxBid              = -1l;
+    private long                minBid              = -1l;
+    private long                balanceJPY          = -1l;
+    private double              balanceBTC          = -1.0d;
 
     private static URL          tickerURL;
     private static URL          tradesURL;
@@ -124,7 +131,7 @@ public class APIcoincheck extends API implements Coincheckable {
 
     /**
      * <b>coincheckのAPI</b>
-     * 
+     *
      * @param apiKey
      *            APIキー
      * @param apiSecret
@@ -139,7 +146,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>ティッカー</b><br>
      * 各種最新情報を簡易に取得することができます。<br>
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>last</b> 最後の取引の価格<br>
      *         <b>bid</b> 現在の買い注文の最高価格<br>
@@ -157,7 +164,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>全取引履歴</b><br>
      * 最新の取引履歴を取得できます。
-     * 
+     *
      * @return 【JSONArray】<br>
      *         <b>id</b> 注文のID<br>
      *         <b>amount</b> 注文の量<br>
@@ -173,7 +180,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>全取引履歴</b><br>
      * 最新の取引履歴を取得できます。
-     * 
+     *
      * @param offset
      *            指定された数だけスキップ<br>
      *            最大99件スキップ可能 (1~99)
@@ -192,10 +199,10 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>板情報</b><br>
      * 板情報を取得できます。
-     * 
+     *
      * @return 【JSON】<br>
-     *         <b>asks</b> 売り注文の情報<br>
-     *         <b>bids</b> 買い注文の情報
+     *         <b>asks</b> 【JSONArray】 売り注文の情報<br>
+     *         <b>bids</b> 【JSONArray】 買い注文の情報
      */
     @Override
     public String getBoard() {
@@ -203,9 +210,71 @@ public class APIcoincheck extends API implements Coincheckable {
     }
 
     /**
+     * <b>板情報</b><br>
+     * 更新F
+     */
+    @Override
+    public void updateBoard() {
+        try {
+            JSONObject board = new JSONObject(getBoard());
+            JSONArray asks = board.getJSONArray("asks");
+            JSONArray bids = board.getJSONArray("bids");
+            maxAsk = (long) asks.getJSONArray((asks.length() - 1)).getDouble(0);
+            minAsk = (long) asks.getJSONArray(0).getDouble(0);
+            maxBid = (long) bids.getJSONArray(0).getDouble(0);
+            minBid = (long) bids.getJSONArray(bids.length() - 1).getDouble(0);
+        } catch (JSONException | NullPointerException e) {
+        }
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 売り注文
+     *
+     * @return 最高価格
+     */
+    @Override
+    public long getMaxAsk() {
+        return maxAsk;
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 売り注文
+     *
+     * @return 最低価格
+     */
+    @Override
+    public long getMinAsk() {
+        return minAsk;
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 買い注文
+     *
+     * @return 最高価格
+     */
+    @Override
+    public long getMaxBid() {
+        return maxBid;
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 買い注文
+     *
+     * @return 最低価格
+     */
+    @Override
+    public long getMinBid() {
+        return minBid;
+    }
+
+    /**
      * <b>レート取得</b><br>
      * 取引所の注文を元にレートを算出します。
-     * 
+     *
      * @param order_type
      *            注文の種類<br>
      *            "sell" もしくは "buy"
@@ -231,7 +300,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>レート取得</b><br>
      * 取引所の注文を元にレートを算出します。
-     * 
+     *
      * @param order_type
      *            注文の種類<br>
      *            "sell" もしくは "buy"
@@ -258,7 +327,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>販売レート取得</b><br>
      * 販売所のレートを取得します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>rate</b> 販売のレート
      * @see Pair 取引ペア
@@ -286,7 +355,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>チャット受信</b><br>
      * 最近のチャットを受信する
-     * 
+     *
      * @return 【JSON】<br>
      *         chats 【JSONArray】<br>
      *         <b>id</b> チャットのID<br>
@@ -303,7 +372,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>チャット受信</b><br>
      * 指定したチャットのID以降のチャットを受信する
-     * 
+     *
      * @param since_id
      *            チャットのID
      * @return 【JSON】<br>
@@ -323,7 +392,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>指値注文 現物取引 買い</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param rate
      *            注文のレート
      * @param amount
@@ -348,7 +417,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>指値注文 現物取引 買い</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param rate
@@ -372,7 +441,7 @@ public class APIcoincheck extends API implements Coincheckable {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.buy.toString());
-        addParameter(RATE, String.valueOf(rate));
+        addParameter(RATE, String.valueOf((double) rate));
         addParameter(AMOUNT, String.valueOf(amount));
         return privateAPI(ordersURL, HttpMethod.POST);
     }
@@ -381,7 +450,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>指値注文 現物取引 売り</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param rate
      *            注文のレート
      * @param amount
@@ -406,7 +475,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>指値注文 現物取引 売り</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param rate
@@ -430,7 +499,7 @@ public class APIcoincheck extends API implements Coincheckable {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.sell.toString());
-        addParameter(RATE, String.valueOf(rate));
+        addParameter(RATE, String.valueOf((double) rate));
         addParameter(AMOUNT, String.valueOf(amount));
         return privateAPI(ordersURL, HttpMethod.POST);
     }
@@ -439,7 +508,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>成行注文 現物取引 買い</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param market_buy_amount
      *            成行買で利用する日本円の金額
      * @return 【JSON】<br>
@@ -462,7 +531,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>成行注文 現物取引 買い</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param market_buy_amount
@@ -492,7 +561,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>成行注文 現物取引 売り</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @return 【JSON】<br>
@@ -515,7 +584,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>成行注文 現物取引 売り</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -545,7 +614,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>成行注文 レバレッジ取引新規 買い</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @return 【JSON】<br>
@@ -568,7 +637,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>成行注文 レバレッジ取引新規 買い</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -598,7 +667,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>指値注文 レバレッジ取引新規 買い</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @param rate
@@ -623,7 +692,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>指値注文 レバレッジ取引新規 買い</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -656,7 +725,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>成行注文 レバレッジ取引新規 売り</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @return 【JSON】<br>
@@ -679,7 +748,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>成行注文 レバレッジ取引新規 売り</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -709,7 +778,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>指値注文 レバレッジ取引新規 売り</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @param rate
@@ -734,7 +803,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>指値注文 レバレッジ取引新規 売り</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -767,7 +836,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>成行注文 レバレッジ取引決済 売り</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @param position_id
@@ -792,7 +861,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>成行注文 レバレッジ取引決済 売り</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -825,7 +894,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>指値注文 レバレッジ取引決済 売り</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @param position_id
@@ -852,7 +921,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>指値注文 レバレッジ取引決済 売り</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -888,7 +957,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>成行注文 レバレッジ取引決済 買い</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @param position_id
@@ -913,7 +982,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>成行注文 レバレッジ取引決済 買い</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -946,7 +1015,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>指値注文 レバレッジ取引決済 買い</b><br>
      * 取引所に新規注文を発行します。<br>
      * 取引ペア(デフォルト): btc_jpy
-     * 
+     *
      * @param amount
      *            注文の量
      * @param position_id
@@ -973,7 +1042,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>指値注文 レバレッジ取引決済 買い</b><br>
      * 取引所に新規注文を発行します。
-     * 
+     *
      * @param pair
      *            取引ペア
      * @param amount
@@ -1008,7 +1077,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>未決済の注文一覧</b><br>
      * アカウントの未決済の注文を一覧で表示します。
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 情報取得結果<br>
      *         <hr>
@@ -1028,9 +1097,27 @@ public class APIcoincheck extends API implements Coincheckable {
     }
 
     /**
+     * <b>未決済の注文 有無</b>
+     *
+     * @return <b>true</b> 未決済注文なし<br>
+     *         <b>false</b> 未決済注文あり
+     */
+    @Override
+    public boolean ordersIsEmpty() {
+        try {
+            return new JSONObject(getOrdersOpens()).getJSONArray("orders").length() == 0;
+        } catch (NullPointerException e) {
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    /**
      * <b>注文のキャンセル</b><br>
      * 新規注文または未決済の注文一覧のIDを指定してキャンセルすることができます。
-     * 
+     *
      * @param id
      *            新規注文または未決済の注文一覧のID
      * @return 【JSON】<br>
@@ -1045,7 +1132,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>注文のキャンセル</b><br>
      * 新規注文または未決済の注文一覧のIDを指定してキャンセルすることができます。
-     * 
+     *
      * @param id
      *            新規注文または未決済の注文一覧のID
      * @param pair
@@ -1068,12 +1155,15 @@ public class APIcoincheck extends API implements Coincheckable {
         try {
             JSONArray orders = new JSONObject(getOrdersOpens()).getJSONArray(ORDERS);
             for (int i = 0; i < orders.length(); i++) {
+                sleep(1500);
                 long id = orders.getJSONObject(i).getLong(ID);
                 if (!(new JSONObject(deleteOrder(String.valueOf(id))).getBoolean(SUCCESS)))
                     throw new NullPointerException(ERROR_ORDERS_CANCEL + id);
             }
             return SUCCESS_TRUE;
-        } catch (JSONException e) {
+        } catch (NullPointerException e) {
+            return SUCCESS_FALSE;
+        } catch (JSONException | InterruptedException e) {
             e.printStackTrace();
             return SUCCESS_FALSE;
         }
@@ -1925,7 +2015,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>残高</b><br>
      * アカウントの残高を確認できます。<br>
      * jpy, btc には未決済の注文に利用している jpy_reserved, btc_reserved は含まれていません。
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <b>jpy</b> 日本円の残高<br>
@@ -1941,13 +2031,34 @@ public class APIcoincheck extends API implements Coincheckable {
      */
     @Override
     public String getBalance() {
+        clearParameters();
         return privateAPI(accountsBalanceURL, HttpMethod.GET);
+    }
+
+    @Override
+    public void updateBalance() {
+        try {
+            JSONObject balance = new JSONObject(getBalance());
+            balanceJPY = (long) balance.getDouble("jpy");
+            balanceBTC = balance.getDouble("btc");
+        } catch (JSONException | NullPointerException e) {
+        }
+    }
+
+    @Override
+    public long getBalanceJPY() {
+        return balanceJPY;
+    }
+
+    @Override
+    public double getBalanceBTC() {
+        return balanceBTC;
     }
 
     /**
      * <b>レバレッジアカウントの残高</b><br>
      * レバレッジアカウントの残高を確認できます。
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <b>margin</b> 証拠金 JSON(jpy)<br>
@@ -1962,7 +2073,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>ビットコインの送金</b><br>
      * 指定のアドレスにビットコインを送ります。
-     * 
+     *
      * @param address
      *            送り先のビットコインアドレス
      * @param amount
@@ -1985,7 +2096,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>送金履歴</b><br>
      * 通貨(デフォルト): BTC
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
@@ -2005,7 +2116,7 @@ public class APIcoincheck extends API implements Coincheckable {
 
     /**
      * <b>送金履歴</b>
-     * 
+     *
      * @param currency
      *            通貨
      * @return 【JSON】<br>
@@ -2028,7 +2139,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>受け取り履歴</b><br>
      * 通貨(デフォルト): BTC
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
@@ -2049,7 +2160,7 @@ public class APIcoincheck extends API implements Coincheckable {
 
     /**
      * <b>受け取り履歴</b>
-     * 
+     *
      * @param currency
      *            通貨
      * @return 【JSON】<br>
@@ -2073,7 +2184,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>入金履歴</b><br>
      * 通貨(デフォルト): JPY
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
@@ -2095,7 +2206,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>高速入金</b><br>
      * 受取中のビットコインを高速入金します。
-     * 
+     *
      * @param id
      *            受け取りのID
      * @return 【JSON】<br>
@@ -2129,7 +2240,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>銀行口座一覧</b><br>
      * お客様の出金用に登録された銀行口座の一覧を返します。
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
@@ -2149,7 +2260,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>銀行口座の登録</b><br>
      * 出金先の銀行口座を登録します。
-     * 
+     *
      * @param bank_name
      *            銀行名
      * @param branch_name
@@ -2160,7 +2271,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *            口座番号
      * @param name
      *            口座名義
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
@@ -2188,10 +2299,10 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>銀行口座の登録</b><br>
      * 出金先の銀行口座を登録します。
-     * 
+     *
      * @param bankAccount
      *            銀行口座
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
@@ -2212,7 +2323,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>銀行口座の削除</b><br>
      * 出金先の銀行口座を削除します。
-     * 
+     *
      * @param id
      *            銀行口座のID
      * @return 【JSON】<br>
@@ -2226,7 +2337,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <b>pagination</b> ページネーション JSON(limit, order, starting_after,
@@ -2250,7 +2361,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @param limit
      *            最大表示件数
      * @return 【JSON】<br>
@@ -2276,7 +2387,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @param order
      *            ソート
      * @return 【JSON】<br>
@@ -2303,7 +2414,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @param starting_after
      *            指定したIDより後の取引履歴 starting_after < id
      * @return 【JSON】<br>
@@ -2329,7 +2440,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @param limit
      *            最大表示件数
      * @param order
@@ -2358,7 +2469,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @param limit
      *            最大表示件数
      * @param starting_after
@@ -2386,7 +2497,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @param limit
      *            最大表示件数
      * @param order
@@ -2418,7 +2529,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金履歴</b><br>
      * 出金の申請の履歴を表示します。
-     * 
+     *
      * @param order
      *            ソート
      * @param starting_after
@@ -2447,7 +2558,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金申請の作成</b><br>
      * 出金申請をします。
-     * 
+     *
      * @param bank_account_id
      *            銀行口座のID
      * @param amount
@@ -2479,7 +2590,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>出金申請のキャンセル</b><br>
      * 出金申請をキャンセルします。
-     * 
+     *
      * @param id
      *            出金申請のID
      * @return 【JSON】<br>
@@ -2493,7 +2604,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>借入申請</b><br>
      * 借入の申請をします。
-     * 
+     *
      * @param amount
      *            借りたい量
      * @param currency
@@ -2519,7 +2630,7 @@ public class APIcoincheck extends API implements Coincheckable {
      * <b>借入中一覧</b><br>
      * 借り入れしている通貨の一覧を表示します。<br>
      * この id を元に返却をすることができます。
-     * 
+     *
      * @return 【JSON】<br>
      *         <b>success</b> 結果<br>
      *         <hr>
@@ -2540,7 +2651,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>返済</b><br>
      * 返却をすることができます。
-     * 
+     *
      * @param id
      *            借入中一覧のID
      * @return 【JSON】<br>
@@ -2556,7 +2667,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>レバレッジアカウントへ振替</b><br>
      * 現物取引アカウントからレバレッジアカウントへ振替します。
-     * 
+     *
      * @param currency
      *            通貨
      * @param amount
@@ -2576,7 +2687,7 @@ public class APIcoincheck extends API implements Coincheckable {
     /**
      * <b>レバレッジアカウントから振替</b><br>
      * レバレッジアカウントから現物取引アカウントへ振替します。
-     * 
+     *
      * @param currency
      *            通貨
      * @param amount

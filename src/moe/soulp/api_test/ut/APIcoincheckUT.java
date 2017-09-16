@@ -1,12 +1,7 @@
 package moe.soulp.api_test.ut;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -38,7 +33,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 /**
  * <b>Coincheck用のUTテストケース</b><br>
  * date: 2017/08/03 last_date: 2017/09/12
- * 
+ *
  * @author ソウルP
  */
 public class APIcoincheckUT extends APIkey {
@@ -182,29 +177,29 @@ public class APIcoincheckUT extends APIkey {
         JSONArray minAsk = null;
         JSONArray maxBid = null;
         JSONArray minBid = null;
-        double maxAskPrice = -1.0d;
+        long maxAskPrice = -1l;
         double maxAskAmount = -1.0d;
-        double minAskPrice = -1.0d;
+        long minAskPrice = -1l;
         double minAskAmount = -1.0d;
-        double maxBidPrice = -1.0d;
+        long maxBidPrice = -1l;
         double maxBidAmount = -1.0d;
-        double minBidPrice = -1.0d;
+        long minBidPrice = -1l;
         double minBidAmount = -1.0d;
         try {
             temp = new JSONObject(coincheck.getBoard());
             asks = temp.getJSONArray("asks");
             bids = temp.getJSONArray("bids");
-            maxAsk = asks.getJSONArray((asks.length() - 1));
+            maxAsk = asks.getJSONArray(asks.length() - 1);
             minAsk = asks.getJSONArray(0);
-            maxBid = bids.getJSONArray(bids.length() - 1);
-            minBid = bids.getJSONArray(0);
-            maxAskPrice = maxAsk.getDouble(0);
+            minBid = bids.getJSONArray(bids.length() - 1);
+            maxBid = bids.getJSONArray(0);
+            maxAskPrice = (long) maxAsk.getDouble(0);
             maxAskAmount = maxAsk.getDouble(1);
-            minAskPrice = minAsk.getDouble(0);
+            minAskPrice = (long) minAsk.getDouble(0);
             minAskAmount = minAsk.getDouble(1);
-            maxBidPrice = maxBid.getDouble(0);
+            maxBidPrice = (long) maxBid.getDouble(0);
             maxBidAmount = maxBid.getDouble(1);
-            minBidPrice = minBid.getDouble(0);
+            minBidPrice = (long) minBid.getDouble(0);
             minBidAmount = minBid.getDouble(1);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -227,8 +222,8 @@ public class APIcoincheckUT extends APIkey {
         assertThat(minBidAmount, is(not(-1.0d)));
 
         System.out.println("【買】");
-        System.out.println("最高: " + minBidPrice + "円, " + minBidAmount + "btc");
-        System.out.println("最安: " + maxBidPrice + "円, " + maxBidAmount + "btc");
+        System.out.println("最高: " + maxBidPrice + "円, " + maxBidAmount + "btc");
+        System.out.println("最安: " + minBidPrice + "円, " + minBidAmount + "btc");
         System.out.println();
         System.out.println("【売】");
         System.out.println("最安: " + minAskPrice + "円, " + minAskAmount + "btc");

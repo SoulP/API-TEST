@@ -17,15 +17,15 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * <b>汎用API接続</b><br>
- * date: 2017/08/03 last_date: 2017/09/08
- * 
+ * date: 2017/08/03 last_date: 2017/09/16
+ *
  * @author ソウルP
  * @version 1.0 2017/08/03 API作成
  * @version 1.1 2017/08/21 Private API用のdelete操作追加
  * @version 1.2 2017/09/07 APIcoincheckの一部をAPIに移動
  * @version 1.3 2017/09/08 coincheckとbitFlyer両方対応の為、通信仕組みを大幅に変更
  */
-public abstract class API {
+public abstract class API extends Thread {
     private final static String ERROR_NULL_API_KEY    = "apiKeyの値がありません。";
     private final static String ERROR_NULL_API_SECRET = "apiSecretの値がありません。";
     private String              parameters;
@@ -79,7 +79,8 @@ public abstract class API {
                 }
                 result = temp.toString();
             } else {
-                throw new IOException("HTTP CODE: " + code);
+                //throw new IOException("HTTP CODE: " + code);
+                System.out.println("HTTP CODE: " + code);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -129,7 +130,8 @@ public abstract class API {
                 }
                 result = temp.toString();
             } else {
-                throw new IOException("HTTP CODE: " + code);
+                //throw new IOException("HTTP CODE: " + code);
+                System.out.println("HTTP CODE: " + code);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,7 +168,7 @@ public abstract class API {
 
     /**
      * <b>APIキー 設定</b>
-     * 
+     *
      * @param apiKey
      *            APIキー
      */
@@ -176,7 +178,7 @@ public abstract class API {
 
     /**
      * <b>APIシークレット 設定</b>
-     * 
+     *
      * @param apiSecret
      *            APIシークレット
      */
@@ -194,7 +196,7 @@ public abstract class API {
 
     /**
      * <b>APIキーの有無</b>
-     * 
+     *
      * @return <b>true</b> ない<br>
      *         <b>false</b> ある
      */
@@ -206,7 +208,7 @@ public abstract class API {
 
     /**
      * <b>APIシークレットの有無</b>
-     * 
+     *
      * @return <b>true</b> ない<br>
      *         <b>false</b> ある
      */

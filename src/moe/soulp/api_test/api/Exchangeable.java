@@ -3,13 +3,23 @@ package moe.soulp.api_test.api;
 /**
  * <b>取引所</b><br>
  * date: 2017/09/06 last_date: 2017/09/14
- * 
+ *
  * @author ソウルP
  * @version 1.0 2017/09/06 Exchangeable作成
  */
 public interface Exchangeable {
     //Public API
     public String getBoard(); // 板情報
+
+    public void updateBoard(); // 板情報 更新
+
+    public long getMaxAsk(); // 板情報 売り注文 最高価格
+
+    public long getMinAsk(); // 板情報 売り注文 最低価格
+
+    public long getMaxBid(); // 板情報 買い注文 最高価格
+
+    public long getMinBid(); // 板情報 買い注文 最低価格
 
     public String getTicker(); // ティッカー
 
@@ -47,6 +57,8 @@ public interface Exchangeable {
 
     public String getOrdersOpens(); // 未決済の注文一覧
 
+    public boolean ordersIsEmpty(); // 未決済の注文 有無
+
     public String deleteOrder(String id); // 注文のキャンセル
 
     public String deleteOrder(String id, Pair pair); // 注文のキャンセル
@@ -59,6 +71,12 @@ public interface Exchangeable {
 
     // アカウント
     public String getBalance(); // 残高
+
+    public void updateBalance(); // 残高 更新
+
+    public long getBalanceJPY(); // 残高 日本円
+
+    public double getBalanceBTC(); // 残高 ビットコイン
 
     public String getLeverageBalance(); // レバレッジアカウントの残高
 
