@@ -27,7 +27,7 @@ import moe.soulp.api_test.bitFlyer.dto.OrderDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
- * date: 2017/09/07 last_date: 2017/09/14
+ * date: 2017/09/07 last_date: 2017/09/20
  * 
  * @author ソウルP
  */
@@ -914,6 +914,68 @@ public class APIbitFlyerUT extends APIkey {
 
         try {
             temp = new JSONArray(bitFlyer.getOrdersOpens());
+            List<OrderDTO> orders = new ArrayList<>();
+            for (int i = 0; i < temp.length(); i++) {
+                OrderDTO order = new OrderDTO();
+                try {
+                    JSONObject obj = temp.getJSONObject(i);
+                    order.setId(obj.getLong("id"));
+                    order.setOrderId(obj.getString("child_order_id"));
+                    order.setProductCode(obj.getString("product_code"));
+                    order.setSide(obj.getString("side"));
+                    order.setOrderType(obj.getString("child_order_type"));
+                    order.setPrice(obj.getLong("price"));
+                    order.setAveragePrice(obj.getLong("average_price"));
+                    order.setSize(obj.getDouble("size"));
+                    order.setOrderState(obj.getString("child_order_state"));
+                    order.setExpireDate(obj.getString("expire_date"));
+                    order.setOrderDate(obj.getString("child_order_date"));
+                    order.setOrderAcceptanceId(obj.getString("child_order_acceptance_id"));
+                    order.setOutstandingSize(obj.getDouble("outstanding_size"));
+                    order.setCancelSize(obj.getDouble("cancel_size"));
+                    order.setExecutedSize(obj.getDouble("executed_size"));
+                    order.setTotalCommission(obj.getLong("total_commission"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    fail(e.getMessage());
+                }
+
+                orders.add(order);
+            }
+
+            System.out.println("------------------------------");
+            orders.forEach(o -> {
+                System.out.println("注文一覧のID: " + o.getId());
+                System.out.println("注文のID: " + o.getOrderId());
+                System.out.println("プロダクトコード: " + o.getProductCode());
+                System.out.println("注文の種類: " + o.getSide());
+                System.out.println("注文の種類: " + o.getOrderType());
+                System.out.println("価格: " + o.getPrice());
+                System.out.println("平均価格: " + o.getAveragePrice());
+                System.out.println("量: " + o.getSize());
+                System.out.println("注文の状態: " + o.getOrderState());
+                System.out.println("有効期限: " + o.getExpireDate());
+                System.out.println("注文日時: " + o.getOrderDate());
+                System.out.println("新規注文のID: " + o.getOrderAcceptanceId());
+                System.out.println("未決済の量: " + o.getOutstandingSize());
+                System.out.println("約定した量: " + o.getExecutedSize());
+                System.out.println("合計手数料: " + o.getTotalCommission());
+                System.out.println("------------------------------");
+            });
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void getOrders() {
+        JSONArray temp = null;
+        System.out.println("注文一覧");
+
+        try {
+            temp = new JSONArray(bitFlyer.getOrders());
             List<OrderDTO> orders = new ArrayList<>();
             for (int i = 0; i < temp.length(); i++) {
                 OrderDTO order = new OrderDTO();
