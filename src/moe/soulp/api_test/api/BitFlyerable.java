@@ -166,6 +166,12 @@ public interface BitFlyerable extends Exchangeable {
 
     public String getMyCollateralHistory(Integer count, Long before, Long after); // 証拠金の変動履歴
 
+    public String getTradingCommission(); // 取引手数料
+
+    public String getTradingCommission(Pair prdouct_code); // 取引手数料
+
+    public String getTradingCommission(String product_code); // 取引手数料
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)

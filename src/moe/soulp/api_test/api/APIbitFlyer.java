@@ -2562,6 +2562,48 @@ public class APIbitFlyer extends API implements BitFlyerable {
         return privateAPI(API + GET_MY_COLLATERAL_HISTORY + setGetParametersQ(count, before, after), HttpMethod.GET);
     }
 
+    /**
+     * <b>取引手数料</b><br>
+     * 取引手数料を取得<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @return 【JSON】<br>
+     *         <b>commission_rate</b> 手数料
+     */
+    @Override
+    public String getTradingCommission() {
+        return getTradingCommission(Pair.BTC_JPY);
+    }
+
+    /**
+     * <b>取引手数料</b><br>
+     * 取引手数料を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSON】<br>
+     *         <b>commission_rate</b> 手数料
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String getTradingCommission(Pair product_code) {
+        return getTradingCommission(product_code.toString());
+    }
+
+    /**
+     * <b>取引手数料</b><br>
+     * 取引手数料を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSON】<br>
+     *         <b>commission_rate</b> 手数料
+     */
+    @Override
+    public String getTradingCommission(String product_code) {
+        return privateAPI(API + GET_TRADING_COMMISSION + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
+    }
+
     @Override
     protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
         String message = nonce + method + url.substring(API.length()) + getParameters();

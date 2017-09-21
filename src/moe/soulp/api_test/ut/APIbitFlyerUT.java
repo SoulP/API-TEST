@@ -1297,4 +1297,42 @@ public class APIbitFlyerUT extends APIkey {
         }
         assertNotNull(temp);
     }
+
+    /**
+     * <b>取引手数料</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getTradingCommission() {
+        JSONObject temp = null;
+        System.out.println("取引手数料");
+
+        try {
+            temp = new JSONObject(bitFlyer.getTradingCommission());
+            System.out.println("手数料: " + temp.getDouble("commission_rate"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>取引手数料</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getTradingCommission_FX() {
+        JSONObject temp = null;
+        System.out.println("取引手数料");
+
+        try {
+            temp = new JSONObject(bitFlyer.getTradingCommission(Pair.FX_BTC_JPY));
+            System.out.println("手数料: " + temp.getDouble("commission_rate"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
 }
