@@ -13,40 +13,43 @@ import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 
 /**
  * <b>bitFlyerのAPI操作</b><br>
- * date: 2017/09/07 last_date: 2017/09/20
+ * date: 2017/09/07 last_date: 2017/09/21
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 APIbitFlyer作成
  */
 public class APIbitFlyer extends API implements BitFlyerable {
-    private final static String Q_PRODUCT_CODE              = "?product_code=";
-    private final static String Q_COUNT                     = "?count=";
-    private final static String Q_BEFORE                    = "?before=";
-    private final static String Q_AFTER                     = "?after=";
-    private final static String Q_FROM_DATE                 = "?from_date=";
+    private final static String Q_PRODUCT_CODE               = "?product_code=";
+    private final static String Q_COUNT                      = "?count=";
+    private final static String Q_BEFORE                     = "?before=";
+    private final static String Q_AFTER                      = "?after=";
+    private final static String Q_FROM_DATE                  = "?from_date=";
+    private final static String Q_PARENT_ORDER_ID            = "?parent_order_id=";
+    private final static String Q_PARENT_ORDER_ACCEPTANCE_ID = "?parent_order_acceptance_id=";
 
-    private final static String A_COUNT                     = "&count=";
-    private final static String A_BEFORE                    = "&before=";
-    private final static String A_AFTER                     = "&after=";
-    private final static String A_MESSAGE_ID                = "&message_id=";
-    private final static String A_CHILD_ORDER_STATE         = "&child_order_state=";
-    private final static String A_CHILD_ORDER_ID            = "&child_order_id=";
-    private final static String A_CHILD_ORDER_ACCEPTANCE_ID = "&child_order_acceptance_id=";
-    private final static String A_PARENT_ORDER_ID           = "&parent_order_id=";
+    private final static String A_COUNT                      = "&count=";
+    private final static String A_BEFORE                     = "&before=";
+    private final static String A_AFTER                      = "&after=";
+    private final static String A_MESSAGE_ID                 = "&message_id=";
+    private final static String A_CHILD_ORDER_STATE          = "&child_order_state=";
+    private final static String A_CHILD_ORDER_ID             = "&child_order_id=";
+    private final static String A_CHILD_ORDER_ACCEPTANCE_ID  = "&child_order_acceptance_id=";
+    private final static String A_PARENT_ORDER_ID            = "&parent_order_id=";
+    private final static String A_PARENT_ORDER_STATE         = "&parent_order_state=";
 
-    private final static String Z                           = "Z";
-    private final static String ACCESS_KEY                  = "ACCESS-KEY";
-    private final static String ACCESS_TIMESTAMP            = "ACCESS-TIMESTAMP";
-    private final static String ACCESS_SIGN                 = "ACCESS-SIGN";
+    private final static String Z                            = "Z";
+    private final static String ACCESS_KEY                   = "ACCESS-KEY";
+    private final static String ACCESS_TIMESTAMP             = "ACCESS-TIMESTAMP";
+    private final static String ACCESS_SIGN                  = "ACCESS-SIGN";
 
-    private final static String CURRENCY_CODE               = "currency_code";
-    private final static String BANK_ACCOUNT_ID             = "bank_account_id";
-    private final static String AMOUNT                      = "amount";
-    private final static String CODE                        = "code";
-    private final static String BODY                        = "Body";
-    private final static String PRODUCT_CODE                = "product_code";
-    private final static String CHILD_ORDER_ID              = "child_order_id";
-    private final static String PARENT_ORDER_ID             = "parent_order_id";
+    private final static String CURRENCY_CODE                = "currency_code";
+    private final static String BANK_ACCOUNT_ID              = "bank_account_id";
+    private final static String AMOUNT                       = "amount";
+    private final static String CODE                         = "code";
+    private final static String BODY                         = "Body";
+    private final static String PRODUCT_CODE                 = "product_code";
+    private final static String CHILD_ORDER_ID               = "child_order_id";
+    private final static String PARENT_ORDER_ID              = "parent_order_id";
 
     private static URL          getMarketsURL;
     private static URL          getBoardURL;
@@ -1645,8 +1648,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
     }
 
     /**
-     * <b>未決済の注文一覧</b><br>
-     * product_code（デフォルト）: BTC_JPY
+     * <b>未決済の注文一覧</b> product_code（デフォルト）: BTC_JPY
      * 
      * @param count
      *            最大表示件数
@@ -1683,6 +1685,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
 
     /**
      * <b>注文一覧</b><br>
+     * 注文の一覧を取得<br>
      * product_code（デフォルト）: BTC_JPY
      * 
      * @return 【JSONArray】<br>
@@ -1711,7 +1714,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     }
 
     /**
-     * <b>注文一覧</b>
+     * <b>注文一覧</b><br>
+     * 注文の一覧を取得
      * 
      * @param product_code
      *            プロダクトコード
@@ -1742,7 +1746,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     }
 
     /**
-     * <b>注文一覧</b>
+     * <b>注文一覧</b><br>
+     * 注文の一覧を取得
      * 
      * @param product_code
      *            プロダクトコード
@@ -1773,6 +1778,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
 
     /**
      * <b>注文一覧</b><br>
+     * <br>
+     * 注文の一覧を取得<br>
      * product_code（デフォルト）: BTC_JPY
      * 
      * @param count
@@ -1820,7 +1827,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     }
 
     /**
-     * <b>注文一覧</b>
+     * <b>注文一覧</b><br>
+     * 注文の一覧を取得
      * 
      * @param product_code
      *            プロダクトコード
@@ -1870,7 +1878,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
     }
 
     /**
-     * <b>注文一覧</b>
+     * <b>注文一覧</b><br>
+     * 注文の一覧を取得
      * 
      * @param product_code
      *            プロダクトコード
@@ -1920,6 +1929,250 @@ public class APIbitFlyer extends API implements BitFlyerable {
             str += A_CHILD_ORDER_ACCEPTANCE_ID + child_order_acceptance_id;
         if (!(parent_order_id == null || parent_order_id.equals(""))) str += A_PARENT_ORDER_ID + parent_order_id;
         return privateAPI(API + GET_ORDERS + Q_PRODUCT_CODE + product_code + str, HttpMethod.GET);
+    }
+
+    /**
+     * <b>親注文一覧</b><br>
+     * 親注文の一覧を取得<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 親注文一覧のID<br>
+     *         <b>parent_order_id</b> 親注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>parent_order_type</b> 注文方法<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>parent_order_date</b> 日時<br>
+     *         <b>parent_order_acceptance_id</b> 新規の親注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     */
+    public String getParentOrders() {
+        return getParentOrders(Pair.BTC_JPY);
+    }
+
+    /**
+     * <b>親注文一覧</b><br>
+     * 親注文の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 親注文一覧のID<br>
+     *         <b>parent_order_id</b> 親注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>parent_order_type</b> 注文方法<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>parent_order_state</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>parent_order_date</b> 日時<br>
+     *         <b>parent_order_acceptance_id</b> 新規の親注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     * @see Pair 取引ペア
+     */
+    public String getParentOrders(Pair product_code) {
+        return getParentOrders(product_code.toString());
+    }
+
+    /**
+     * <b>親注文一覧</b><br>
+     * 親注文の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 親注文一覧のID<br>
+     *         <b>parent_order_id</b> 親注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>parent_order_type</b> 注文方法<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>parent_order_state</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>parent_order_date</b> 日時<br>
+     *         <b>parent_order_acceptance_id</b> 新規の親注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     */
+    public String getParentOrders(String product_code) {
+        return privateAPI(API + GET_ORDERS_SUPER + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
+    }
+
+    /**
+     * <b>親注文一覧</b><br>
+     * 親注文の一覧を取得<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param parent_order_state
+     *            注文の状態
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 親注文一覧のID<br>
+     *         <b>parent_order_id</b> 親注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>parent_order_type</b> 注文方法<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>parent_order_state</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>parent_order_date</b> 日時<br>
+     *         <b>parent_order_acceptance_id</b> 新規の親注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     * @see Status 状態
+     */
+    public String getParentOrders(Integer count, Long before, Long after, Status parent_order_state) {
+        return getParentOrders(Pair.BTC_JPY, count, before, after, parent_order_state);
+    }
+
+    /**
+     * <b>親注文一覧</b><br>
+     * 親注文の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param parent_order_state
+     *            注文の状態
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 親注文一覧のID<br>
+     *         <b>parent_order_id</b> 親注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>parent_order_type</b> 注文方法<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>parent_order_state</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>parent_order_date</b> 日時<br>
+     *         <b>parent_order_acceptance_id</b> 新規の親注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     * @see Pair 取引ペア
+     * @see Status 状態
+     */
+    public String getParentOrders(Pair product_code, Integer count, Long before, Long after,
+            Status parent_order_state) {
+        return getParentOrders(product_code.toString(), count, before, after, parent_order_state);
+    }
+
+    /**
+     * <b>親注文一覧</b><br>
+     * 親注文の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param parent_order_state
+     *            注文の状態
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 親注文一覧のID<br>
+     *         <b>parent_order_id</b> 親注文のID<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>parent_order_type</b> 注文方法<br>
+     *         <b>price</b> 価格<br>
+     *         <b>average_price</b> 平均価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>parent_order_state</b> 注文の状態<br>
+     *         <b>expire_date</b> 有効期限<br>
+     *         <b>parent_order_date</b> 日時<br>
+     *         <b>parent_order_acceptance_id</b> 新規の親注文のID<br>
+     *         <b>outstanding_size</b> 未決済の量<br>
+     *         <b>cancel_size</b> キャンセルした量<br>
+     *         <b>executed_size</b> 約定した量<br>
+     *         <b>total_commission</b> 合計手数料
+     * @see Status 状態
+     */
+    public String getParentOrders(String product_code, Integer count, Long before, Long after,
+            Status parent_order_state) {
+        String str = setGetParametersA(count, before, after);
+        if (parent_order_state != null) str += A_PARENT_ORDER_STATE + parent_order_state;
+        return privateAPI(API + GET_ORDERS_SUPER + Q_PRODUCT_CODE + product_code + str, HttpMethod.GET);
+    }
+
+    /**
+     * <b>親注文詳細</b><br>
+     * 親注文の詳細を取得
+     * 
+     * @param parent_order_id
+     *            親注文のID
+     * @param parent_order_acceptance_id
+     *            新規の親注文のID
+     * @return 【JSON】<br>
+     *         <b>id</b> 親注文一覧のID<br>
+     *         <b>parent_order_id</b> 親注文のID<br>
+     *         <b>order_method</b> 注文方法<br>
+     *         <b>minute_to_expire</b> 有効期限（分）<br>
+     *         <hr>
+     *         parameters 【JSONArray】<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>condition_type</b> 注文の種類<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>trigger_price</b> トリガー価格<br>
+     *         <b>offset</b> トレール幅<br>
+     *         <hr>
+     *         <b>parrent_order_acceptance_id</b> 新規の親注文のID
+     */
+    public String getParentOrderInfo(String parent_order_id, String parent_order_acceptance_id) {
+        return privateAPI(API + GET_ORDER_SUPER_INFO + ((parent_order_id == null || parent_order_id.equals(""))
+                ? Q_PARENT_ORDER_ACCEPTANCE_ID + parent_order_acceptance_id : Q_PARENT_ORDER_ID + parent_order_id),
+                HttpMethod.GET);
     }
 
     @Override

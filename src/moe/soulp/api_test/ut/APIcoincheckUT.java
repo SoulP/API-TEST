@@ -1,7 +1,12 @@
 package moe.soulp.api_test.ut;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -38,6 +43,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
  */
 public class APIcoincheckUT extends APIkey {
     final static APIcoincheck coincheck = new APIcoincheck(COINCHECK_API_KEY, COINCHECK_API_SECRET);
+    final static String       LINE      = "------------------------------";
 
     /**
      * <b>ティッカー</b><br>
@@ -754,7 +760,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("all_amount: " + pos.getAllAmount());
                 System.out.println("side: " + pos.getSide());
                 System.out.println("pl: " + pos.getPl());
-                System.out.println("------------------------------");
+                System.out.println(LINE);
                 System.out.println("new_order:");
                 System.out.println("n_id: " + pos.getNewOrder().getId());
                 System.out.println("n_side: " + pos.getNewOrder().getSide());
@@ -763,7 +769,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("n_pending_amount: " + pos.getNewOrder().getPendingAmount());
                 System.out.println("n_status: " + pos.getNewOrder().getStatus());
                 System.out.println("n_created_at: " + pos.getNewOrder().getCreatedAt());
-                System.out.println("------------------------------");
+                System.out.println(LINE);
                 System.out.println("close_orders:");
                 pos.getCloseOrders().forEach(close_order -> {
                     System.out.println("c_id: " + close_order.getId());
@@ -773,7 +779,7 @@ public class APIcoincheckUT extends APIkey {
                     System.out.println("c_pending_amount: " + close_order.getPendingAmount());
                     System.out.println("c_status: " + close_order.getStatus());
                     System.out.println("c_created_at: " + close_order.getCreatedAt());
-                    System.out.println("------------------------------");
+                    System.out.println(LINE);
                 });
                 System.out.println();
             });
@@ -919,7 +925,7 @@ public class APIcoincheckUT extends APIkey {
 
             System.out.println("送金履歴");
             System.out.println("success: " + success);
-            System.out.println("------------------------------");
+            System.out.println(LINE);
             for (SendMoneyTransactionDTO item : sendMoneyTransactions) {
                 System.out.println("ID: " + item.getId());
                 System.out.println("送った量: " + item.getAmount());
@@ -927,7 +933,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("手数料: " + item.getFee());
                 System.out.println("送金先のアドレス: " + item.getAddress());
                 System.out.println("作成日時: " + item.getCreatedAt());
-                System.out.println("------------------------------");
+                System.out.println(LINE);
             }
             System.out.println();
         } catch (JSONException e) {
@@ -968,7 +974,7 @@ public class APIcoincheckUT extends APIkey {
 
             System.out.println("受け取り履歴");
             System.out.println("success: " + success);
-            System.out.println("------------------------------");
+            System.out.println(LINE);
             depositMoneyTransactions.forEach(item -> {
                 System.out.println("ID: " + item.getId());
                 System.out.println("受け取った量: " + item.getAmount());
@@ -977,7 +983,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("状態: " + item.getStatus());
                 System.out.println("承認日時: " + item.getConfirmedAt());
                 System.out.println("作成日時: " + item.getCreatedAt());
-                System.out.println("------------------------------");
+                System.out.println(LINE);
             });
             System.out.println();
         } catch (JSONException e) {
@@ -1089,7 +1095,7 @@ public class APIcoincheckUT extends APIkey {
                 bankAccounts.add(bankAccount);
             }
             System.out.println("success: " + success);
-            System.out.println("------------------------------");
+            System.out.println(LINE);
             bankAccounts.forEach(a -> {
                 System.out.println("ID: " + a.getId());
                 System.out.println("銀行名: " + a.getBankName());
@@ -1097,7 +1103,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("口座種類: " + a.getBankAccountType());
                 System.out.println("口座番号: " + a.getNumber());
                 System.out.println("口座名義: " + a.getName());
-                System.out.println("------------------------------");
+                System.out.println(LINE);
             });
             System.out.println();
         } catch (JSONException e) {
@@ -1205,7 +1211,7 @@ public class APIcoincheckUT extends APIkey {
 
                 withdraws.add(withdraw);
             }
-            System.out.println("------------------------------");
+            System.out.println(LINE);
             withdraws.forEach(item -> {
                 System.out.println("出金申請のID: " + item.getId());
                 System.out.println("出金の状態: " + item.getStatus());
@@ -1214,7 +1220,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("銀行口座のID: " + item.getBankAccountId());
                 System.out.println("手数料: " + item.getFee());
                 System.out.println("高速出金のオプション: " + item.getIsFast());
-                System.out.println("------------------------------");
+                System.out.println(LINE);
             });
             System.out.println();
         } catch (JSONException e) {
@@ -1338,7 +1344,7 @@ public class APIcoincheckUT extends APIkey {
 
                 borrows.add(borrow);
             }
-            System.out.println("------------------------------");
+            System.out.println(LINE);
             borrows.forEach(item -> {
                 System.out.println("借入中一覧のID: " + item.getId());
                 System.out.println("借入申請のID: " + item.getBorrowId());
@@ -1347,7 +1353,7 @@ public class APIcoincheckUT extends APIkey {
                 System.out.println("借りている量（利子付き）: " + item.getPendingAmount());
                 System.out.println("通貨: " + item.getCurrency());
                 System.out.println("返却期日: " + item.getDeadline());
-                System.out.println("------------------------------");
+                System.out.println(LINE);
             });
             System.out.println();
         } catch (JSONException e) {

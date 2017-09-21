@@ -8,10 +8,11 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>注文の情報</b><br>
- * date: 2017/09/08 last_date: 2017/09/15
+ * date: 2017/09/08 last_date: 2017/09/21
  * 
  * @author ソウルP
  * @version 1.0 2017/09/08 OrderDTO作成
+ * @version 1.1 2017/09/21 平均価格のデータ・タイプをdoubleからlongに変更
  * @see Type 種類
  * @see Status 状態
  */
@@ -19,7 +20,7 @@ public class OrderDTO extends OrderExecTransaction {
     private String        order_id;            // 注文のID
     private String        product_code;        // プロダクトコード
     private Type          order_type;          // 注文の種類
-    private double        average_price;       // 平均価格
+    private long          average_price;       // 平均価格
     private Status        order_state;         // 注文の状態
     private ZonedDateTime expire_date;         // 有効期限
     private ZonedDateTime order_date;          // 注文日時
@@ -105,7 +106,7 @@ public class OrderDTO extends OrderExecTransaction {
      * 
      * @return average_price
      */
-    public double getAveragePrice() {
+    public long getAveragePrice() {
         return average_price;
     }
 
@@ -115,7 +116,7 @@ public class OrderDTO extends OrderExecTransaction {
      * @param average_price
      *            平均価格
      */
-    public void setAveragePrice(double average_price) {
+    public void setAveragePrice(long average_price) {
         this.average_price = average_price;
     }
 

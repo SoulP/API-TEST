@@ -4,15 +4,16 @@ import moe.soulp.api_test.api.Type;
 
 /**
  * <b>注文と約定の情報</b><br>
- * date: 2017/09/08 last_date: 2017/09/08
+ * date: 2017/09/08 last_date: 2017/09/21
  * 
  * @author ソウルP
  * @version 1.0 2017/09/08 OrderExecTransaction作成
+ * @version 1.1 2017/09/21 価格のデータ・タイプをdoubleからlongに変更
  * @see Type 種類
  */
 public abstract class OrderExecTransaction extends Transaction {
     private Type   side;  // 注文の種類
-    private double price; // 価格
+    private long   price; // 価格
     private double size;  // 量
 
     /**
@@ -52,7 +53,7 @@ public abstract class OrderExecTransaction extends Transaction {
      * 
      * @return price
      */
-    public double getPrice() {
+    public long getPrice() {
         return price;
     }
 
@@ -62,7 +63,7 @@ public abstract class OrderExecTransaction extends Transaction {
      * @param price
      *            価格
      */
-    public void setPrice(double price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
