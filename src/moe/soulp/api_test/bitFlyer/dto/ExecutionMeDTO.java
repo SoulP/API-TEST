@@ -2,15 +2,16 @@ package moe.soulp.api_test.bitFlyer.dto;
 
 /**
  * <b>約定の情報(自分)</b><br>
- * date: 2017/09/07 last_date: 2017/09/07
+ * date: 2017/09/07 last_date: 2017/09/21
  * 
  * @author ソウルP
  * @version 1.0 2017/09/07 MeExecutionDTO作成
+ * @version 1.1 2017/09/21 手数料のデータ・タイプをdoubleからlongに変更
  */
 public class ExecutionMeDTO extends ExecutionTransaction {
     private String child_order_id;            // 注文のID
     private String child_order_acceptance_id; // 新規注文のID
-    private double commission;                // 取引手数料
+    private long   commission;                // 手数料
 
     /**
      * <b>注文のID 出力</b>
@@ -55,7 +56,7 @@ public class ExecutionMeDTO extends ExecutionTransaction {
      * 
      * @return commission
      */
-    public double getCommission() {
+    public long getCommission() {
         return commission;
     }
 
@@ -65,7 +66,7 @@ public class ExecutionMeDTO extends ExecutionTransaction {
      * @param commission
      *            手数料
      */
-    public void setCommission(double commission) {
+    public void setCommission(long commission) {
         this.commission = commission;
     }
 }

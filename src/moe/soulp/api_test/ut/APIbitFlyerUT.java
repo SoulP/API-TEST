@@ -1,6 +1,5 @@
 package moe.soulp.api_test.ut;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -22,6 +21,7 @@ import moe.soulp.api_test.bitFlyer.dto.BankAccountDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinInDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinOutDTO;
 import moe.soulp.api_test.bitFlyer.dto.ExecutionGetDTO;
+import moe.soulp.api_test.bitFlyer.dto.ExecutionMeDTO;
 import moe.soulp.api_test.bitFlyer.dto.MoneyTransactionDTO;
 import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 import moe.soulp.api_test.bitFlyer.dto.OrderDTO;
@@ -1045,11 +1045,12 @@ public class APIbitFlyerUT extends APIkey {
     @Test
     public void getParentOrders() {
         JSONArray temp = null;
-        List<OrderDTO> orders = new ArrayList<>();
         System.out.println("親注文一覧");
 
         try {
             temp = new JSONArray(bitFlyer.getParentOrders());
+            List<OrderDTO> orders = new ArrayList<>();
+
             for (int i = 0; i < temp.length(); i++) {
                 JSONObject parent = temp.getJSONObject(i);
                 OrderDTO order = new OrderDTO();
@@ -1096,8 +1097,6 @@ public class APIbitFlyerUT extends APIkey {
             fail(e.getMessage());
         }
         assertNotNull(temp);
-        assertNotNull(orders);
-        assertFalse(orders.isEmpty());
     }
 
     /**
@@ -1149,6 +1148,54 @@ public class APIbitFlyerUT extends APIkey {
                 System.out.println("量: " + p.getSize());
                 System.out.println("トリガー価格: " + p.getTriggerPrice());
                 System.out.println("トレール幅: " + p.getOffset());
+                System.out.println(LINE);
+            });
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>約定一覧</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getOrdersTransactions() {
+        JSONArray temp = null;
+        System.out.println("約定一覧");
+
+        try {
+            temp = new JSONArray(bitFlyer.getOrdersTransactions());
+            List<ExecutionMeDTO> transactions = new ArrayList<>();
+
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject me = temp.getJSONObject(i);
+                ExecutionMeDTO transaction = new ExecutionMeDTO();
+
+                transaction.setId(me.getLong("id"));
+                transaction.setChildOrderId(me.getString("child_order_id"));
+                transaction.setSide(me.getString("side"));
+                transaction.setPrice(me.getLong("price"));
+                transaction.setSize(me.getDouble("size"));
+                transaction.setCommission(me.getLong("commission"));
+                transaction.setExecDate(me.getString("exec_date"));
+                transaction.setChildOrderAcceptanceId(me.getString("child_order_acceptance_id"));
+
+                transactions.add(transaction);
+            }
+
+            System.out.println(LINE);
+            transactions.forEach(t -> {
+                System.out.println("約定一覧のID: " + t.getId());
+                System.out.println("注文のID: " + t.getChildOrderId());
+                System.out.println("注文の種類: " + t.getSide());
+                System.out.println("価格: " + t.getPrice());
+                System.out.println("量: " + t.getSize());
+                System.out.println("手数料: " + t.getCommission());
+                System.out.println("新規注文のID: " + t.getChildOrderAcceptanceId());
                 System.out.println(LINE);
             });
             System.out.println();

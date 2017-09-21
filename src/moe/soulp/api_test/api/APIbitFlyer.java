@@ -2175,6 +2175,188 @@ public class APIbitFlyer extends API implements BitFlyerable {
                 HttpMethod.GET);
     }
 
+    /**
+     * <b>約定一覧</b><br>
+     * 約定の一覧を取得<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 約定一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>commission</b> 手数料<br>
+     *         <b>exec_date</b> 約定日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String getOrdersTransactions() {
+        return getOrdersTransactions(Pair.BTC_JPY);
+    }
+
+    /**
+     * <b>約定一覧</b><br>
+     * 約定の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 約定一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>commission</b> 手数料<br>
+     *         <b>exec_date</b> 約定日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String getOrdersTransactions(Pair product_code) {
+        return getOrdersTransactions(product_code.toString());
+    }
+
+    /**
+     * <b>約定一覧</b><br>
+     * 約定の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 約定一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>commission</b> 手数料<br>
+     *         <b>exec_date</b> 約定日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String getOrdersTransactions(String product_code) {
+        return privateAPI(API + GET_EXECUTIONS_ME + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
+    }
+
+    /**
+     * <b>約定一覧</b><br>
+     * 約定の一覧を取得<br>
+     * product_code（デフォルト）: BTC_JPY
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param child_order_id
+     *            注文のID
+     * @param child_order_acceptance_id
+     *            新規注文のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 約定一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>commission</b> 手数料<br>
+     *         <b>exec_date</b> 約定日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String getOrdersTransactions(Integer count, Long before, Long after, String child_order_id,
+            String child_order_acceptance_id) {
+        return getOrdersTransactions(Pair.BTC_JPY, count, before, after, child_order_id, child_order_acceptance_id);
+    }
+
+    /**
+     * <b>約定一覧</b><br>
+     * 約定の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param child_order_id
+     *            注文のID
+     * @param child_order_acceptance_id
+     *            新規注文のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 約定一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>commission</b> 手数料<br>
+     *         <b>exec_date</b> 約定日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     * @see Pair 取引ペア
+     */
+    @Override
+    public String getOrdersTransactions(Pair product_code, Integer count, Long before, Long after,
+            String child_order_id, String child_order_acceptance_id) {
+        return getOrdersTransactions(product_code.toString(), count, before, after, child_order_id,
+                child_order_acceptance_id);
+    }
+
+    /**
+     * <b>約定一覧</b><br>
+     * 約定の一覧を取得
+     * 
+     * @param product_code
+     *            プロダクトコード
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @param child_order_id
+     *            注文のID
+     * @param child_order_acceptance_id
+     *            新規注文のID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 約定一覧のID<br>
+     *         <b>child_order_id</b> 注文のID<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>commission</b> 手数料<br>
+     *         <b>exec_date</b> 約定日時<br>
+     *         <b>child_order_acceptance_id</b> 新規注文のID
+     */
+    @Override
+    public String getOrdersTransactions(String product_code, Integer count, Long before, Long after,
+            String child_order_id, String child_order_acceptance_id) {
+        String str = setGetParametersA(count, before, after);
+        if (!(child_order_id == null || child_order_id.equals(""))) str += A_CHILD_ORDER_ID + child_order_id;
+        else if (!(child_order_acceptance_id == null || child_order_acceptance_id.equals("")))
+            str += A_CHILD_ORDER_ACCEPTANCE_ID + child_order_acceptance_id;
+        return privateAPI(API + GET_EXECUTIONS_ME + Q_PRODUCT_CODE + product_code + str, HttpMethod.GET);
+    }
+
     @Override
     protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
         String message = nonce + method + url.substring(API.length()) + getParameters();

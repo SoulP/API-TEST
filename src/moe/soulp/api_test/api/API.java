@@ -17,13 +17,15 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * <b>汎用API接続</b><br>
- * date: 2017/08/03 last_date: 2017/09/16
+ * date: 2017/08/03 last_date: 2017/09/21
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 API作成
  * @version 1.1 2017/08/21 Private API用のdelete操作追加
  * @version 1.2 2017/09/07 APIcoincheckの一部をAPIに移動
  * @version 1.3 2017/09/08 coincheckとbitFlyer両方対応の為、通信仕組みを大幅に変更
+ * @version 1.4 2017/09/16 HTTPエラーの例外スローを外し、ログ出力に変更
+ * @version 1.5 2017/09/21 HTTPエラーのメッセージ出力を追加
  */
 public abstract class API extends Thread {
     private final static String ERROR_NULL_API_KEY    = "apiKeyの値がありません。";
@@ -79,8 +81,8 @@ public abstract class API extends Thread {
                 }
                 result = temp.toString();
             } else {
-                //throw new IOException("HTTP CODE: " + code);
                 System.out.println("HTTP CODE: " + code);
+                System.out.println("メッセージ: " + connection.getResponseMessage());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -130,8 +132,8 @@ public abstract class API extends Thread {
                 }
                 result = temp.toString();
             } else {
-                //throw new IOException("HTTP CODE: " + code);
                 System.out.println("HTTP CODE: " + code);
+                System.out.println("メッセージ: " + connection.getResponseMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
