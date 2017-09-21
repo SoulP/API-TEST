@@ -162,6 +162,10 @@ public interface BitFlyerable extends Exchangeable {
     public String getOrdersTransactions(String product_code, Integer count, Long before, Long after,
             String child_order_id, String child_order_acceptance_id); // 約定一覧
 
+    public String getMyCollateralHistory(); // 証拠金の変動履歴
+
+    public String getMyCollateralHistory(Integer count, Long before, Long after); // 証拠金の変動履歴
+
     /**
      * <b>日時 データ・タイプ変換</b><br>
      * String(UTC) -> ZonedDateTime(システムのタイムゾーン)

@@ -82,6 +82,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private static URL          sendOrderSuperURL;
     private static URL          cancelOrderSuperURL;
     private static URL          cancelAllOrderURL;
+    private static URL          getMyCollateralHistoryURL;
 
     static {
         try {
@@ -105,6 +106,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
             sendOrderSuperURL = new URL(API + SEND_ORDER_SUPER);
             cancelOrderSuperURL = new URL(API + CANCEL_ORDER_SUPER);
             cancelAllOrderURL = new URL(API + CANCEL_ALL_ORDER);
+            getMyCollateralHistoryURL = new URL(API + GET_MY_COLLATERAL_HISTORY);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -2512,6 +2514,52 @@ public class APIbitFlyer extends API implements BitFlyerable {
     @Override
     public String getPositions() {
         return privateAPI(API + GET_POSITIONS + Q_PRODUCT_CODE + Pair.FX_BTC_JPY, HttpMethod.GET);
+    }
+
+    /**
+     * <b>証拠金の変動履歴</b><br>
+     * 証拠金の変動履歴を取得
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 証拠金の変動履歴のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>change</b> 証拠金の変動額<br>
+     *         <b>amount</b> 変動後の証拠金の残高<br>
+     *         <b>reason_code</b> 理由コード<br>
+     *         <b>date</b> 日時
+     */
+    @Override
+    public String getMyCollateralHistory() {
+        return privateAPI(getMyCollateralHistoryURL, HttpMethod.GET);
+    }
+
+    /**
+     * <b>証拠金の変動履歴</b><br>
+     * 証拠金の変動履歴を取得
+     * 
+     * @param count
+     *            最大表示件数
+     * @param before
+     *            ID, 指定する値より前のIDを持つデータ取得<br>
+     *            ID < before
+     * @param after
+     *            ID, 指定する値より後のIDを持つデータ取得<br>
+     *            after < ID
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>id</b> 証拠金の変動履歴のID<br>
+     *         <b>currency_code</b> 通貨<br>
+     *         <b>change</b> 証拠金の変動額<br>
+     *         <b>amount</b> 変動後の証拠金の残高<br>
+     *         <b>reason_code</b> 理由コード<br>
+     *         <b>date</b> 日時
+     */
+    @Override
+    public String getMyCollateralHistory(Integer count, Long before, Long after) {
+        return privateAPI(API + GET_MY_COLLATERAL_HISTORY + setGetParametersQ(count, before, after), HttpMethod.GET);
     }
 
     @Override

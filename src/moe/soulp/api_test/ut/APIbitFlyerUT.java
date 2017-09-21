@@ -1259,4 +1259,42 @@ public class APIbitFlyerUT extends APIkey {
         }
         assertNotNull(temp);
     }
+
+    /**
+     * <b>証拠金の変動履歴</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getMyCollateralHistory() {
+        JSONArray temp = null;
+        System.out.println("証拠金の変動履歴");
+
+        try {
+            temp = new JSONArray(bitFlyer.getMyCollateralHistory());
+
+            System.out.println(LINE);
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject c = temp.getJSONObject(i);
+
+                String currency = c.getString("currency_code");
+                System.out.println("証拠金の変動履歴のID: " + c.getLong("id"));
+                System.out.println("通貨: " + currency);
+                if (currency.equals("JPY")) {
+                    System.out.println("証拠金の変動額: " + c.getLong("change"));
+                    System.out.println("変動後の証拠金の残高: " + c.getLong("amount"));
+                } else {
+                    System.out.println("証拠金の変動額: " + c.getDouble("change"));
+                    System.out.println("変動後の証拠金の残高: " + c.getDouble("amount"));
+                }
+                System.out.println("理由コード: " + c.getString("reason_code"));
+                System.out.println("日時: " + BitFlyerable.string2zonedDateTime(c.getString("date")));
+                System.out.println(LINE);
+            }
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
 }
