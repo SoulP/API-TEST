@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  * @author ソウルP
  * @version 1.0 2017/09/07 BitFlyerable作成
  */
-public interface BitFlyerable {
+public interface BitFlyerable extends Exchangeable {
     DateTimeFormatter FORMAT                    = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
     // Base API
@@ -97,8 +97,6 @@ public interface BitFlyerable {
 
     public String getSendCoins(Integer count, Long before, Long after); // ビットコイン・イーサ預入履歴
 
-    public String getBankAccounts(); // 銀行口座一覧取得
-
     public String getDeposits(Integer count, Long before, Long after); // 入金履歴
 
     public String withdraw(long bank_account_id, long amount, Currency currency, String code); // 出金
@@ -117,9 +115,10 @@ public interface BitFlyerable {
 
     public String orderMarketSell(String product_code, double size); // 成行注文 現物取引 売り
 
-    public String deleteOrder(Pair product_code, String child_order_id); // 注文のキャンセル
+    @Override
+    public String deleteOrder(String child_order_id, Pair product_code); // 注文のキャンセル
 
-    public String deleteOrder(String product_code, String child_order_id); // 注文のキャンセル
+    public String deleteOrder(String child_order_id, String product_code); // 注文のキャンセル
 
     public String deleteAllOrders(Pair product_code); // 全ての注文をキャンセル
 
@@ -178,65 +177,4 @@ public interface BitFlyerable {
             date += 0;
         return ZonedDateTime.parse(date + "Z", FORMAT).withZoneSameInstant(ZoneId.systemDefault());
     }
-
-    // --- ↓ Exchangeable継承のために、後で削除する---
-    //Public API
-    public String getBoard(); // 板情報
-
-    public String getTicker(); // ティッカー
-
-    public String getTrades(); // 全取引履歴
-
-    public String getChats(); // チャット受信
-
-    public String getRate(); // レート取得
-
-    // Private API
-    public String getBalance(); // 残高
-
-    public String getLeverageBalance(); // 証拠金の状態を取得
-
-    public String getDepositCoins(); // 受け取り履歴
-
-    public String getSendCoins(); // 送金履歴
-
-    public String getDeposits(); // 入金履歴
-
-    public String withdraw(long bank_account_id, long amount, Currency currency); // 出金
-
-    public String getWithdraws(); // 出金履歴
-
-    public String orderBuy(long rate, double amount); // 指値注文 現物取引 買い
-
-    public String orderBuy(Pair pair, long rate, double amount); // 指値注文 現物取引 買い
-
-    public String orderSell(long rate, double amount); // 指値注文 現物取引 売り
-
-    public String orderSell(Pair pair, long rate, double amount); // 指値注文 現物取引 売り
-
-    public String orderMarketBuy(double amount); // 成行注文 現物取引 買い
-
-    public String orderMarketBuy(Pair pair, double amount); // 成行注文 現物取引 買い
-
-    public String orderMarketSell(double amount); // 成行注文 現物取引 売り
-
-    public String orderMarketSell(Pair pair, double amount); // 成行注文 現物取引 売り
-
-    public String leverageBuy(double amount); // 成行注文 レバレッジ取引 買い
-
-    public String leverageBuy(long rate, double amount); // 指値注文 レバレッジ取引買い
-
-    public String leverageSell(double amount); // 成行注文 レバレッジ取引 売り
-
-    public String leverageSell(long rate, double amount); // 指値注文 レバレッジ取引 売り
-
-    public String deleteOrder(String id); // 注文のキャンセル
-
-    public String deleteAllOrders(); // 全ての注文をキャンセル
-
-    public String getOrdersOpens(); // 未決済の注文一覧
-
-    public String getOrdersTransactions(); // 取引履歴
-
-    public String getPositions(); // ポジション一覧
 }

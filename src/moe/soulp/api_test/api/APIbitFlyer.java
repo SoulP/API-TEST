@@ -5,6 +5,7 @@ import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,6 +51,16 @@ public class APIbitFlyer extends API implements BitFlyerable {
     private final static String PRODUCT_CODE                 = "product_code";
     private final static String CHILD_ORDER_ID               = "child_order_id";
     private final static String PARENT_ORDER_ID              = "parent_order_id";
+    private final static String ASKS                         = "asks";
+    private final static String BIDS                         = "bids";
+    private final static String PRICE                        = "price";
+
+    private long                maxAsk                       = -1l;
+    private long                minAsk                       = -1l;
+    private long                maxBid                       = -1l;
+    private long                minBid                       = -1l;
+    private long                balanceJPY                   = -1l;
+    private double              balanceBTC                   = -1.0d;
 
     private static URL          getMarketsURL;
     private static URL          getBoardURL;
@@ -189,16 +200,80 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *         <b>mid_price</b> 仲値<br>
      *         <hr>
      *         bids 【JSONArray】 買取価格<br>
+     *         【JSON】<br>
      *         <b>price</b> 価格<br>
      *         <b>size</b> 量<br>
      *         <hr>
      *         asks 【JSONArray】 販売価格<br>
+     *         【JSON】<br>
      *         <b>price</b> 価格<br>
      *         <b>size</b> 量
      */
     @Override
     public String getBoard(String product_code) {
         return publicAPI(API + GET_BOARD + Q_PRODUCT_CODE + product_code, HttpMethod.GET);
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 更新
+     */
+    @Override
+    public void updateBoard() {
+        try {
+            JSONObject board = new JSONObject(getBoard());
+            JSONArray asks = board.getJSONArray(ASKS);
+            JSONArray bids = board.getJSONArray(BIDS);
+            maxAsk = asks.getJSONObject((asks.length() - 1)).getLong(PRICE);
+            minAsk = asks.getJSONObject(0).getLong(PRICE);
+            maxBid = bids.getJSONObject(0).getLong(PRICE);
+            minBid = bids.getJSONObject(bids.length() - 1).getLong(PRICE);
+        } catch (JSONException | NullPointerException e) {
+        }
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 売り注文
+     *
+     * @return 最高価格
+     */
+    @Override
+    public long getMaxAsk() {
+        return maxAsk;
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 売り注文
+     *
+     * @return 最低価格
+     */
+    @Override
+    public long getMinAsk() {
+        return minAsk;
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 買い注文
+     *
+     * @return 最高価格
+     */
+    @Override
+    public long getMaxBid() {
+        return maxBid;
+    }
+
+    /**
+     * <b>板情報</b><br>
+     * 買い注文
+     *
+     * @return 最低価格
+     */
+    @Override
+    public long getMinBid() {
+        return minBid;
     }
 
     /**
@@ -524,6 +599,47 @@ public class APIbitFlyer extends API implements BitFlyerable {
     @Override
     public String getBalance() {
         return privateAPI(getBalanceURL, HttpMethod.GET);
+    }
+
+    @Override
+    public void updateBalance() {
+        try {
+            JSONArray balance = new JSONArray(getBalance());
+            for (int i = 0; i < balance.length(); i++) {
+                JSONObject b = balance.getJSONObject(i);
+                switch (b.getString(CURRENCY_CODE)) {
+                    case "JPY":
+                        balanceJPY = b.getLong(AMOUNT);
+                        break;
+                    case "BTC":
+                        balanceBTC = b.getDouble(AMOUNT);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } catch (JSONException | NullPointerException e) {
+        }
+    }
+
+    /**
+     * <b>日本円の残高 出力</b>
+     * 
+     * @return 日本円
+     */
+    @Override
+    public long getBalanceJPY() {
+        return balanceJPY;
+    }
+
+    /**
+     * <b>BTCの残高 出力</b>
+     * 
+     * @return BTC
+     */
+    @Override
+    public double getBalanceBTC() {
+        return balanceBTC;
     }
 
     /**
@@ -1322,37 +1438,37 @@ public class APIbitFlyer extends API implements BitFlyerable {
      */
     @Override
     public String deleteOrder(String child_order_id) {
-        return deleteOrder(Pair.BTC_JPY, child_order_id);
+        return deleteOrder(child_order_id, Pair.BTC_JPY);
     }
 
     /**
      * <b>注文キャンセル</b><br>
      * 注文をキャンセルする
      * 
-     * @param product_code
-     *            プロダクトコード
      * @param child_order_id
      *            新規注文のID
+     * @param product_code
+     *            プロダクトコード
      * @return 空のJSON
      * @see Pair 取引ペア
      */
     @Override
-    public String deleteOrder(Pair product_code, String child_order_id) {
-        return deleteOrder(product_code.toString(), child_order_id);
+    public String deleteOrder(String child_order_id, Pair product_code) {
+        return deleteOrder(child_order_id, product_code.toString());
     }
 
     /**
      * <b>注文キャンセル</b><br>
      * 注文をキャンセルする
      * 
-     * @param product_code
-     *            プロダクトコード
      * @param child_order_id
      *            新規注文のID
+     * @param product_code
+     *            プロダクトコード
      * @return 空のJSON
      */
     @Override
-    public String deleteOrder(String product_code, String child_order_id) {
+    public String deleteOrder(String child_order_id, String product_code) {
         clearParameters();
         try {
             JSONObject body = new JSONObject().put(PRODUCT_CODE, product_code).put(CHILD_ORDER_ID, child_order_id);
@@ -1391,7 +1507,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @return 空のJSON
      */
     public String deleteParentOrder(String parent_order_id) {
-        return deleteParentOrder(Pair.BTC_JPY, parent_order_id);
+        return deleteParentOrder(parent_order_id, Pair.BTC_JPY);
     }
 
     /**
@@ -1405,8 +1521,8 @@ public class APIbitFlyer extends API implements BitFlyerable {
      * @return 空のJSON
      * @see Pair 取引ペア
      */
-    public String deleteParentOrder(Pair product_code, String parent_order_id) {
-        return deleteParentOrder(product_code.toString(), parent_order_id);
+    public String deleteParentOrder(String parent_order_id, Pair product_code) {
+        return deleteParentOrder(parent_order_id, product_code.toString());
     }
 
     /**
@@ -1419,7 +1535,7 @@ public class APIbitFlyer extends API implements BitFlyerable {
      *            親注文のID
      * @return 空のJSON
      */
-    public String deleteParentOrder(String product_code, String parent_order_id) {
+    public String deleteParentOrder(String parent_order_id, String product_code) {
         clearParameters();
         try {
             JSONObject body = new JSONObject().put(PRODUCT_CODE, product_code).put(PARENT_ORDER_ID, parent_order_id);
@@ -1681,6 +1797,24 @@ public class APIbitFlyer extends API implements BitFlyerable {
     @Override
     public String getOrdersOpens(Integer count, Long before, Long after) {
         return getOrdersOpens(Pair.BTC_JPY, count, before, after);
+    }
+
+    /**
+     * <b>未決済の注文 有無</b>
+     *
+     * @return <b>true</b> 未決済注文なし<br>
+     *         <b>false</b> 未決済注文あり
+     */
+    @Override
+    public boolean ordersIsEmpty() {
+        try {
+            return new JSONArray(getOrdersOpens()).length() == 0;
+        } catch (NullPointerException e) {
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 
     /**

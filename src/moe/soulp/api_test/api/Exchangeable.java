@@ -85,7 +85,7 @@ public interface Exchangeable {
     public String getDepositCoins(); // 受け取り履歴
 
     // 入出金
-    public String getBankAcccounts(); // 銀行口座一覧
+    public String getBankAccounts(); // 銀行口座一覧
 
     public String withdraw(long bank_account_id, long amount, Currency currency); // 出金
 

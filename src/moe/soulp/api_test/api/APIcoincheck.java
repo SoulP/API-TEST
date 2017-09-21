@@ -11,7 +11,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/16
+ * date: 2017/08/03 last_date: 2017/09/21
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -53,6 +53,10 @@ public class APIcoincheck extends API implements Coincheckable {
     private final static String NAME                = "name";
     private final static String BANK_ACCOUNT_ID     = "bank_account_id";
     private final static String CURRENCY            = "currency";
+    private final static String ASKS                = "asks";
+    private final static String BIDS                = "bids";
+    private final static String JPY                 = "jpy";
+    private final static String BTC                 = "btc";
 
     private final static String SLASH               = "/";
     private final static String ORDERS              = "orders";
@@ -211,14 +215,14 @@ public class APIcoincheck extends API implements Coincheckable {
 
     /**
      * <b>板情報</b><br>
-     * 更新F
+     * 更新
      */
     @Override
     public void updateBoard() {
         try {
             JSONObject board = new JSONObject(getBoard());
-            JSONArray asks = board.getJSONArray("asks");
-            JSONArray bids = board.getJSONArray("bids");
+            JSONArray asks = board.getJSONArray(ASKS);
+            JSONArray bids = board.getJSONArray(BIDS);
             maxAsk = (long) asks.getJSONArray((asks.length() - 1)).getDouble(0);
             minAsk = (long) asks.getJSONArray(0).getDouble(0);
             maxBid = (long) bids.getJSONArray(0).getDouble(0);
@@ -2035,21 +2039,35 @@ public class APIcoincheck extends API implements Coincheckable {
         return privateAPI(accountsBalanceURL, HttpMethod.GET);
     }
 
+    /**
+     * <b>残高</b><br>
+     * 更新
+     */
     @Override
     public void updateBalance() {
         try {
             JSONObject balance = new JSONObject(getBalance());
-            balanceJPY = (long) balance.getDouble("jpy");
-            balanceBTC = balance.getDouble("btc");
+            balanceJPY = (long) balance.getDouble(JPY);
+            balanceBTC = balance.getDouble(BTC);
         } catch (JSONException | NullPointerException e) {
         }
     }
 
+    /**
+     * <b>日本円の残高 出力</b>
+     * 
+     * @return 日本円
+     */
     @Override
     public long getBalanceJPY() {
         return balanceJPY;
     }
 
+    /**
+     * <b>BTCの残高 出力</b>
+     * 
+     * @return BTC
+     */
     @Override
     public double getBalanceBTC() {
         return balanceBTC;
@@ -2253,7 +2271,7 @@ public class APIcoincheck extends API implements Coincheckable {
      *         <b>name</b> 口座名義
      */
     @Override
-    public String getBankAcccounts() {
+    public String getBankAccounts() {
         return privateAPI(bankAccountsURL, HttpMethod.GET);
     }
 

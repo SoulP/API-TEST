@@ -37,7 +37,7 @@ import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
  * <b>Coincheck用のUTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/09/12
+ * date: 2017/08/03 last_date: 2017/09/21
  *
  * @author ソウルP
  */
@@ -1078,7 +1078,7 @@ public class APIcoincheckUT extends APIkey {
 
         System.out.println("銀行口座一覧");
         try {
-            temp = new JSONObject(coincheck.getBankAcccounts());
+            temp = new JSONObject(coincheck.getBankAccounts());
             success = temp.getBoolean("success");
             JSONArray tempArray = temp.getJSONArray("data");
             for (int i = 0; i < tempArray.length(); i++) {
