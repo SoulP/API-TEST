@@ -237,4 +237,6 @@ public interface BitFlyerable {
     public String getOrdersOpens(); // 未決済の注文一覧
 
     public String getOrdersTransactions(); // 取引履歴
+
+    public String getPositions(); // ポジション一覧
 }

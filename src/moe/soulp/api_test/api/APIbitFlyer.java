@@ -2357,6 +2357,29 @@ public class APIbitFlyer extends API implements BitFlyerable {
         return privateAPI(API + GET_EXECUTIONS_ME + Q_PRODUCT_CODE + product_code + str, HttpMethod.GET);
     }
 
+    /**
+     * <b>建玉一覧</b><br>
+     * 建玉の一覧を取得
+     * 
+     * @return 【JSONArray】<br>
+     *         <hr>
+     *         【JSON】<br>
+     *         <b>product_code</b> プロダクトコード<br>
+     *         <b>side</b> 注文の種類<br>
+     *         <b>price</b> 価格<br>
+     *         <b>size</b> 量<br>
+     *         <b>commission</b> 手数料<br>
+     *         <b>swap_point_accumulate</b> スワップポイント<br>
+     *         <b>require_collateral</b> 必要証拠金<br>
+     *         <b>open_date</b> 日時<br>
+     *         <b>leverage</b> レバレッジ倍率<br>
+     *         <b>pnl</b> 含み損益
+     */
+    @Override
+    public String getPositions() {
+        return privateAPI(API + GET_POSITIONS + Q_PRODUCT_CODE + Pair.FX_BTC_JPY, HttpMethod.GET);
+    }
+
     @Override
     protected String createSignature(String apiSecret, String url, String nonce, HttpMethod method) {
         String message = nonce + method + url.substring(API.length()) + getParameters();

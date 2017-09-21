@@ -26,6 +26,7 @@ import moe.soulp.api_test.bitFlyer.dto.MoneyTransactionDTO;
 import moe.soulp.api_test.bitFlyer.dto.NewParentOrderDTO;
 import moe.soulp.api_test.bitFlyer.dto.OrderDTO;
 import moe.soulp.api_test.bitFlyer.dto.ParentOrderDTO;
+import moe.soulp.api_test.bitFlyer.dto.PositionDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
@@ -1196,6 +1197,59 @@ public class APIbitFlyerUT extends APIkey {
                 System.out.println("量: " + t.getSize());
                 System.out.println("手数料: " + t.getCommission());
                 System.out.println("新規注文のID: " + t.getChildOrderAcceptanceId());
+                System.out.println(LINE);
+            });
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>建玉一覧</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getPositions() {
+        JSONArray temp = null;
+        System.out.println("建玉一覧");
+
+        try {
+            temp = new JSONArray(bitFlyer.getPositions());
+            List<PositionDTO> positions = new ArrayList<>();
+
+            for (int i = 0; i < temp.length(); i++) {
+                JSONObject pos = temp.getJSONObject(i);
+                PositionDTO position = new PositionDTO();
+
+                position.setProductCode(pos.getString("product_code"));
+                position.setSide(pos.getString("side"));
+                position.setPrice(pos.getLong("price"));
+                position.setSize(pos.getDouble("size"));
+                position.setCommission(pos.getLong("commission"));
+                position.setSwapPointAccumulate(pos.getLong("swap_point_accumulate"));
+                position.setRequireCollateral(pos.getLong("require_collateral"));
+                position.setOpenDate(pos.getString("open_date"));
+                position.setLeverage(pos.getInt("leverage"));
+                position.setPnl(pos.getLong("pnl"));
+
+                positions.add(position);
+            }
+
+            System.out.println(LINE);
+            positions.forEach(p -> {
+                System.out.println("プロダクトコード: " + p.getProductCode());
+                System.out.println("注文の種類: " + p.getSide());
+                System.out.println("価格: " + p.getPrice());
+                System.out.println("量: " + p.getSize());
+                System.out.println("手数料: " + p.getCommission());
+                System.out.println("スワップポイント: " + p.getSwapPointAccumulate());
+                System.out.println("必要証拠金: " + p.getRequireCollateral());
+                System.out.println("日時: " + p.getOpenDate());
+                System.out.println("レバレッジ倍率: " + p.getLeverage());
+                System.out.println("含み損益: " + p.getPnl());
                 System.out.println(LINE);
             });
             System.out.println();
