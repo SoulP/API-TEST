@@ -36,8 +36,8 @@ import moe.soulp.api_test.coincheck.dto.SendMoneyTransactionDTO;
 import moe.soulp.api_test.coincheck.dto.WithdrawTransactionDTO;
 
 /**
- * <b>Coincheck用のUTテストケース</b><br>
- * date: 2017/08/03 last_date: 2017/09/21
+ * <b>CoincheckのUTテストケース</b><br>
+ * date: 2017/08/03 last_date: 2017/09/22
  *
  * @author ソウルP
  */

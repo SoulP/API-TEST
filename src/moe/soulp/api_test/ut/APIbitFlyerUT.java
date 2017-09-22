@@ -30,7 +30,7 @@ import moe.soulp.api_test.bitFlyer.dto.ParentOrderDTO;
 import moe.soulp.api_test.bitFlyer.dto.PositionDTO;
 
 /**
- * <b>bitFlyer用のUTテストケース</b><br>
+ * <b>bitFlyerのUTテストケース</b><br>
  * date: 2017/09/07 last_date: 2017/09/22
  * 
  * @author ソウルP
