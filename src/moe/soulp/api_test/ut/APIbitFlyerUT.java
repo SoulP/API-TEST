@@ -20,6 +20,7 @@ import moe.soulp.api_test.api.Type;
 import moe.soulp.api_test.bitFlyer.dto.BankAccountDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinInDTO;
 import moe.soulp.api_test.bitFlyer.dto.CoinOutDTO;
+import moe.soulp.api_test.bitFlyer.dto.CollateralTransactionDTO;
 import moe.soulp.api_test.bitFlyer.dto.ExecutionGetDTO;
 import moe.soulp.api_test.bitFlyer.dto.ExecutionMeDTO;
 import moe.soulp.api_test.bitFlyer.dto.MoneyTransactionDTO;
@@ -30,7 +31,7 @@ import moe.soulp.api_test.bitFlyer.dto.PositionDTO;
 
 /**
  * <b>bitFlyer用のUTテストケース</b><br>
- * date: 2017/09/07 last_date: 2017/09/21
+ * date: 2017/09/07 last_date: 2017/09/22
  * 
  * @author ソウルP
  */
@@ -1271,25 +1272,39 @@ public class APIbitFlyerUT extends APIkey {
 
         try {
             temp = new JSONArray(bitFlyer.getMyCollateralHistory());
+            List<CollateralTransactionDTO> collaterals = new ArrayList<>();
 
-            System.out.println(LINE);
             for (int i = 0; i < temp.length(); i++) {
                 JSONObject c = temp.getJSONObject(i);
+                CollateralTransactionDTO collateral = new CollateralTransactionDTO();
 
                 String currency = c.getString("currency_code");
-                System.out.println("証拠金の変動履歴のID: " + c.getLong("id"));
-                System.out.println("通貨: " + currency);
+                collateral.setId(c.getLong("id"));
+                collateral.setCurrencyCode(currency);
                 if (currency.equals("JPY")) {
-                    System.out.println("証拠金の変動額: " + c.getLong("change"));
-                    System.out.println("変動後の証拠金の残高: " + c.getLong("amount"));
+                    collateral.setChange(c.getLong("change"));
+                    collateral.setAmount(c.getLong("amount"));
                 } else {
-                    System.out.println("証拠金の変動額: " + c.getDouble("change"));
-                    System.out.println("変動後の証拠金の残高: " + c.getDouble("amount"));
+                    collateral.setChange(c.getDouble("change"));
+                    collateral.setAmount(c.getDouble("amount"));
                 }
-                System.out.println("理由コード: " + c.getString("reason_code"));
-                System.out.println("日時: " + BitFlyerable.string2zonedDateTime(c.getString("date")));
-                System.out.println(LINE);
+
+                collateral.setReasonCode(c.getString("reason_code"));
+                collateral.setDate(c.getString("date"));
+
+                collaterals.add(collateral);
             }
+
+            System.out.println(LINE);
+            collaterals.forEach(col -> {
+                System.out.println("証拠金の変動履歴のID: " + col.getId());
+                System.out.println("通貨: " + col.getCurrencyCode());
+                System.out.println("証拠金の変動額: " + col.getChange());
+                System.out.println("変動後の証拠金の残高: " + col.getAmount());
+                System.out.println("理由コード: " + col.getReasonCode());
+                System.out.println("日時: " + col.getDate());
+                System.out.println(LINE);
+            });
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
