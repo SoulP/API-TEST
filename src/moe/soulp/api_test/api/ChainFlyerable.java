@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * <b>chainFlyer</b><br>
- * date: 2017/09/22 last_date: 2017/09/22
+ * date: 2017/09/22 last_date: 2017/09/27
  * 
  * @author ソウルP
  * @version 1.0 2017/09/22 ChainFlyerable作成
@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 public interface ChainFlyerable {
     DateTimeFormatter FORMAT       = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
     // Base API
-    String            API          = "https://api.bitflyer.jp";
+    String            API          = "https://chainflyer.bitflyer.jp";
 
     // Public API
     String            BLOCK        = "/v1/block/";

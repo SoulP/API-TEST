@@ -17,7 +17,7 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * <b>汎用API接続</b><br>
- * date: 2017/08/03 last_date: 2017/09/21
+ * date: 2017/08/03 last_date: 2017/09/27
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 API作成
@@ -26,10 +26,16 @@ import javax.xml.bind.DatatypeConverter;
  * @version 1.3 2017/09/08 coincheckとbitFlyer両方対応の為、通信仕組みを大幅に変更
  * @version 1.4 2017/09/16 HTTPエラーの例外スローを外し、ログ出力に変更
  * @version 1.5 2017/09/21 HTTPエラーのメッセージ出力を追加
+ * @version 1.6 2017/09/27 bitFlyerの403 Forbidden（アクセス禁止）対策
  */
 public abstract class API extends Thread {
     private final static String ERROR_NULL_API_KEY    = "apiKeyの値がありません。";
     private final static String ERROR_NULL_API_SECRET = "apiSecretの値がありません。";
+    private final static String HEADER_HOST           = "Host";
+    private final static String HEADER_USER_AGENT     = "User-Agent";
+    private final static String SLASH                 = "/";
+    private final static String JAVA                  = "Java";
+
     private String              parameters;
     private String              apiKey;
     private String              apiSecret;
@@ -61,6 +67,8 @@ public abstract class API extends Thread {
         try {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(method.toString());
+            connection.setRequestProperty(HEADER_HOST, url.toString().split(SLASH)[2]);
+            connection.setRequestProperty(HEADER_USER_AGENT, JAVA);
             if (HttpMethod.GET != method) {
                 connection.setUseCaches(false);
                 connection.setDoInput(true);
@@ -109,6 +117,8 @@ public abstract class API extends Thread {
             checkAPIkeys();
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(method.toString());
+            connection.setRequestProperty(HEADER_HOST, url.toString().split(SLASH)[2]);
+            connection.setRequestProperty(HEADER_USER_AGENT, JAVA);
             connection.setRequestProperty(apiKeyProperty, apiKey);
             connection.setRequestProperty(apiNonceProperty, nonce);
             connection.setRequestProperty(apiSignProperty, createSignature(apiSecret, url.toString(), nonce, method));

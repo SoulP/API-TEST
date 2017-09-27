@@ -13,7 +13,7 @@ import moe.soulp.api_test.api.ChainFlyerable;
 
 /**
  * <b>chainFlyerのUTテストケース</b><br>
- * date: 2017/09/22 last_date: 2017/09/22
+ * date: 2017/09/22 last_date: 2017/09/27
  * 
  * @author ソウルP
  */
@@ -44,7 +44,7 @@ public class APIchainFlyerUT {
             System.out.println("マイニング難易度: " + temp.getLong("bits"));
             System.out.println("nonce: " + temp.getLong("nonce"));
             System.out.println("トランザクション数: " + temp.getInt("txnum"));
-            System.out.println("合計手数料（satoshi単位）: " + String.format("%f", temp.getLong("total_fees") / 100000000.0d));
+            System.out.println("合計手数料: " + String.format("%f", temp.getLong("total_fees") / 100000000.0d));
 
             System.out.println(LINE);
             JSONArray tx = temp.getJSONArray("tx_hashes");
@@ -81,7 +81,7 @@ public class APIchainFlyerUT {
             System.out.println("マイニング難易度: " + temp.getLong("bits"));
             System.out.println("nonce: " + temp.getLong("nonce"));
             System.out.println("トランザクション数: " + temp.getInt("txnum"));
-            System.out.println("合計手数料（satoshi単位）: " + String.format("%f", temp.getLong("total_fees") / 100000000.0d));
+            System.out.println("合計手数料: " + String.format("%f", temp.getLong("total_fees") / 100000000.0d));
 
             System.out.println(LINE);
             JSONArray tx = temp.getJSONArray("tx_hashes");
@@ -186,6 +186,28 @@ public class APIchainFlyerUT {
                 if (i != outputs.length() - 1) System.out.println();
             }
             System.out.println(LINE);
+            System.out.println();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        assertNotNull(temp);
+    }
+
+    /**
+     * <b>アドレス</b><br>
+     * 成功テスト
+     */
+    @Test
+    public void getAddress() {
+        JSONObject temp = null;
+        String address = "";
+        System.out.println("アドレス");
+        try {
+            temp = new JSONObject(chainFlyer.getAddress(address));
+            System.out.println("ビットコインアドレス: " + temp.getString("address"));
+            System.out.println("未確定残高: " + temp.getDouble("unconfirmed_balance"));
+            System.out.println("確定残高: " + temp.getDouble("confirmed_balance"));
             System.out.println();
         } catch (JSONException e) {
             e.printStackTrace();
