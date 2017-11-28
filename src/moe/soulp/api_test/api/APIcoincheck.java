@@ -11,7 +11,7 @@ import moe.soulp.api_test.coincheck.dto.BankAccountDTO;
 
 /**
  * <b>coincheckのAPI操作</b><br>
- * date: 2017/08/03 last_date: 2017/09/21
+ * date: 2017/08/03 last_date: 2017/11/28
  *
  * @author ソウルP
  * @version 1.0 2017/08/03 APIcoincheck作成
@@ -557,7 +557,7 @@ public class APIcoincheck extends API implements Coincheckable {
         clearParameters();
         addParameter(PAIR, pair.toString());
         addParameter(ORDER_TYPE, Type.market_buy.toString());
-        addParameter(MARKET_BUY_AMOUNT, String.valueOf(market_buy_amount));
+        addParameter(MARKET_BUY_AMOUNT, String.valueOf((long) market_buy_amount));
         return privateAPI(ordersURL, HttpMethod.POST);
     }
 
@@ -2055,7 +2055,7 @@ public class APIcoincheck extends API implements Coincheckable {
 
     /**
      * <b>日本円の残高 出力</b>
-     * 
+     *
      * @return 日本円
      */
     @Override
@@ -2065,7 +2065,7 @@ public class APIcoincheck extends API implements Coincheckable {
 
     /**
      * <b>BTCの残高 出力</b>
-     * 
+     *
      * @return BTC
      */
     @Override
